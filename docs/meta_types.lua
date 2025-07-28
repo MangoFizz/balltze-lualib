@@ -5,24 +5,50 @@
 ---@diagnostic disable: missing-return 
 ---@diagnostic disable: unused-local 
 
----@class Plane3D
----@field i number
----@field j number
----@field k number
----@field w number
-
----@alias WeaponOverchargedAction
----| "discharge"
----| "explode"
+---@alias LensFlareRadiusScaledBy
+---| "distance_from_center"
+---| "rotation_and_strafing"
+---| "rotation"
 ---| "none"
 
----@class ScenarioAIConversation
----@field name string
----@field flags ScenarioAIConversationFlags
----@field triggerDistance number
----@field runToPlayerDist number
----@field participants ScenarioAIConversationParticipant[]
----@field lines ScenarioAIConversationLine[]
+---@class ItemCollection
+---@field permutations ItemCollectionPermutation[]
+---@field defaultSpawnTime integer
+
+---@class ShaderEffectFlags
+---@field dontOverdrawFpWeapon boolean
+---@field nonlinearTint boolean
+---@field sortBias boolean
+
+---@class DeviceMachine: Device
+---@field type MachineType
+---@field flags MachineFlags
+---@field doorOpenTime number
+---@field collisionResponse MachineCollisionResponse
+---@field elevatorNode integer
+---@field doorOpenTimeTicks integer
+
+---@alias FunctionType
+---| "cosine"
+---| "very_late"
+---| "late"
+---| "very_early"
+---| "early"
+---| "linear"
+
+---@class FontCharacter
+---@field character integer
+---@field characterWidth integer
+---@field bitmapWidth integer
+---@field bitmapHeight integer
+---@field bitmapOriginX integer
+---@field bitmapOriginY integer
+---@field hardwareCharacterIndex integer
+---@field drawGeneration integer
+---@field pixelsOffset integer
+
+---@class ScenarioChildScenario
+---@field childScenario TagReference
 
 ---@class Quaternion
 ---@field i number
@@ -30,93 +56,526 @@
 ---@field k number
 ---@field l number
 
----@class ObjectChangeColors
----@field darkenBy FunctionScaleBy
----@field scaleBy FunctionScaleBy
----@field flags ColorInterpolationFlags
----@field color ColorRGB
----@field permutations ObjectChangeColorsPermutation[]
+---@alias FunctionOut
+---| "d_out"
+---| "c_out"
+---| "b_out"
+---| "a_out"
+---| "none"
 
----@class ModelRegionPermutationFlags
----@field cannotBeChosenRandomly boolean
+---@class BaseObjectVitals
+---@field baseHealth number
+---@field baseShield number
+---@field health number
+---@field shield number
+---@field currentShieldDamage number
+---@field currentHealthDamage number
+---@field entangledObjectHandle ObjectHandle
+---@field recentShieldDamage number
+---@field recentHealthDamage number
+---@field recentShieldDamageTime integer
+---@field recentHealthDamageTime integer
+---@field shieldStunTime integer
+---@field flags BaseObjectVitalsFlags
 
----@class PhysicsMassPointFlags
----@field metallic boolean
+---@class ModelFlags
+---@field blendSharedNormals boolean
 
----@class PointPhysicsFlags
----@field noGravity boolean
----@field usesDampedWind boolean
----@field usesSimpleWind boolean
----@field collidesWithWaterSurface boolean
----@field collidesWithStructures boolean
----@field flamethrowerParticleCollision boolean
+---@class ModelAnimationsAnimationWeaponClassAnimation
+---@field animation integer
 
----@class DeviceControl: Device
----@field type DeviceType
----@field triggersWhen DeviceTriggersWhen
----@field callValue number
----@field on TagReference
----@field off TagReference
----@field deny TagReference
+---@class HUDMessageTextElement
+---@field type integer
+---@field data integer
 
----@class SoundPermutation
----@field name string
----@field skipFraction number
----@field gain number
----@field format SoundFormat
----@field nextPermutationIndex integer
----@field samplesPointer integer
----@field tagId0 TagHandle
----@field bufferSize integer
----@field tagId1 TagHandle
----@field samples TagRawData
----@field mouthData TagRawData
----@field subtitleData TagRawData
+---@class VectorFontData
+---@field fontFamilyName string
+---@field format VectorFontDataFormat
+---@field fontData TagRawData
+---@field resourceHandle integer
+---@field fallbackFont TagReference
 
----@class HUDInterfaceMessagingInformation
----@field sequenceIndex integer
----@field widthOffset integer
----@field offsetFromReferenceCorner VectorXYInt
----@field overrideIconColor integer
----@field frameRate integer
----@field moreFlags HUDInterfaceMessagingFlags
----@field textIndex integer
+---@class ParticleSystemPhysicsConstant
+---@field k number
 
----@class ScenarioStructureBSPLightmap
----@field bitmap integer
----@field materials ScenarioStructureBSPMaterial[]
+---@class ScenarioDeviceFlags
+---@field notUsableFromAnySide boolean
+---@field positionReversed boolean
+---@field canChangeOnlyOnce boolean
+---@field initiallyOff boolean
+---@field initiallyOpen boolean
 
----@class IsUnusedFlag
----@field unused boolean
+---@alias VectorFontDataFormat
+---| "opentype"
+---| "truetype"
 
----@class ModelVertexUncompressed
+---@class ShaderEnvironmentReflectionFlags
+---@field dynamicMirror boolean
+
+---@class ScenarioStartingEquipmentFlags
+---@field type3GrenadesOnly boolean
+---@field type2GrenadesOnly boolean
+---@field plasmaGrenadesOnly boolean
+---@field noGrenades boolean
+
+---@class ScenarioStructureBSPClusterPortalFlags
+---@field aiCantHearThroughThisShit boolean
+
+---@class ModelDetailNodeCount
+---@field superLow integer
+---@field low integer
+---@field medium integer
+---@field high integer
+---@field superHigh integer
+
+---@class UnitAnimationData
+---@field flags UnitAnimationFlags
+---@field unknownSomeAnimationIndexMaybe integer
+---@field unknownSomeAnimationIndex integer
+---@field seatIndex integer
+---@field seatWeaponIndex integer
+---@field weaponTypeIndex integer
+---@field state integer
+---@field replacementState integer
+---@field overlayState integer
+---@field desiredState integer
+---@field baseSeat integer
+---@field emotion integer
+---@field replacementAnimation ObjectAnimationState
+---@field overlayStateAnimation ObjectAnimationState
+---@field weaponIk ObjectAnimationState
+---@field updateLook boolean
+---@field updateAim boolean
+---@field lookingBounds Bounds2D
+---@field aimingBounds Bounds2D
+---@field externalAnimationGraph integer
+---@field externalAnimation ObjectAnimationState
+
+---@class ScenarioStructureBSPMaterialUncompressedRenderedVertex
 ---@field position VectorXYZ
 ---@field normal VectorXYZ
 ---@field binormal VectorXYZ
 ---@field tangent VectorXYZ
 ---@field textureCoords VectorXY
----@field node0Index integer
----@field node1Index integer
----@field node0Weight number
----@field node1Weight number
 
----@class IsUnfilteredFlag
----@field unfiltered boolean
+---@class GlowDistanceToObject
+---@field attachment FunctionOut
+---@field distance number[2]
+---@field multiplier number[2]
 
----@class ColorTable
----@field colors ColorTableColor[]
+---@class GlobalsBreakableSurfaceParticleEffect
+---@field particleType TagReference
+---@field flags GlobalsBreakableSurfaceParticleEffectFlags
+---@field density number
+---@field velocityScale number[2]
+---@field angularVelocity number[2]
+---@field radius number[2]
+---@field tint ColorARGB
 
----@class BitmapGroupSprite
----@field bitmapIndex integer
----@field left number
----@field right number
----@field top number
----@field bottom number
----@field registrationPoint VectorXY
+---@class LensFlare
+---@field falloffAngle number
+---@field cutoffAngle number
+---@field cosFalloffAngle number
+---@field cosCutoffAngle number
+---@field occlusionRadius number
+---@field occlusionOffsetDirection LensFlareOcclusionOffsetDirection
+---@field nearFadeDistance number
+---@field farFadeDistance number
+---@field bitmap TagReference
+---@field flags LensFlareFlags
+---@field rotationFunction LensFlareRotationFunction
+---@field rotationFunctionScale number
+---@field horizontalScale number
+---@field verticalScale number
+---@field reflections LensFlareReflection[]
 
----@class MaterialEffectsMaterialEffectMaterial
----@field effect TagReference
----@field sound TagReference
+---@class ScenarioMovePosition
+---@field position VectorXYZ
+---@field facing number
+---@field weight number
+---@field time number[2]
+---@field animation integer
+---@field sequenceId integer
+---@field clusterIndex integer
+---@field surfaceIndex integer
+
+---@class SoundScenery: BasicObject
+
+---@class ChildWidgetReferenceFlags
+---@field useCustomControllerIndex boolean
+
+---@alias ShaderTransparentGenericStageOutputFunction
+---| "dot_product"
+---| "multiply"
+
+---@class FlagAttachmentPoint
+---@field heightToNextAttachment integer
+---@field markerName string
+
+---@alias DamageEffectCategory
+---| "shotgun"
+---| "needle"
+---| "plasma"
+---| "vehicle"
+---| "mounted_weapon"
+---| "flame"
+---| "melee"
+---| "sniper"
+---| "high_explosive"
+---| "grenade"
+---| "bullet"
+---| "falling"
+---| "none"
+
+---@class Shader
+---@field radiosity ShaderRadiosityProperties
+---@field physics ShaderPhysicsProperties
+
+---@alias BitmapUsage
+---| "vector_map"
+---| "light_map"
+---| "detail_map"
+---| "height_map"
+---| "default"
+---| "alpha_blend"
+
+---@class ShaderEnvironmentReflection
+---@field flags ShaderEnvironmentReflectionFlags
+---@field type ShaderEnvironmentReflectionType
+---@field lightmapBrightnessScale number
+---@field perpendicularBrightness number
+---@field parallelBrightness number
+---@field reflectionCubeMap TagReference
+
+---@class ScenarioBSP
+---@field bspStart integer
+---@field bspSize integer
+---@field bspAddress integer
+---@field structureBsp TagReference
+
+---@class ShaderTransparentFlags
+---@field numeric boolean
+---@field scaleFirstMapWithDistance boolean
+---@field ignoreEffect boolean
+---@field drawBeforeWater boolean
+---@field firstMapIsInScreenspace boolean
+---@field twoSided boolean
+---@field decal boolean
+---@field alphaTested boolean
+
+---@class LightVolume
+---@field attachmentMarker string
+---@field flags LightVolumeFlags
+---@field nearFadeDistance number
+---@field farFadeDistance number
+---@field perpendicularBrightnessScale number
+---@field parallelBrightnessScale number
+---@field brightnessScaleSource FunctionOut
+---@field map TagReference
+---@field sequenceIndex integer
+---@field count integer
+---@field frameAnimationSource FunctionOut
+---@field frames LightVolumeFrame[]
+
+---@class ActorVariantRangedCombat
+---@field weapon TagReference
+---@field maximumFiringDistance number
+---@field rateOfFire number
+---@field projectileError number
+---@field firstBurstDelayTime number[2]
+---@field newTargetFiringPatternTime number
+---@field surpriseDelayTime number
+---@field surpriseFireWildlyTime number
+---@field deathFireWildlyChance number
+---@field deathFireWildlyTime number
+---@field desiredCombatRange number[2]
+---@field customStandGunOffset VectorXYZ
+---@field customCrouchGunOffset VectorXYZ
+---@field targetTracking number
+---@field targetLeading number
+---@field weaponDamageModifier number
+---@field damagePerSecond number
+
+---@alias HUDInterfaceAnchor
+---| "right_center"
+---| "left_center"
+---| "bottom_center"
+---| "top_center"
+---| "center"
+---| "bottom_right"
+---| "bottom_left"
+---| "top_right"
+---| "top_left"
+
+---@alias ScenarioScriptValueType
+---| "scenery_name"
+---| "device_name"
+---| "weapon_name"
+---| "vehicle_name"
+---| "unit_name"
+---| "object_name"
+---| "scenery"
+---| "device"
+---| "weapon"
+---| "vehicle"
+---| "unit"
+---| "object"
+---| "hud_corner"
+---| "actor_type"
+---| "ai_default_state"
+---| "team"
+---| "game_difficulty"
+---| "object_definition"
+---| "damage_effect"
+---| "actor_variant"
+---| "animation_graph"
+---| "looping_sound"
+---| "damage"
+---| "effect"
+---| "sound"
+---| "object_list"
+---| "hud_message"
+---| "navpoint"
+---| "conversation"
+---| "starting_profile"
+---| "ai_command_list"
+---| "ai"
+---| "device_group"
+---| "cutscene_recording"
+---| "cutscene_title"
+---| "cutscene_camera_point"
+---| "cutscene_flag"
+---| "trigger_volume"
+---| "script"
+---| "string"
+---| "long"
+---| "short"
+---| "real"
+---| "boolean"
+---| "void"
+---| "passthrough"
+---| "function_name"
+---| "special_form"
+---| "unparsed"
+
+---@alias FlagAttachedEdgeShape
+---| "concave_triangular"
+---| "flat"
+
+---@class ScenarioStructureBSPClusterPortalVertex
+---@field point VectorXYZ
+
+---@class UnitHUDInterfaceShieldMeter: HUDInterfaceMeterElement
+---@field overchargeMinimumColor integer
+---@field overchargeMaximumColor integer
+---@field overchargeFlashColor integer
+---@field overchargeEmptyColor integer
+
+---@class ModelCollisionGeometryBSPPlane
+---@field plane Plane3D
+
+---@alias WaveFunction
+---| "spark"
+---| "wander"
+---| "jitter"
+---| "noise"
+---| "slide_variable_period"
+---| "slide"
+---| "diagonal_wave_variable_period"
+---| "diagonal_wave"
+---| "cosine_variable_period"
+---| "cosine"
+---| "zero"
+---| "one"
+
+---@class ScenarioSquadFlags
+---@field automaticMigration boolean
+---@field magicSightAfterTimer boolean
+---@field noTimerDelayForever boolean
+---@field startTimerImmediately boolean
+---@field neverSearch boolean
+---@field unused boolean
+
+---@class WeaponHUDInterfaceStaticElement
+---@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
+---@field allowedViewType WeaponHUDInterfaceViewType
+---@field anchor HUDInterfaceChildAnchor
+---@field properties HUDInterfaceStaticElement
+
+---@class ShaderTransparentWaterProperties
+---@field waterFlags ShaderTransparentWaterFlags
+---@field baseMap TagReference
+---@field reflectionMapProperties ShaderSpecularProperties
+---@field reflectionMap TagReference
+
+---@class VirtualKeyboard
+---@field displayFont TagReference
+---@field backgroundBitmap TagReference
+---@field specialKeyLabelsStringList TagReference
+---@field virtualKeys VirtualKeyboardVirtualKey[]
+
+---@class ScenarioStructureBSPMaterialFlags
+---@field fogPlane boolean
+---@field coplanar boolean
+
+---@class DecalAppearance
+---@field radius number[2]
+---@field intensity number[2]
+---@field color ColorRGB
+
+---@class VehicleNetwork
+---@field timeValid boolean
+---@field baselineValid boolean
+---@field baselineId integer
+---@field messageId integer
+---@field updateBaseline VehicleNetworkData
+---@field deltaValid boolean
+---@field updateDelta VehicleNetworkData
+---@field lastMovedAtTick integer
+---@field scenarioRespawnId integer
+---@field respawnPosition VectorXYZ
+
+---@class ModelCollisionGeometryBSP2DReference
+---@field plane integer
+---@field bsp2dNode integer
+
+---@class GlowFlags
+---@field trailingParticlesSlowOverTime boolean
+---@field trailingParticlesShrinkOverTime boolean
+---@field trailingParticlesFadeOverTime boolean
+---@field particesMoveInBothDirections boolean
+---@field particlesMoveBackwards boolean
+---@field modifyParticleColorInRange boolean
+
+---@class HUDGlobalsDamageIndicators
+---@field topOffset integer
+---@field bottomOffset integer
+---@field leftOffset integer
+---@field rightOffset integer
+---@field bitmap TagReference
+---@field sequenceIndex integer
+---@field multiplayerSequenceIndex integer
+---@field color integer
+
+---@class HUDInterfaceElementColor
+---@field defaultColor integer
+---@field flashingColor integer
+---@field flashPeriod number
+---@field flashDelay number
+---@field numberOfFlashes integer
+---@field flashFlags HUDInterfaceFlashFlags
+---@field flashLength number
+---@field disabledColor integer
+
+---@class Wind
+---@field velocity number[2]
+---@field variationArea VectorPY
+---@field localVariationWeight number
+---@field localVariationRate number
+---@field damping number
+
+---@class ScenarioFiringPosition
+---@field position VectorXYZ
+---@field groupIndex ScenarioGroupIndex
+---@field clusterIndex integer
+---@field surfaceIndex integer
+
+---@class ScenarioStructureBSPMaterial
+---@field shader TagReference
+---@field shaderPermutation integer
+---@field flags ScenarioStructureBSPMaterialFlags
+---@field surfaces integer
+---@field surfaceCount integer
+---@field centroid VectorXYZ
+---@field ambientColor ColorRGB
+---@field distantLightCount integer
+---@field distantLight0Color ColorRGB
+---@field distantLight0Direction VectorXYZ
+---@field distantLight1Color ColorRGB
+---@field distantLight1Direction VectorXYZ
+---@field reflectionTint ColorARGB
+---@field shadowVector VectorXYZ
+---@field shadowColor ColorRGB
+---@field plane Plane3D
+---@field breakableSurface integer
+---@field renderedVertices ModelVertexReference
+---@field lightmapVertices ModelVertexReference
+---@field uncompressedVertices TagRawData
+---@field compressedVertices TagRawData
+
+---@class ActorVariantChangeColors
+---@field color ColorRGB
+
+---@class ActorMovement
+---@field diveIntoCoverChance number
+---@field emergeFromCoverChance number
+---@field diveFromGrenadeChance number
+---@field pathfindingRadius number
+---@field glassIgnoranceChance number
+---@field stationaryMovementDist number
+---@field freeFlyingSidestep number
+---@field beginMovingAngle number
+---@field cosineBeginMovingAngle number
+
+---@class ModelCollisionGeometryBSP3DNode
+---@field plane integer
+---@field backChild integer
+---@field frontChild integer
+
+---@class ModelAnimationSuspensionAnimation
+---@field massPointIndex integer
+---@field animation integer
+---@field fullExtensionGroundDepth number
+---@field fullCompressionGroundDepth number
+
+---@alias ScenarioGroupIndex
+---| "z"
+---| "y"
+---| "x"
+---| "w"
+---| "v"
+---| "u"
+---| "t"
+---| "s"
+---| "r"
+---| "q"
+---| "p"
+---| "o"
+---| "n"
+---| "m"
+---| "l"
+---| "k"
+---| "j"
+---| "i"
+---| "h"
+---| "g"
+---| "f"
+---| "e"
+---| "d"
+---| "c"
+---| "b"
+---| "a"
+
+---@class EventHandlerReferencesFlags
+---@field tryToBranchOnFailure boolean
+---@field runScenarioScript boolean
+---@field goBackToPreviousWidget boolean
+---@field replaceSelfWWidget boolean
+---@field runFunction boolean
+---@field giveFocusToWidget boolean
+---@field reloadOtherWidget boolean
+---@field reloadSelf boolean
+---@field openWidget boolean
+---@field closeAllWidgets boolean
+---@field closeOtherWidget boolean
+---@field closeCurrentWidget boolean
+
+---@class WeaponHUDInterfaceOverlayElement
+---@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
+---@field allowedViewType WeaponHUDInterfaceViewType
+---@field anchor HUDInterfaceChildAnchor
+---@field overlayBitmap TagReference
+---@field overlays WeaponHUDInterfaceOverlay[]
 
 ---@class ContrailPointStateScaleFlags
 ---@field color boolean
@@ -126,23 +585,269 @@
 ---@field durationDelta boolean
 ---@field duration boolean
 
----@class ShaderEffectProperties
----@field shader Shader
----@field shaderFlags ShaderEffectFlags
----@field framebufferBlendFunction FramebufferBlendFunction
----@field framebufferFadeMode FramebufferFadeMode
----@field mapFlags IsUnfilteredFlag
+---@class ShaderTransparentGenericMapFlag
+---@field vClamped boolean
+---@field uClamped boolean
+---@field unfiltered boolean
 
----@class LightningMarker
----@field attachmentMarker string
----@field flags LightningMarkerFlag
----@field octavesToNextMarker integer
----@field randomPositionBounds VectorXYZ
----@field randomJitter number
----@field thickness number
----@field tint ColorARGB
+---@class ShaderEnvironmentSpecular
+---@field flags ShaderEnvironmentSpecularFlags
+---@field brightness number
+---@field perpendicularColor ColorRGB
+---@field parallelColor ColorRGB
 
----@alias ScenarioTeamIndex
+---@class EffectPartScalesValues
+---@field typeSpecificScale boolean
+---@field angularVelocityDelta boolean
+---@field angularVelocity boolean
+---@field velocityConeAngle boolean
+---@field velocityDelta boolean
+---@field velocity boolean
+
+---@class Device: Object
+---@field flags DeviceFlags
+---@field powerTransitionTime number
+---@field powerAccelerationTime number
+---@field positionTransitionTime number
+---@field positionAccelerationTime number
+---@field depoweredPositionTransitionTime number
+---@field depoweredPositionAccelerationTime number
+---@field aIn DeviceIn
+---@field bIn DeviceIn
+---@field cIn DeviceIn
+---@field dIn DeviceIn
+---@field open TagReference
+---@field close TagReference
+---@field opened TagReference
+---@field closed TagReference
+---@field depowered TagReference
+---@field repowered TagReference
+---@field delayTime number
+---@field delayEffect TagReference
+---@field automaticActivationRadius number
+---@field inversePowerAccelerationTime number
+---@field inversePowerTransitionTime number
+---@field inverseDepoweredPositionAccelerationTime number
+---@field inverseDepoweredPositionTransitionTime number
+---@field inversePositionAccelerationTime number
+---@field inversePositionTransitionTime number
+---@field delayTimeTicks number
+
+---@alias HUDInterfaceWrapMode
+---| "wrap"
+---| "clamp"
+
+---@class ScenarioCommandListFlags
+---@field manualBspIndex boolean
+---@field disableFallingDamage boolean
+---@field disableCommunication boolean
+---@field disableLooking boolean
+---@field allowTargeting boolean
+---@field allowInitiative boolean
+
+---@class PredictedResource
+---@field type PredictedResourceType
+---@field resourceIndex integer
+---@field tag TagHandle
+
+---@class ObjectAnimationState
+---@field index integer
+---@field frame integer
+
+---@alias ScenarioSearchBehavior
+---| "tenacious"
+---| "never"
+---| "normal"
+
+---@alias ShaderDetailFunction
+---| "double_biased_add"
+---| "multiply"
+---| "double_biased_multiply"
+
+---@class ScenarioActorPalette
+---@field reference TagReference
+
+---@alias ParticleOrientation
+---| "perpendicular_to_direction"
+---| "parallel_to_direction"
+---| "screen_facing"
+
+---@class DamageEffectCameraShaking
+---@field duration number
+---@field falloffFunction FunctionType
+---@field randomTranslation number
+---@field randomRotation number
+---@field wobbleFunction WaveFunction
+---@field wobblePeriod number
+---@field wobbleWeight number
+
+---@class ModelAnimationsAnimationGraphSoundReference
+---@field sound TagReference
+
+---@class ModelCollisionGeometryBSPSurfaceFlags
+---@field breakable boolean
+---@field climbable boolean
+---@field invisible boolean
+---@field twoSided boolean
+
+---@alias BitmapSpriteUsage
+---| "double_multiply"
+---| "multiply_min"
+---| "blend_add_subtract_max"
+
+---@class ShaderModelSelfIlluminationFlags
+---@field noRandomPhase boolean
+
+---@alias AnimationFrameInfoType
+---| "dx_dy_dz_dyaw"
+---| "dx_dy_dyaw"
+---| "dx_dy"
+---| "none"
+
+---@class ProjectileMaterialResponse
+---@field flags ProjectileMaterialResponseFlags
+---@field defaultResponse ProjectileResponse
+---@field defaultEffect TagReference
+---@field potentialResponse ProjectileResponse
+---@field potentialFlags ProjectileMaterialResponsePotentialFlags
+---@field potentialSkipFraction number
+---@field potentialBetween number[2]
+---@field potentialAnd number[2]
+---@field potentialEffect TagReference
+---@field scaleEffectsBy ProjectileScaleEffectsBy
+---@field angularNoise number
+---@field velocityNoise number
+---@field detonationEffect TagReference
+---@field initialFriction number
+---@field maximumDistance number
+---@field parallelFriction number
+---@field perpendicularFriction number
+
+---@class WeaponHUDInterfaceCrosshair
+---@field crosshairType WeaponHUDInterfaceCrosshairType
+---@field allowedViewType WeaponHUDInterfaceViewType
+---@field crosshairBitmap TagReference
+---@field crosshairOverlays WeaponHUDInterfaceCrosshairOverlay[]
+
+---@class ColorTable
+---@field colors ColorTableColor[]
+
+---@class ShaderTransparentPlasmaColor
+---@field specularProperties ShaderSpecularProperties
+---@field tintColorSource FunctionNameNullable
+
+---@class WeatherParticleSystemParticleType
+---@field name string
+---@field flags WeatherParticleSystemParticleTypeFlags
+---@field fadeInStartDistance number
+---@field fadeInEndDistance number
+---@field fadeOutStartDistance number
+---@field fadeOutEndDistance number
+---@field fadeInStartHeight number
+---@field fadeInEndHeight number
+---@field fadeOutStartHeight number
+---@field fadeOutEndHeight number
+---@field particleCount number[2]
+---@field physics TagReference
+---@field accelerationMagnitude number[2]
+---@field accelerationTurningRate number
+---@field accelerationChangeRate number
+---@field particleRadius number[2]
+---@field animationRate number[2]
+---@field rotationRate number[2]
+---@field color ColorARGB
+---@field spriteSize number
+---@field spriteBitmap TagReference
+---@field renderMode ParticleOrientation
+---@field renderDirectionSource WeatherParticleSystemRenderDirectionSource
+---@field shader ShaderEffect
+
+---@class ScenarioStructureBSPSubclusterSurfaceIndex
+---@field index integer
+
+---@class ScenarioStructureBSPMapLeafFace
+---@field nodeIndex integer
+---@field vertices ScenarioStructureBSPMapLeafFaceVertex[]
+
+---@alias ShaderEnvironmentReflectionType
+---| "bumped_radiosity"
+---| "flat_cube_map"
+---| "bumped_cube_map"
+
+---@class Vehicle: Unit
+---@field flags VehicleFlags
+---@field type VehicleType
+---@field maximumForwardSpeed number
+---@field maximumReverseSpeed number
+---@field speedAcceleration number
+---@field speedDeceleration number
+---@field maximumLeftTurn number
+---@field maximumRightTurn number
+---@field wheelCircumference number
+---@field turnRate number
+---@field blurSpeed number
+---@field aIn VehicleFunctionIn
+---@field bIn VehicleFunctionIn
+---@field cIn VehicleFunctionIn
+---@field dIn VehicleFunctionIn
+---@field maximumLeftSlide number
+---@field maximumRightSlide number
+---@field slideAcceleration number
+---@field slideDeceleration number
+---@field minimumFlippingAngularVelocity number
+---@field maximumFlippingAngularVelocity number
+---@field fixedGunYaw number
+---@field fixedGunPitch number
+---@field aiSideslipDistance number
+---@field aiDestinationRadius number
+---@field aiAvoidanceDistance number
+---@field aiPathfindingRadius number
+---@field aiChargeRepeatTimeout number
+---@field aiStrafingAbortRange number
+---@field aiOversteeringBounds number[2]
+---@field aiSteeringMaximum number
+---@field aiThrottleMaximum number
+---@field aiMovePositionTime number
+---@field suspensionSound TagReference
+---@field crashSound TagReference
+---@field materialEffects TagReference
+---@field effect TagReference
+
+---@class ScenarioStructureBSPMirrorVertex
+---@field point VectorXYZ
+
+---@class Projectile: Object
+---@field flags ProjectileFlags
+---@field detonationTimerStarts ProjectileDetonationTimerStarts
+---@field impactNoise ObjectNoise
+---@field aIn ProjectileFunctionIn
+---@field bIn ProjectileFunctionIn
+---@field cIn ProjectileFunctionIn
+---@field dIn ProjectileFunctionIn
+---@field superDetonation TagReference
+---@field aiPerceptionRadius number
+---@field collisionRadius number
+---@field armingTime number
+---@field dangerRadius number
+---@field effect TagReference
+---@field timer number[2]
+---@field minimumVelocity number
+---@field maximumRange number
+---@field airGravityScale number
+---@field airDamageRange number[2]
+---@field waterGravityScale number
+---@field waterDamageRange number[2]
+---@field initialVelocity number
+---@field finalVelocity number
+---@field guidedAngularVelocity number
+---@field detonationNoise ObjectNoise
+---@field detonationStarted TagReference
+---@field flybySound TagReference
+---@field attachedDetonationDamage TagReference
+---@field impactDamage TagReference
+---@field materialResponse ProjectileMaterialResponse[]
+
+---@alias UnitDefaultTeam
 ---| "unused_9"
 ---| "unused_8"
 ---| "unused_7"
@@ -152,222 +857,48 @@
 ---| "covenant"
 ---| "human"
 ---| "player"
----| "default_by_unit"
-
----@class Globals
----@field sounds GlobalsSound[]
----@field camera GlobalsCamera[]
----@field playerControl GlobalsPlayerControl[]
----@field difficulty GlobalsDifficulty[]
----@field grenades GlobalsGrenade[]
----@field rasterizerData GlobalsRasterizerData[]
----@field interfaceBitmaps GlobalsInterfaceBitmaps[]
----@field weaponList GlobalsWeapon[]
----@field cheatPowerups GlobalsCheatPowerup[]
----@field multiplayerInformation GlobalsMultiplayerInformation[]
----@field playerInformation GlobalsPlayerInformation[]
----@field firstPersonInterface GlobalsFirstPersonInterface[]
----@field fallingDamage GlobalsFallingDamage[]
----@field materials GlobalsMaterial[]
----@field playlistMembers GlobalsPlaylistMember[]
-
----@class VectorXYZ
----@field x number
----@field y number
----@field z number
-
----@class WeaponHUDInterfaceCrosshairOverlay
----@field position HUDInterfaceElementPosition
----@field color HUDInterfaceElementColor
----@field frameRate integer
----@field sequenceIndex integer
----@field flags WeaponHUDInterfaceCrosshairOverlayFlags
-
----@class Bounds2D
----@field left number
----@field right number
----@field top number
----@field bottom number
-
----@class BitmapSpriteProcessing
----@field usage BitmapSpriteUsage
----@field spacing integer
-
----@class HUDInterfaceMessagingFlags
----@field widthOffsetIsAbsoluteIconWidth boolean
----@field overrideDefaultColor boolean
----@field useTextFromStringListInstead boolean
-
----@class VehicleFlags
----@field autoaimWhenTeamless boolean
----@field canTriggerAutomaticOpeningDoors boolean
----@field noFrictionWithDriver boolean
----@field noncombatVehicle boolean
----@field hasEbrake boolean
----@field unused boolean
----@field vehicleSteersDirectly boolean
----@field aiDriverHovering boolean
----@field aiDriverCanSidestep boolean
----@field aiDriverFlying boolean
----@field aiDriverEnable boolean
----@field aiUnused boolean
----@field aiDoesNotRequireDriver boolean
----@field aiWeaponCannotRotate boolean
----@field causesCollisionDamage boolean
----@field killsRidersAtTerminalVelocity boolean
----@field slideWakesPhysics boolean
----@field controlOppositeSpeedSetsBrake boolean
----@field gunnerPowerWakesPhysics boolean
----@field driverPowerWakesPhysics boolean
----@field turnWakesPhysics boolean
----@field speedWakesPhysics boolean
-
----@class ScenarioLocation
----@field leafId integer
----@field clusterId integer
-
----@class ScenarioFunction
----@field flags ScenarioFunctionFlags
----@field name string
----@field period number
----@field scalePeriodBy integer
----@field function WaveFunction
----@field scaleFunctionBy integer
----@field wobbleFunction WaveFunction
----@field wobblePeriod number
----@field wobbleMagnitude number
----@field squareWaveThreshold number
----@field stepCount integer
----@field mapTo FunctionType
----@field sawtoothCount integer
----@field scaleResultBy integer
----@field boundsMode FunctionBoundsMode
----@field bounds number[2]
----@field turnOffWith integer
-
----@class SkyLightRadiosity
----@field flags SkyLightFlags
----@field color ColorRGB
----@field power number
----@field testDistance number
----@field direction VectorPY
----@field diameter number
-
----@class ScenarioUnitProperties
----@field placement ScenarioObjectPlacement
----@field appearancePlayerIndex integer
----@field bodyVitality number
----@field flags ScenarioUnitFlags
-
----@class ScenarioStartingEquipmentFlags
----@field type3GrenadesOnly boolean
----@field type2GrenadesOnly boolean
----@field plasmaGrenadesOnly boolean
----@field noGrenades boolean
-
----@class ModelGeometryPartFlags
----@field zoner boolean
----@field strippedInternal boolean
-
----@alias FunctionScaleBy
----| "d_out"
----| "c_out"
----| "b_out"
----| "a_out"
----| "d_in"
----| "c_in"
----| "b_in"
----| "a_in"
 ---| "none"
 
----@class LightLensFlare
----@field lensFlare TagReference
+---@class ModelDetailCutoff
+---@field superHigh number
+---@field high number
+---@field medium number
+---@field low number
+---@field superLow number
 
----@class ScenarioStructureBSPGlobalDetailObjectCount
----@field count integer
-
----@alias UnitHUDInterfacePanelType
----| "integrated_light"
-
----@alias AnimationFrameInfoType
----| "dx_dy_dz_dyaw"
----| "dx_dy_dyaw"
----| "dx_dy"
----| "none"
-
----@class EffectEvent
----@field skipFraction number
----@field delayBounds number[2]
----@field durationBounds number[2]
----@field parts EffectPart[]
----@field particles EffectParticle[]
-
----@class ShaderPhysicsProperties
----@field materialType MaterialType
----@field type integer
-
----@class LightVolumeFlags
----@field moreColors boolean
----@field interpolateColorInHsv boolean
-
----@alias ScenarioAtomType
----| "teleport"
----| "set_radius"
----| "look_object"
----| "look_player"
----| "look_random"
----| "move_immediate"
----| "die"
----| "loop"
----| "wait"
----| "initiative"
----| "targeting"
----| "vocalize"
----| "action"
----| "recording"
----| "animate"
----| "script"
----| "targeted_jump"
----| "running_jump"
----| "vehicle"
----| "grenade"
----| "shoot"
----| "crouch"
----| "animation_mode"
----| "look"
----| "move_in_direction"
----| "go_to_and_face"
----| "go_to"
----| "pause"
-
----@class ModelCollisionGeometryMaterialFlags
----@field head boolean
-
----@alias UIControllerIndex
----| "any_player"
----| "player_4"
----| "player_3"
----| "player_2"
----| "player_1"
-
----@class ShaderTransparentPlasmaIntensity
----@field intensitySource FunctionOut
----@field intensityExponent number
-
----@class SoundLoopingDetail
+---@class GlobalsMaterial
+---@field groundFrictionScale number
+---@field groundFrictionNormalK1Scale number
+---@field groundFrictionNormalK0Scale number
+---@field groundDepthScale number
+---@field groundDampFractionScale number
+---@field maximumVitality number
+---@field effect TagReference
 ---@field sound TagReference
----@field randomPeriodBounds number[2]
----@field gain number
----@field flags SoundLoopingDetailFlags
----@field yawBounds number[2]
----@field pitchBounds number[2]
----@field distanceBounds number[2]
+---@field particleEffects GlobalsBreakableSurfaceParticleEffect[]
+---@field meleeHitSound TagReference
 
----@alias ShaderFirstMapType
----| "first_map_is_viewer_centered_cube_map"
----| "first_map_is_object_centered_cube_map"
----| "first_map_is_reflection_cube_map"
----| "_2d_map"
+---@class ShaderModel: Shader
+---@field properties ShaderModelProperties
+---@field changeColor ShaderModelChangeColor
+---@field selfIllumination ShaderModelSelfIllumination
+---@field maps ShaderModelMaps
+---@field textureScrollingAnimation ShaderModelTextureScrollingAnimation
+---@field reflection ShaderModelReflection
+---@field bullshit ShaderModelBullshit
+
+---@class UnitUnitHUDInterface
+---@field hud TagReference
+
+---@class UnitHUDInterfaceMotionSensorCenter
+---@field anchorOffset VectorXYInt
+---@field widthScale number
+---@field heightScale number
+---@field scalingFlags HUDInterfaceScalingFlags
+
+---@alias ParticleSystemSystemUpdatePhysics
+---| "explosion"
+---| "default"
 
 ---@class ShaderTransparentGenericStage
 ---@field flags ShaderTransparentGenericStageFlags
@@ -403,63 +934,549 @@
 ---@field outputAbCdMuxSumAlpha ShaderTransparentGenericStageOutput
 ---@field outputMappingAlpha ShaderTransparentGenericStageOutputMapping
 
+---@alias ShaderColorFunctionType
+---| "blend_next_map_alpha_inverse"
+---| "blend_next_map_alpha"
+---| "blend_current_alpha_inverse"
+---| "blend_current_alpha"
+---| "subtract_next_map"
+---| "subtract_current"
+---| "add_signed_next_map"
+---| "add_signed_current"
+---| "add"
+---| "double_multiply"
+---| "multiply"
+---| "next_map"
+---| "current"
+
+---@class EffectParticle
+---@field createIn EffectCreateIn
+---@field violenceMode EffectViolenceMode
+---@field create EffectCreate
+---@field location integer
+---@field relativeDirection VectorPY
+---@field relativeOffset VectorXYZ
+---@field relativeDirectionVector VectorXYZ
+---@field particleType TagReference
+---@field flags EffectParticleFlags
+---@field distributionFunction EffectDistributionFunction
+---@field count integer[2]
+---@field distributionRadius number[2]
+---@field velocity number[2]
+---@field velocityConeAngle number
+---@field angularVelocity number[2]
+---@field radius number[2]
+---@field tint ColorARGB
+---@field aScalesValues EffectParticleScalesValues
+---@field bScalesValues EffectParticleScalesValues
+
+---@alias ObjectNoise
+---| "quiet"
+---| "shout"
+---| "loud"
+---| "medium"
+---| "silent"
+
+---@class PhysicsInertialMatrix
+---@field matrix Matrix
+
+---@class UnitHUDInterfaceHUDSound
+---@field sound TagReference
+---@field latchedTo UnitHUDInterfaceHUDSoundLatchedTo
+---@field scale number
+
+---@class ScenarioActorStartingLocationFlags
+---@field required boolean
+
+---@class SoundFlags
+---@field thirstyGrunt boolean
+---@field splitLongSoundIntoPermutations boolean
+---@field fitToAdpcmBlocksize boolean
+
+---@class ScenarioStructureBSPPathfindingEdge
+---@field midpoint integer
+
+---@class ModelCollisionGeometryBSPLeafFlags
+---@field containsDoubleSidedSurfaces boolean
+
+---@alias UIEventType
+---| "post_render"
+---| "custom_activation"
+---| "double_click"
+---| "right_mouse"
+---| "middle_mouse"
+---| "left_mouse"
+---| "lose_focus"
+---| "get_focus"
+---| "deleted"
+---| "created"
+---| "right_analog_stick_right"
+---| "right_analog_stick_left"
+---| "right_analog_stick_down"
+---| "left_analog_stick_up_1"
+---| "left_analog_stick_right"
+---| "left_analog_stick_left"
+---| "left_analog_stick_down"
+---| "left_analog_stick_up"
+---| "right_thumb"
+---| "left_thumb"
+---| "back_button"
+---| "start_button"
+---| "dpad_right"
+---| "dpad_left"
+---| "dpad_down"
+---| "dpad_up"
+---| "right_trigger"
+---| "left_trigger"
+---| "white_button"
+---| "black_button"
+---| "y_button"
+---| "x_button"
+---| "b_button"
+---| "a_button"
+
+---@class ParticleSystemTypeParticleState
+---@field name string
+---@field durationBounds number[2]
+---@field transitionTimeBounds number[2]
+---@field bitmaps TagReference
+---@field sequenceIndex integer
+---@field scale number[2]
+---@field animationRate number[2]
+---@field rotationRate number[2]
+---@field color1 ColorARGB
+---@field color2 ColorARGB
+---@field radiusMultiplier number
+---@field pointPhysics TagReference
+---@field shader ShaderEffect
+---@field physicsConstants ParticleSystemPhysicsConstant[]
+
+---@class ScenarioStructureBSPMarker
+---@field name string
+---@field rotation Quaternion
+---@field position VectorXYZ
+
+---@class ModelAnimationsAnimationWeaponTypeAnimation
+---@field animation integer
+
+---@class ScenarioStructureBSPClusterSurfaceIndex
+---@field index integer
+
+---@alias VehicleFunctionIn
+---| "wingtip_contrail_new"
+---| "engine_hack"
+---| "thrust"
+---| "hover"
+---| "wingtip_contrail"
+---| "back_right_tire_velocity"
+---| "back_left_tire_velocity"
+---| "front_right_tire_velocity"
+---| "front_left_tire_velocity"
+---| "back_right_tire_position"
+---| "back_left_tire_position"
+---| "front_right_tire_position"
+---| "front_left_tire_position"
+---| "right_tread_velocity"
+---| "left_tread_velocity"
+---| "right_tread_position"
+---| "left_tread_position"
+---| "velocity_up"
+---| "velocity_left"
+---| "velocity_forward"
+---| "velocity_ground"
+---| "velocity_water"
+---| "velocity_air"
+---| "walk"
+---| "jump"
+---| "crouch"
+---| "turn_right"
+---| "turn_left"
+---| "turn_absolute"
+---| "speed_slide_maximum"
+---| "slide_right"
+---| "slide_left"
+---| "slide_absolute"
+---| "speed_backward"
+---| "speed_forward"
+---| "speed_absolute"
+---| "none"
+
+---@class WeaponHUDInterfaceMeter
+---@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
+---@field allowedViewType WeaponHUDInterfaceViewType
+---@field anchor HUDInterfaceChildAnchor
+---@field properties HUDInterfaceMeterElement
+
+---@class HUDGlobalsMessagingParameters
+---@field anchor HUDInterfaceAnchor
+---@field canvasSize HUDInterfaceCanvasSize
+---@field position HUDInterfaceElementPosition
+---@field fullscreenFont TagReference
+---@field splitscreenFont TagReference
+---@field upTime number
+---@field fadeTime number
+---@field iconColor ColorARGB
+---@field textColor ColorARGB
+---@field textSpacing number
+---@field itemMessageText TagReference
+---@field iconBitmap TagReference
+---@field alternateIconText TagReference
+---@field buttonIcons HUDGlobalsButtonIcon[]
+
+---@class HUDGlobalsExtraCrap
+---@field carnageReportBitmap TagReference
+---@field loadingBeginText integer
+---@field loadingEndText integer
+---@field checkpointBeginText integer
+---@field checkpointEndText integer
+---@field checkpointSound TagReference
+
+---@alias HUDInterfaceMultitextureOverlayAnchor
+---| "screen"
+---| "texture"
+
+---@class ActorVariantBerserkingAndMelee
+---@field meleeRange number
+---@field meleeAbortRange number
+---@field berserkFiringRanges number[2]
+---@field berserkMeleeRange number
+---@field berserkMeleeAbortRange number
+
+---@alias ActorDefensiveCrouchType
+---| "flood_shamble"
+---| "any_target"
+---| "hide_behind_shield"
+---| "low_shields"
+---| "danger"
+---| "never"
+
+---@class ScenarioActorStartingLocation
+---@field position VectorXYZ
+---@field facing number
+---@field clusterIndex integer
+---@field sequenceId integer
+---@field flags ScenarioActorStartingLocationFlags
+---@field returnState ScenarioReturnState
+---@field initialState ScenarioReturnState
+---@field actorType integer
+---@field commandList integer
+
+---@alias UIReplaceFunction
+---| "pid"
+---| "build_number"
+---| "widget_s_controller"
+---| "null"
+
+---@class MetagameProperties
+---@field metagameType MetagameType
+---@field metagameClass MetagameClass
+
+---@alias ScenarioAtomType
+---| "teleport"
+---| "set_radius"
+---| "look_object"
+---| "look_player"
+---| "look_random"
+---| "move_immediate"
+---| "die"
+---| "loop"
+---| "wait"
+---| "initiative"
+---| "targeting"
+---| "vocalize"
+---| "action"
+---| "recording"
+---| "animate"
+---| "script"
+---| "targeted_jump"
+---| "running_jump"
+---| "vehicle"
+---| "grenade"
+---| "shoot"
+---| "crouch"
+---| "animation_mode"
+---| "look"
+---| "move_in_direction"
+---| "go_to_and_face"
+---| "go_to"
+---| "pause"
+
+---@alias ParticleAnchor
+---| "zsprite"
+---| "with_screen_space"
+---| "with_primary"
+
+---@class GBXModelGeometryPart: ModelGeometryPart
+---@field localNodeCount integer
+---@field localNodeIndices integer[22]
+
+---@alias BitmapSpriteBudgetSize
+---| "_1024_x1024"
+---| "_512_x512"
+---| "_256_x256"
+---| "_128_x128"
+---| "_64_x64"
+---| "_32_x32"
+
+---@class UnitFlags
+---@field integratedLightLastsForever boolean
+---@field integratedLightControlsWeapon boolean
+---@field shieldsFryInfectionForms boolean
+---@field ignoredByAutoaiming boolean
+---@field specialCinematicUnit boolean
+---@field inconsequential boolean
+---@field runsAroundFlaming boolean
+---@field shieldSapping boolean
+---@field notInstantlyKilledByMelee boolean
+---@field meleeAttackersCannotAttach boolean
+---@field cannotOpenDoorsAutomatically boolean
+---@field impactMeleeDiesOnShields boolean
+---@field impactMeleeAttachesToUnit boolean
+---@field simpleCreature boolean
+---@field hasNoAiming boolean
+---@field dontRefaceDuringPings boolean
+---@field meleeAttackIsFatal boolean
+---@field resistsPings boolean
+---@field causesPassengerDialogue boolean
+---@field unused boolean
+---@field entranceInsideBoundingSphere boolean
+---@field firesFromCamera boolean
+---@field halfSpeedInterpolation boolean
+---@field destroyedAfterDying boolean
+---@field circularAiming boolean
+
 ---@class ObjectRuntimeFlags
 ---@field functionsControlColorScale boolean
 
----@class TagReference
----@field tagGroup TagGroup
----@field tagHandle TagHandle
+---@alias UnitHUDInterfacePanelType
+---| "integrated_light"
 
----@class WeaponHUDInterfaceFlags
----@field useParentHudFlashingParameters boolean
+---@class ScenarioScriptNodeFlags
+---@field isLocalVariable boolean
+---@field isGarbageCollectable boolean
+---@field isGlobal boolean
+---@field isScriptCall boolean
+---@field isPrimitive boolean
 
----@alias EffectCreateIn
----| "space_only"
----| "water_only"
----| "air_only"
----| "any_environment"
+---@class GlobalsRasterizerDataFlags
+---@field tintEdgeDensity boolean
 
----@class ShaderModelSelfIllumination
----@field flags ShaderModelSelfIlluminationFlags
----@field colorSource FunctionNameNullable
----@field animationFunction WaveFunction
----@field animationPeriod number
----@field animationColor ColorRGB
+---@class ParticleSystem
+---@field pointPhysics TagReference
+---@field systemUpdatePhysics ParticleSystemSystemUpdatePhysics
+---@field physicsFlags IsUnusedFlag
+---@field physicsConstants ParticleSystemPhysicsConstant[]
+---@field particleTypes ParticleSystemType[]
 
----@class ShaderFlags
----@field transparentLit boolean
----@field ignoreNormals boolean
----@field simpleParameterization boolean
+---@class MaterialEffectsMaterialEffectMaterial
+---@field effect TagReference
+---@field sound TagReference
 
----@class LensFlareFlags
----@field scaleByMarker boolean
----@field fadeOutMoreQuickly boolean
----@field fadeInMoreQuickly boolean
----@field onlyRenderInThirdPerson boolean
----@field onlyRenderInFirstPerson boolean
----@field noOcclusionTest boolean
----@field sun boolean
+---@class GlowRotationalVelocity
+---@field attachment FunctionOut
+---@field velocity number
+---@field multiplier number[2]
 
----@class ScenarioTriggerVolume
----@field type ScenarioTriggerVolumeType
----@field name string
----@field parameters number[3]
----@field rotationVectorForward VectorXYZ
----@field rotationVectorUp VectorXYZ
----@field startingCorner VectorXYZ
----@field endingCornerOffset VectorXYZ
+---@class ScenarioFunctionFlags
+---@field alwaysActive boolean
+---@field additive boolean
+---@field invert boolean
+---@field scripted boolean
 
----@class HUDInterfaceScalingFlags
----@field useHighResScale boolean
----@field dontScaleSize boolean
----@field dontScaleOffset boolean
+---@alias MaterialType
+---| "hunter_shield"
+---| "ice"
+---| "elite_energy_shield"
+---| "leaves"
+---| "water"
+---| "plastic"
+---| "monitor"
+---| "sentinel"
+---| "human_skin"
+---| "human_armor"
+---| "cyborg_energy_shield"
+---| "cyborg_armor"
+---| "flood_carrier_form"
+---| "flood_combat_form"
+---| "engineer_force_field"
+---| "engineer_skin"
+---| "jackal_energy_shield"
+---| "jackal"
+---| "elite"
+---| "hunter_skin"
+---| "hunter_armor"
+---| "grunt"
+---| "force_field"
+---| "glass"
+---| "rubber"
+---| "metal_thick"
+---| "metal_thin"
+---| "metal_hollow"
+---| "wood"
+---| "snow"
+---| "stone"
+---| "sand"
+---| "dirt"
 
----@class BasicObject: Object
----@field moreFlags BaseObjectFlags
+---@alias DetailObjectCollectionType
+---| "viewer_facing"
+---| "screen_facing"
+
+---@class UIWidgetDefinitionFlags2
+---@field listSinglePreviewNoScroll boolean
+---@field listItemsOnlyOneTooltip boolean
+---@field listItemsFromStringListTag boolean
+---@field listItemsGeneratedInCode boolean
+
+---@class ScenarioPlatoonFlags
+---@field startInDefendingState boolean
+---@field sayAdvancingWhenManeuver boolean
+---@field fleeWhenManeuvering boolean
 
 ---@alias ParticleSystemComplexSpriteRenderMode
 ---| "rotational"
 ---| "simple"
+
+---@class ScenarioSquad
+---@field name string
+---@field actorType integer
+---@field platoon integer
+---@field initialState ScenarioReturnState
+---@field returnState ScenarioReturnState
+---@field flags ScenarioSquadFlags
+---@field uniqueLeaderType ScenarioUniqueLeaderType
+---@field maneuverToSquad integer
+---@field squadDelayTime number
+---@field attacking ScenarioSquadAttacking
+---@field attackingSearch ScenarioSquadAttacking
+---@field attackingGuard ScenarioSquadAttacking
+---@field defending ScenarioSquadAttacking
+---@field defendingSearch ScenarioSquadAttacking
+---@field defendingGuard ScenarioSquadAttacking
+---@field pursuing ScenarioSquadAttacking
+---@field normalDiffCount integer
+---@field insaneDiffCount integer
+---@field majorUpgrade ScenarioMajorUpgrade
+---@field respawnMinActors integer
+---@field respawnMaxActors integer
+---@field respawnTotal integer
+---@field respawnDelay number[2]
+---@field movePositions ScenarioMovePosition[]
+---@field startingLocations ScenarioActorStartingLocation[]
+
+---@class ModelNode
+---@field name string
+---@field nextSiblingNodeIndex integer
+---@field firstChildNodeIndex integer
+---@field parentNodeIndex integer
+---@field defaultTranslation VectorXYZ
+---@field defaultRotation Quaternion
+---@field nodeDistanceFromParent number
+---@field scale number
+---@field rotation Matrix
+---@field translation VectorXYZ
+
+---@alias ActorVariantSpecialFireMode
+---| "secondary_trigger"
+---| "overcharge"
+---| "none"
+
+---@class TagCollection
+---@field tags TagCollectionTag[]
+
+---@alias ActorUnreachableDangerTrigger
+---| "unused_4"
+---| "unused_3"
+---| "unused_2"
+---| "unused_1"
+---| "unused"
+---| "damaging_us"
+---| "shooting_near_us"
+---| "shooting"
+---| "visible"
+---| "never"
+
+---@class DeviceObjectFlags2
+---@field operatesAutomatically boolean
+---@field oneSided boolean
+
+---@class WeaponTriggerFiringEffect
+---@field shotCount integer[2]
+---@field firingEffect TagReference
+---@field misfireEffect TagReference
+---@field emptyEffect TagReference
+---@field firingDamage TagReference
+---@field misfireDamage TagReference
+---@field emptyDamage TagReference
+
+---@class ShaderTransparentWaterRipple
+---@field contributionFactor number
+---@field animationAngle number
+---@field animationVelocity number
+---@field mapOffset VectorXY
+---@field mapRepeats integer
+---@field mapIndex integer
+
+---@class ModelAnimationsFirstPersonWeapon
+---@field animation integer
+
+---@class WeaponMagazineFlags
+---@field everyRoundMustBeChambered boolean
+---@field wastesRoundsWhenReloaded boolean
+
+---@class GlobalsFallingDamage
+---@field harmfulFallingDistance number[2]
+---@field fallingDamage TagReference
+---@field maximumFallingDistance number
+---@field distanceDamage TagReference
+---@field vehicleEnvironmentCollisionDamage TagReference
+---@field vehicleKilledUnitDamage TagReference
+---@field vehicleCollisionDamage TagReference
+---@field flamingDeathDamage TagReference
+---@field maximumFallingVelocity number
+---@field harmfulFallingVelocity number[2]
+
+---@class ModelAnimationsVehicleAnimation
+---@field animation integer
+
+---@class VectorPY
+---@field pitch number
+---@field yaw number
+
+---@alias SoundChannelCount
+---| "stereo"
+---| "mono"
+
+---@alias WeaponHUDInterfaceStateAttachedTo
+---| "elevation_to_target"
+---| "distance_to_target"
+---| "secondary_weapon_loaded_ammo"
+---| "secondary_weapon_total_ammo"
+---| "age"
+---| "heat"
+---| "loaded_ammo"
+---| "total_ammo"
+
+---@class ModelShaderReference
+---@field shader TagReference
+---@field permutation integer
+
+---@class ModelAnimationsAnimationGraphWeaponAnimations
+---@field animations ModelAnimationsWeaponAnimation[]
+
+---@class ActorVariantMovementSwitching
+---@field movementType ActorVariantMovementType
+---@field initialCrouchChance number
+---@field crouchTime number[2]
+---@field runTime number[2]
+
+---@class LightLensFlare
+---@field lensFlare TagReference
+
+---@class GrenadeHUDInterfaceSoundLatchedTo
+---@field throwOnNoGrenades boolean
+---@field noGrenadesLeft boolean
+---@field lowGrenadeCount boolean
 
 ---@alias ProjectileFunctionIn
 ---| "tracer"
@@ -467,78 +1484,176 @@
 ---| "range_remaining"
 ---| "none"
 
----@class LightShape
----@field radius number
----@field radiusModifer number[2]
----@field falloffAngle number
----@field cutoffAngle number
----@field lensFlareOnlyRadius number
----@field cosFalloffAngle number
----@field cosCutoffAngle number
----@field specularRadiusMultiplier number
----@field sinCutoffAngle number
+---@class ModelCollisionGeometryMaterialFlags
+---@field head boolean
 
----@class ModelGeometry
----@field flags IsUnusedFlag
----@field parts ModelGeometryPart[]
+---@class DeviceLightFixtureObject: DeviceObject
+---@field lightColor ColorRGB
+---@field lightIntensity number
+---@field lightFalloffAngle number
+---@field lightCutoffAngle number
 
----@class ScenarioEncounter
----@field name string
----@field flags ScenarioEncounterFlags
----@field teamIndex ScenarioTeamIndex
----@field one integer
----@field searchBehavior ScenarioSearchBehavior
----@field manualBspIndex integer
----@field respawnDelay number[2]
----@field precomputedBspIndex integer
----@field squads ScenarioSquad[]
----@field platoons ScenarioPlatoon[]
----@field firingPositions ScenarioFiringPosition[]
----@field playerStartingLocations ScenarioPlayerStartingLocation[]
+---@class DeviceControlObject: DeviceObject
+---@field deviceControlFlags DeviceControlObjectFlags
 
----@class DeviceFlags
----@field positionNotInterpolated boolean
----@field positionLoops boolean
+---@class DeviceControlObjectFlags
+---@field usableFromBothSides boolean
 
----@class LensFlareReflection
----@field flags LensFlareReflectionFlags
----@field bitmapIndex integer
----@field position number
----@field rotationOffset number
----@field radius number[2]
----@field radiusScaledBy LensFlareRadiusScaledBy
----@field brightness number[2]
----@field brightnessScaledBy LensFlareRadiusScaledBy
----@field tintColor ColorARGB
----@field color ColorARGB
----@field moreFlags LensFlareReflectionMoreFlags
----@field animationFunction WaveFunction
----@field animationPeriod number
----@field animationPhase number
+---@alias ScenarioScriptType
+---| "stub"
+---| "static"
+---| "continuous"
+---| "dormant"
+---| "startup"
 
----@class ActorMoreFlags
----@field noCorpseShooting boolean
----@field panicInGroups boolean
----@field pathfindingIgnoresDanger boolean
----@field disallowVehicleCombat boolean
----@field mustStopToFire boolean
----@field mustStandToFire boolean
----@field avoidAllEnemyAttackVectors boolean
+---@class DeviceMachineObject: DeviceObject
+---@field deviceFlags DeviceMachineObjectFlags
+---@field ticksSinceStartedOpening integer
+---@field elevatorPosition VectorXYZ
 
----@class ScenarioActorPalette
----@field reference TagReference
+---@class WeaponHUDInterfaceOverlay
+---@field position HUDInterfaceElementPosition
+---@field color HUDInterfaceElementColor
+---@field frameRate integer
+---@field sequenceIndex integer
+---@field type WeaponHUDInterfaceOverlayType
+---@field flags HUDInterfaceOverlayFlashFlags
 
----@class ConditionalWidgetReferenceFlags
----@field loadIfEventHandlerFunctionFails boolean
+---@class ScenarioStructureBSPFogRegion
+---@field fog integer
+---@field weatherPalette integer
 
----@class ScenarioDetailObjectCollectionPalette
----@field reference TagReference
+---@class DeviceObject: DynamicObjectBase
+---@field flags1 DeviceObjectFlags1
+---@field power DeviceObjectState
+---@field position DeviceObjectState
+---@field flags2 DeviceObjectFlags2
 
----@class ShaderTransparentChicagoExtended: Shader
----@field properties ShaderTransparentProperties
----@field _4StageMaps ShaderTransparentChicagoMap[]
----@field _2StageMaps ShaderTransparentChicagoMap[]
----@field extraFlags ShaderTransparentChicagoExtraFlags
+---@class DeviceObjectFlags1
+---@field notUsableFromAnySide boolean
+---@field positionReversed boolean
+
+---@class DeviceObjectState
+---@field deviceGroupId integer
+---@field value number
+---@field change number
+
+---@class DeviceControl: Device
+---@field type DeviceType
+---@field triggersWhen DeviceTriggersWhen
+---@field callValue number
+---@field on TagReference
+---@field off TagReference
+---@field deny TagReference
+
+---@class WeaponObject: ItemObject
+---@field flags integer
+---@field ownerUnitFlags integer
+---@field primaryTrigger number
+---@field weaponState integer
+---@field readyTicks integer
+---@field heat number
+---@field age number
+---@field illuminationFraction number
+---@field integratedLightPower number
+---@field trackedObject ObjectHandle
+---@field altShotsLoaded integer
+---@field triggers WeaponObjectTrigger[2]
+---@field magazines WeaponObjectMagazine[2]
+---@field lastTriggerFireTick integer
+---@field reloadStartingPoint WeaponReloadStartData
+---@field network WeaponNetwork
+
+---@class WeaponNetwork
+---@field baselineValid boolean
+---@field baselineIndex integer
+---@field messageIndex integer
+---@field updateBaseline WeaponNetworkData
+---@field deltaValid boolean
+---@field updateDelta WeaponNetworkData
+
+---@alias LensFlareRotationFunction
+---| "translation"
+---| "rotation_translation"
+---| "rotation_b"
+---| "rotation_a"
+---| "none"
+
+---@class ScenarioStructureBSPFogPlaneVertex
+---@field point VectorXYZ
+
+---@class ActorVariantItems
+---@field equipment TagReference
+---@field grenadeCount integer[2]
+---@field dontDropGrenadesChance number
+---@field dropWeaponLoaded number[2]
+---@field dropWeaponAmmo integer[2]
+
+---@alias ActorVariantSpecialFireSituation
+---| "strafing"
+---| "enemy_out_of_sight"
+---| "enemy_visible"
+---| "never"
+
+---@alias ScenarioReturnState
+---| "fleeing"
+---| "searching"
+---| "guarding_at_guard_position"
+---| "guarding"
+---| "moving_randomly"
+---| "moving_loop_randomly"
+---| "moving_loop_back_and_forth"
+---| "moving_loop"
+---| "moving_repeat_same_position"
+---| "alert"
+---| "sleeping"
+---| "none"
+
+---@alias ScenarioSelectionType
+---| "radio_sergeant"
+---| "radio_unit"
+---| "any_actor"
+---| "prefer_sergeant"
+---| "not_in_a_vehicle"
+---| "in_player_s_vehicle"
+---| "disembodied"
+---| "friendly_actor"
+
+---@class WeaponNetworkData
+---@field position VectorXYZ
+---@field transitionalVelocity VectorXYZ
+---@field angularVelocity VectorXYZ
+---@field magazineRoundsTotal integer[2]
+---@field age number
+
+---@class WeaponHUDInterface
+---@field childHud TagReference
+---@field flags WeaponHUDInterfaceFlags
+---@field totalAmmoCutoff integer
+---@field loadedAmmoCutoff integer
+---@field heatCutoff integer
+---@field ageCutoff integer
+---@field anchor HUDInterfaceAnchor
+---@field canvasSize HUDInterfaceCanvasSize
+---@field staticElements WeaponHUDInterfaceStaticElement[]
+---@field meterElements WeaponHUDInterfaceMeter[]
+---@field numberElements WeaponHUDInterfaceNumber[]
+---@field crosshairs WeaponHUDInterfaceCrosshair[]
+---@field overlayElements WeaponHUDInterfaceOverlayElement[]
+---@field crosshairTypes WeaponHUDInterfaceCrosshairTypeFlags
+---@field screenEffect WeaponHUDInterfaceScreenEffect[]
+---@field messagingInformation HUDInterfaceMessagingInformation
+
+---@alias WeaponDistributionFunction
+---| "horizontal_fan"
+---| "point"
+
+---@class ScenarioStructureBSPNode
+---@field nodeStuff integer[3]
+
+---@class WeaponReloadStartData
+---@field totalRounds integer[2]
+---@field loadedRounds integer[2]
 
 ---@alias HUDInterfaceSource
 ---| "weapon_zoom_level"
@@ -550,242 +1665,143 @@
 ---| "player_pitch_tangent"
 ---| "player_pitch"
 
----@class GBXModelFlags
----@field ignoreSkinning boolean
----@field partsHaveLocalNodes boolean
----@field blendSharedNormals boolean
+---@class ModelCollisionGeometryBSPEdge
+---@field startVertex integer
+---@field endVertex integer
+---@field forwardEdge integer
+---@field reverseEdge integer
+---@field leftSurface integer
+---@field rightSurface integer
 
----@class ScenarioLightFixturePalette
----@field name TagReference
+---@class WeaponObjectMagazine
+---@field state integer
+---@field reloadTicksRemaining integer
+---@field reloadTicks integer
+---@field roundsUnloaded integer
+---@field roundsLoaded integer
+---@field roundsLeftToRecharge integer
+---@field unk1 integer
+---@field unk2 integer
 
----@class ScenarioStructureBSPGlobalDetailObjectCell
----@field cellX integer
----@field cellY integer
----@field cellZ integer
----@field offsetZ integer
----@field validLayersFlags integer
----@field startIndex integer
----@field countIndex integer
+---@class ShaderTransparentGlassReflection
+---@field reflectionType ShaderTransparentGlassReflectionType
+---@field reflectionMapProperties ShaderSpecularProperties
+---@field reflectionMap TagReference
+---@field bumpMapScale number
+---@field bumpMap TagReference
 
----@alias ScenarioTextStyle
----| "underline"
----| "condense"
----| "italic"
----| "bold"
----| "plain"
+---@alias WeaponSecondaryTriggerMode
+---| "loads_multiple_primary_ammunition"
+---| "loads_alterate_ammunition"
+---| "inhibits_primary"
+---| "slaved_to_primary"
+---| "normal"
 
----@class Lightning
----@field count integer
----@field nearFadeDistance number
----@field farFadeDistance number
----@field jitterScaleSource FunctionOut
----@field thicknessScaleSource FunctionOut
----@field tintModulationSource FunctionNameNullable
----@field brightnessScaleSource FunctionOut
----@field bitmap TagReference
----@field markers LightningMarker[]
----@field shader ShaderEffect[]
+---@class WeaponObjectTrigger
+---@field idleTime integer
+---@field state integer
+---@field triggerTime integer
+---@field notFiring integer
+---@field autoReload integer
+---@field roundsSinceLastTracer integer
+---@field rateOfFire number
+---@field ejectionPortRecoveryTime number
+---@field illuminationRecoveryTime number
+---@field projectileErrorRelated number
+---@field charingEffect TableResourceHandle
+---@field networkDelayTicks integer
 
----@class BaseObjectAttachmentsData
----@field types integer[8]
----@field attachments integer[8]
----@field firstWidget integer
+---@class HUDGlobalsWaypointParameters
+---@field topOffset number
+---@field bottomOffset number
+---@field leftOffset number
+---@field rightOffset number
+---@field arrowBitmap TagReference
+---@field waypointArrows HUDGlobalsWaypointArrow[]
+---@field hudScaleInMultiplayer number
 
----@class BaseObjectVitalsFlags
----@field killedNoStats boolean
----@field shieldRecharging boolean
----@field invulnerable boolean
----@field cannotMeleeAttack boolean
----@field killedSilent boolean
----@field killed boolean
----@field shieldDepleted boolean
----@field healthDepleted boolean
----@field shieldDamageEffectApplied boolean
----@field healthDamageEffectApplied boolean
-
----@class EffectPartFlags
----@field makeEffectWork boolean
----@field unused boolean
----@field faceDownRegardlessOfLocationDecals boolean
-
----@class ShaderModelSelfIlluminationFlags
----@field noRandomPhase boolean
-
----@class UnicodeStringListString
----@field string TagRawData
-
----@class ScenarioStructureBSPMapLeafPortalIndex
----@field portalIndex integer
-
----@class ScenarioStructureBSPCompiledHeaderCea
----@field pointer integer
----@field lightmapVertexSize integer
----@field lightmapVertices integer
----@field signature TagGroup
-
----@class UnitHUDInterfaceAuxiliaryPanelMeterMoreFlags
----@field flashOnceIfActivatedWhileDisabled boolean
----@field showOnlyWhenActive boolean
-
----@alias ScenarioScriptType
----| "stub"
----| "static"
----| "continuous"
----| "dormant"
----| "startup"
-
----@class ScenarioStructureBSPLeafPortalVertex
----@field point VectorXYZ
-
----@class ModelAnimationsVehicleAnimation
----@field animation integer
-
----@class ScenarioStructureBSPWeatherPalette
----@field name string
----@field particleSystem TagReference
----@field particleSystemScaleFunction string
----@field wind TagReference
----@field windDirection VectorXYZ
----@field windMagnitude number
----@field windScaleFunction string
-
----@class ScenarioLightFixture
+---@class ScenarioControl
 ---@field type integer
 ---@field name integer
 ---@field placement ScenarioObjectPlacement
----@field bspIndices integer
 ---@field appearancePlayerIndex integer
 ---@field powerGroup integer
 ---@field positionGroup integer
 ---@field deviceFlags ScenarioDeviceFlags
----@field color ColorRGB
----@field intensity number
----@field falloffAngle number
----@field cutoffAngle number
+---@field controlFlags ScenarioControlFlags
+---@field noName integer
 
----@alias GrenadeType
----| "grenade_type_3"
----| "grenade_type_2"
----| "covenant_plasma"
----| "human_fragmentation"
+---@class InputDeviceDefaultsFlags
+---@field unused boolean
 
----@class ScenarioStartingEquipment
----@field flags ScenarioStartingEquipmentFlags
----@field type0 ScenarioSpawnType
----@field type1 ScenarioSpawnType
----@field type2 ScenarioSpawnType
----@field type3 ScenarioSpawnType
----@field itemCollection1 TagReference
----@field itemCollection2 TagReference
----@field itemCollection3 TagReference
----@field itemCollection4 TagReference
----@field itemCollection5 TagReference
----@field itemCollection6 TagReference
+---@class ProjectileObject: ItemObject
+---@field projectileFlags ProjectileObjectFlags
+---@field actionEnum integer
+---@field materialId integer
+---@field sourceUnit ObjectHandle
+---@field targetObject ObjectHandle
+---@field contrailAttachmentBlockId integer
+---@field timeRemaining number
+---@field armingRate number
+---@field unknownProjFloat1 number
+---@field unknownProjFloat2 number
+---@field distanceTravelled number
+---@field transitionalVelocity VectorXYZ
+---@field waterDamageUpperBound number
+---@field angularVelocity VectorXYZ
+---@field unknownEuler VectorPY
+---@field network ProjectileNetwork
 
----@class UIWidgetDefinition
----@field widgetType UIWidgetType
----@field controllerIndex UIControllerIndex
----@field name string
----@field bounds Rectangle2D
----@field flags UIWidgetDefinitionFlags
----@field millisecondsToAutoClose integer
----@field millisecondsAutoCloseFadeTime integer
----@field backgroundBitmap TagReference
----@field gameDataInputs GameDataInputReference[]
----@field eventHandlers EventHandlerReference[]
----@field searchAndReplaceFunctions SearchAndReplaceReference[]
----@field textLabelUnicodeStringsList TagReference
----@field textFont TagReference
----@field textColor ColorARGB
----@field justification UIJustification
----@field flags1 UIWidgetDefinitionFlags1
----@field stringListIndex integer
----@field horizOffset integer
----@field vertOffset integer
----@field flags2 UIWidgetDefinitionFlags2
----@field listHeaderBitmap TagReference
----@field listFooterBitmap TagReference
----@field headerBounds Rectangle2D
----@field footerBounds Rectangle2D
----@field extendedDescriptionWidget TagReference
----@field conditionalWidgets ConditionalWidgetReference[]
----@field childWidgets ChildWidgetReference[]
+---@class ProjectileNetwork
+---@field unknown boolean
+---@field baselineValid boolean
+---@field baselineIndex integer
+---@field messageIndex integer
+---@field updateBaseline ProjectileNetworkData
+---@field deltaValid boolean
+---@field updateDelta ProjectileNetworkData
 
----@class ScenarioEditorComment
+---@class SoundLoopingTrack
+---@field flags SoundLoopingTrackFlags
+---@field gain number
+---@field fadeInDuration number
+---@field fadeOutDuration number
+---@field start TagReference
+---@field loop TagReference
+---@field end TagReference
+---@field alternateLoop TagReference
+---@field alternateEnd TagReference
+
+---@class ModelGeometryPartFlags
+---@field zoner boolean
+---@field strippedInternal boolean
+
+---@class ProjectileObjectFlags
+---@field attached boolean
+---@field projectileUnknownFlag boolean
+---@field tracer boolean
+
+---@alias WeaponMovementPenalized
+---| "when_zoomed_or_reloading"
+---| "when_zoomed"
+---| "always"
+
+---@alias MeterInterpolateColors
+---| "through_random_noise"
+---| "faster_near_full"
+---| "faster_near_empty"
+---| "linearly"
+
+---@class GlowTranslationalVelocity
+---@field attachment FunctionOut
+---@field velocity number
+---@field multiplier number[2]
+
+---@class ScenarioObjectPlacement
+---@field notPlaced ScenarioSpawnNotPlaced
+---@field desiredPermutation integer
 ---@field position VectorXYZ
----@field comment TagRawData
-
----@class WeaponHUDInterfaceScreenEffectDefinitionDesaturationFlags
----@field masked boolean
----@field additive boolean
----@field connectToFlashlight boolean
----@field onlyWhenZoomed boolean
-
----@alias BitmapDataType
----| "white"
----| "cube_map"
----| "_3d_texture"
----| "_2d_texture"
-
----@class ModelAnimationsAnimationWeaponClassAnimation
----@field animation integer
-
----@class ModelVertexReference
----@field vertexType ModelVertexType
----@field vertexCount integer
----@field offset integer
----@field unknownPointer integer
----@field vertexPointer integer
-
----@alias WeaponFunctionIn
----| "secondary_firing_on"
----| "primary_firing_on"
----| "secondary_firing"
----| "primary_firing"
----| "integrated_light"
----| "age"
----| "illumination"
----| "secondary_charged"
----| "primary_charged"
----| "overheated"
----| "secondary_ejection_port"
----| "primary_ejection_port"
----| "ready"
----| "secondary_rate_of_fire"
----| "primary_rate_of_fire"
----| "secondary_ammunition"
----| "primary_ammunition"
----| "heat"
----| "none"
-
----@class FontCharacterTables
----@field characterTable FontCharacterIndex[]
-
----@class DamageEffectPermanentCameraImpulse
----@field angle number
-
----@class LightRadiosity
----@field intensity number
----@field color ColorRGB
-
----@class StringListString
----@field string TagRawData
-
----@class ScenarioStructureBSPLensFlare
----@field lens TagReference
-
----@class HUDInterfaceMeterFlags
----@field useXboxShading boolean
----@field invertInterpolation boolean
----@field moreColorsForHsvInterpolation boolean
----@field interpolateColorAlongHsvSpace boolean
----@field interpolateBetweenMinMaxFlashColorsAsStateChanges boolean
----@field useMinMaxForStateChanges boolean
-
----@class ModelCollisionGeometryBSP3DNode
----@field plane integer
----@field backChild integer
----@field frontChild integer
+---@field rotation VectorPYR
 
 ---@class GlobalsPlayerControl
 ---@field magnetismFriction number
@@ -802,285 +1818,101 @@
 ---@field minimumAngleForVehicleFlipping number
 ---@field lookFunction GlobalsLookFunction[]
 
----@alias InputDeviceDefaultsDeviceType
----| "full_profile_definition"
----| "joysticks_gamepads_etc"
----| "mouse_and_keyboard"
-
----@alias MetagameClass
----| "standard_vehicle"
----| "giant_vehicle"
----| "heavy_vehicle"
----| "light_vehicle"
----| "specialist"
----| "hero"
----| "leader"
----| "infantry"
-
----@class SkyLight
----@field lensFlare SkyLightLensFlare
----@field radiosity SkyLightRadiosity
-
----@class ModelCollisionGeometryBSP
----@field bsp3dNodes ModelCollisionGeometryBSP3DNode[]
----@field planes ModelCollisionGeometryBSPPlane[]
----@field leaves ModelCollisionGeometryBSPLeaf[]
----@field bsp2dReferences ModelCollisionGeometryBSP2DReference[]
----@field bsp2dNodes ModelCollisionGeometryBSP2DNode[]
----@field surfaces ModelCollisionGeometryBSPSurface[]
----@field edges ModelCollisionGeometryBSPEdge[]
----@field vertices ModelCollisionGeometryBSPVertex[]
-
----@alias ActorType
----| "mounted_weapon"
----| "none"
----| "sentinel"
----| "monitor"
----| "carrier_form"
----| "infection_form"
----| "combat_form"
----| "crew"
----| "marine"
----| "player"
----| "assassin"
----| "engineer"
----| "hunter"
----| "grunt"
----| "jackal"
----| "elite"
-
----@class UIWidgetDefinitionFlags1
----@field dontDoThatWeirdFocusTest boolean
----@field flashing boolean
----@field password boolean
----@field editable boolean
-
----@alias ScenarioSearchBehavior
----| "tenacious"
----| "never"
----| "normal"
-
----@class ScenarioActorStartingLocation
+---@class EquipmentNetworkData
 ---@field position VectorXYZ
----@field facing number
----@field clusterIndex integer
----@field sequenceId integer
----@field flags ScenarioActorStartingLocationFlags
----@field returnState ScenarioReturnState
----@field initialState ScenarioReturnState
----@field actorType integer
----@field commandList integer
+---@field transitionalVelocity VectorXYZ
+---@field angularVelocity VectorXYZ
 
----@class WeaponHUDInterfaceCrosshairTypeFlags
----@field flashWhenFiringWithDepletedBattery boolean
----@field secondaryTriggerReady boolean
----@field primaryTriggerReady boolean
----@field lowSecondaryAmmoAndNoneLeftToReload boolean
----@field flashWhenFiringSecondaryTriggerWithNoAmmo boolean
----@field flashSecondaryReload boolean
----@field flashSecondaryTotalAmmo boolean
----@field shouldReloadSecondaryTrigger boolean
----@field lowAmmoAndNoneLeftToReload boolean
----@field flashWhenThrowingAndNoGrenade boolean
----@field flashWhenFiringAndNoAmmo boolean
----@field reloadOverheat boolean
----@field flashBattery boolean
----@field flashTotalAmmo boolean
----@field flashHeat boolean
----@field shouldReload boolean
----@field charge boolean
----@field zoomOverlay boolean
----@field aim boolean
-
----@class ShaderTransparentChicagoExtraFlags
----@field customEditionBlending boolean
----@field numericCountdownTimer boolean
----@field dontFadeActiveCamouflage boolean
-
----@class ModelDetailNodeCount
----@field superLow integer
----@field low integer
----@field medium integer
----@field high integer
----@field superHigh integer
-
----@alias LensFlareRotationFunction
----| "translation"
----| "rotation_translation"
----| "rotation_b"
----| "rotation_a"
----| "none"
-
----@alias EffectDistributionFunction
----| "buildup_and_falloff"
----| "falloff"
----| "buildup"
----| "constant"
----| "end"
----| "start"
-
----@class ProjectileFlags
----@field minimumUnattachedDetonationTime boolean
----@field randomAttachedDetonationTime boolean
----@field combineInitialVelocityWithParentVelocity boolean
----@field hasSuperCombiningExplosion boolean
----@field detonationMaxTimeIfAttached boolean
----@field aiMustUseBallisticAiming boolean
----@field orientedAlongVelocity boolean
-
----@class WeaponHUDInterfaceStaticElement
----@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
----@field allowedViewType WeaponHUDInterfaceViewType
----@field anchor HUDInterfaceChildAnchor
----@field properties HUDInterfaceStaticElement
-
----@class Effect
----@field flags EffectFlags
----@field loopStartEvent integer
----@field loopStopEvent integer
----@field maximumDamageRadius number
----@field locations EffectLocation[]
----@field events EffectEvent[]
-
----@class ScenarioStructureBSPMaterialFlags
----@field fogPlane boolean
----@field coplanar boolean
-
----@class GBXModel
----@field flags GBXModelFlags
----@field nodeListChecksum integer
----@field detailCutoff ModelDetailCutoff
----@field detailNodeCount ModelDetailNodeCount
----@field baseMapUScale number
----@field baseMapVScale number
----@field runtimeMarkers ModelMarker[]
----@field nodes ModelNode[]
----@field regions ModelRegion[]
----@field geometries GBXModelGeometry[]
----@field shaders ModelShaderReference[]
-
----@class ShaderModelReflection
----@field falloffDistance number
----@field cutoffDistance number
----@field cubeMapProperties ShaderSpecularProperties
----@field cubeMap TagReference
-
----@alias ActorVariantMovementType
----| "switch_types"
----| "always_crouch"
----| "always_run"
-
----@class HUDMessageText
----@field textData TagRawData
----@field messageElements HUDMessageTextElement[]
----@field messages HUDMessageTextMessage[]
-
----@class ScenarioScriptNodeValue
-
----@class FogFlags
----@field fogScreenOnly boolean
----@field atmosphereDominant boolean
----@field isWater boolean
-
----@class ShaderTransparentPlasmaOffset
----@field offsetSource FunctionOut
----@field offsetAmount number
----@field offsetExponent number
-
----@alias WeaponSecondaryTriggerMode
----| "loads_multiple_primary_ammunition"
----| "loads_alterate_ammunition"
----| "inhibits_primary"
----| "slaved_to_primary"
----| "normal"
-
----@class HUDGlobalsButtonIcon
----@field sequenceIndex integer
----@field widthOffset integer
----@field offsetFromReferenceCorner VectorXYInt
----@field overrideIconColor integer
----@field frameRate integer
----@field flags HUDInterfaceMessagingFlags
----@field textIndex integer
-
----@alias WeaponPredictionType
----| "instant"
----| "continuous"
----| "none"
-
----@class Flag
+---@class WeatherParticleSystem
 ---@field flags IsUnusedFlag
----@field trailingEdgeShape FlagTrailingEdgeShape
----@field trailingEdgeShapeOffset integer
----@field attachedEdgeShape FlagAttachedEdgeShape
----@field width integer
----@field height integer
----@field cellWidth number
----@field cellHeight number
----@field redFlagShader TagReference
----@field physics TagReference
----@field windNoise number
----@field blueFlagShader TagReference
----@field attachmentPoints FlagAttachmentPoint[]
+---@field particleTypes WeatherParticleSystemParticleType[]
 
----@class ScenarioStructureBSPSurfaceReference
----@field surface integer
----@field node integer
+---@class ItemObject: DynamicObjectBase
+---@field flags integer
+---@field ticksUntilDetonation integer
+---@field bspCollisionSurfaceId integer
+---@field bspCollisionReferenceId integer
+---@field droppedByUnit ObjectHandle
+---@field lastUpdateTick integer
+---@field collisionObject ObjectHandle
+---@field collisionObjectPosition VectorXYZ
+---@field unknownCollisionPosition VectorXYZ
+---@field unknownCollisionAngle VectorPY
 
----@alias HUDInterfaceMultitextureOverlayAnchor
----| "screen"
----| "texture"
+---@class ScenarioVehicleMultiplayerSpawnFlags
+---@field unused7 boolean
+---@field unused6 boolean
+---@field unused5 boolean
+---@field unused4 boolean
+---@field oddballAllowed boolean
+---@field kingAllowed boolean
+---@field ctfAllowed boolean
+---@field slayerAllowed boolean
+---@field unused3 boolean
+---@field unused2 boolean
+---@field unused1 boolean
+---@field unused boolean
+---@field oddballDefault boolean
+---@field kingDefault boolean
+---@field ctfDefault boolean
+---@field slayerDefault boolean
 
----@class ScenarioCommandListFlags
----@field manualBspIndex boolean
----@field disableFallingDamage boolean
----@field disableCommunication boolean
----@field disableLooking boolean
----@field allowTargeting boolean
----@field allowInitiative boolean
-
----@class ScenarioStructureBSPMarker
+---@class HUDMessageTextMessage
 ---@field name string
----@field rotation Quaternion
----@field position VectorXYZ
+---@field startIndexIntoTextBlob integer
+---@field startIndexOfMessageBlock integer
+---@field panelCount integer
 
----@alias BitmapSpriteBudgetSize
----| "_1024_x1024"
----| "_512_x512"
----| "_256_x256"
----| "_128_x128"
----| "_64_x64"
----| "_32_x32"
+---@class ScenarioAIConversationFlags
+---@field playerMustBeLooking boolean
+---@field keepTryingToPlay boolean
+---@field stopOtherActions boolean
+---@field playerMustBeVisible boolean
+---@field stopIfAlertedToEnemy boolean
+---@field stopIfVisibleEnemy boolean
+---@field stopIfDamaged boolean
+---@field stopIfDeath boolean
 
----@class DamageEffectDamageFlags
----@field allowAnyNonZeroAccelerationValue boolean
----@field use3dInstantaneousAcceleration boolean
----@field doesNotHurtPlayers boolean
----@field forcesHardPing boolean
----@field ignoreSeatScaleForDirDmg boolean
----@field infectionFormPop boolean
----@field canCauseMultiplayerHeadshots boolean
----@field onlyHurtsOneInfectionForm boolean
----@field skipsShields boolean
----@field damageIndicatorsAlwaysPointDown boolean
----@field causesFlamingDeath boolean
----@field onlyHurtsShields boolean
----@field detonatesExplosives boolean
----@field doesNotPingUnits boolean
----@field doesNotHurtFriends boolean
----@field pingsResistantUnits boolean
----@field canCauseHeadshots boolean
----@field doesNotHurtOwner boolean
+---@class ProjectileMaterialResponsePotentialFlags
+---@field neverAgainstUnits boolean
+---@field onlyAgainstUnits boolean
 
----@class ShaderTransparentChicago: Shader
----@field properties ShaderTransparentProperties
----@field maps ShaderTransparentChicagoMap[]
----@field extraFlags ShaderTransparentChicagoExtraFlags
+---@class VehicleObject: UnitObject
+---@field vehicleFlags VehicleObjectFlags
+---@field speed number
+---@field slide number
+---@field turn number
+---@field tirePosition number
+---@field threadPositionLeft number
+---@field threadPositionRight number
+---@field hover number
+---@field thrust number
+---@field suspensionStates integer[8]
+---@field hoverPosition VectorXYZ
+---@field unk5 VectorXYZ
+---@field unk6 VectorXYZ
+---@field unk7 integer
+---@field network VehicleNetwork
 
----@class ShaderEffectSecondaryMap
----@field bitmap TagReference
----@field anchor ParticleAnchor
----@field flags IsUnfilteredFlag
+---@alias HUDInterfaceDestination
+---| "tertiary_map"
+---| "secondary_map"
+---| "primary_map"
+---| "geometry_offset"
+
+---@class DecalAnimation
+---@field animationLoopFrame integer
+---@field animationSpeed integer
+---@field lifetime number[2]
+---@field decayTime number[2]
+
+---@class ActorFiringPositions
+---@field guardPositionTime number[2]
+---@field combatPositionTime number[2]
+---@field oldPositionAvoidDist number
+---@field friendAvoidDist number
+
+---@class ShaderTransparentMapAnimation
 ---@field uAnimationSource FunctionOut
 ---@field uAnimationFunction WaveFunction
 ---@field uAnimationPeriod number
@@ -1097,57 +1929,309 @@
 ---@field rotationAnimationPhase number
 ---@field rotationAnimationScale number
 ---@field rotationAnimationCenter VectorXY
----@field zspriteRadiusScale number
 
----@alias ProjectileResponse
----| "attach"
----| "overpenetrate"
----| "reflect"
----| "detonate"
----| "disappear"
+---@alias ScenarioUniqueLeaderType
+---| "sgt_lehto"
+---| "sgt_johnson"
+---| "random"
+---| "none"
+---| "normal"
 
----@alias BitmapFormat
----| "bc_7"
----| "monochrome"
----| "_32_bit"
----| "_16_bit"
----| "dxt5"
----| "dxt3"
----| "dxt1"
+---@class PhysicsMassPointFlags
+---@field metallic boolean
 
----@class UnitPoweredSeat
----@field driverPowerupTime number
----@field driverPowerdownTime number
+---@class VehicleNetworkData
+---@field atRest boolean
+---@field position VectorXYZ
+---@field transitionalVelocity VectorXYZ
+---@field angularVelocity VectorXYZ
+---@field forward VectorXYZ
+---@field up VectorXYZ
 
----@class ScenarioAIConversationParticipantFlags
----@field isAlternate boolean
----@field hasAlternate boolean
----@field optional boolean
+---@class ShaderEffectProperties
+---@field shader Shader
+---@field shaderFlags ShaderEffectFlags
+---@field framebufferBlendFunction FramebufferBlendFunction
+---@field framebufferFadeMode FramebufferFadeMode
+---@field mapFlags IsUnfilteredFlag
 
----@class ShaderEffect
----@field shaderProperties ShaderEffectProperties
----@field secondaryMap ShaderEffectSecondaryMap
+---@class VehicleObjectFlags
+---@field jumping boolean
+---@field crouched boolean
+---@field hovering boolean
 
----@class ScenarioPlatoon
+---@alias ModelVertexType
+---| "widget"
+---| "unlit_zsprite"
+---| "model_processed"
+---| "model_uncompressed_ff"
+---| "environment_lightmap_uncompressed_ff"
+---| "environment_uncompressed_ff"
+---| "detail_object"
+---| "decal"
+---| "debug"
+---| "dynamic_screen"
+---| "dynamic_lit"
+---| "dynamic_unlit"
+---| "model_compressed"
+---| "model_uncompressed"
+---| "environment_lightmap_compressed"
+---| "environment_lightmap_uncompressed"
+---| "environment_compressed"
+---| "environment_uncompressed"
+
+---@class HUDInterfaceScalingFlags
+---@field useHighResScale boolean
+---@field dontScaleSize boolean
+---@field dontScaleOffset boolean
+
+---@class BipedObject: UnitObject
+---@field bipedFlags BipedObjectFlags
+---@field landingTimer integer
+---@field landingForce integer
+---@field movementState integer
+---@field unk5 integer
+---@field actionFlags integer
+---@field unk6 integer
+---@field bipedPosition VectorXYZ
+---@field walkingCounter integer
+---@field bumpObject ObjectHandle
+---@field ticksSinceLastBump integer
+---@field airborneTicks integer
+---@field slippingTicks integer
+---@field digitalThrottle integer
+---@field jumpTicks integer
+---@field meleeTicks integer
+---@field meleeInflictTicks integer
+---@field unk7 integer
+---@field crouchScale number
+---@field unk8 number
+---@field unknownBipedPhysicsRelated Plane3D
+---@field network BipedNetwork
+
+---@class BipedNetwork
+---@field baselineValid boolean
+---@field baselineId integer
+---@field messageId integer
+---@field updateBaseline BipedNetworkDelta
+---@field deltaValid boolean
+---@field updateDelta BipedNetworkDelta
+
+---@class ScenarioControlFlags
+---@field usableFromBothSides boolean
+
+---@class ShaderRadiosityProperties
+---@field flags ShaderFlags
+---@field detailLevel ShaderDetailLevel
+---@field power number
+---@field colorOfEmittedLight ColorRGB
+---@field tintColor ColorRGB
+
+---@class UIWidgetDefinitionFlags
+---@field forceHandleMouse boolean
+---@field dontPushHistory boolean
+---@field alwaysUseNiftyRenderFx boolean
+---@field alwaysUseTagControllerIndex boolean
+---@field returnToMainMenuIfNoHistory boolean
+---@field passHandledEventsToAllChildren boolean
+---@field renderRegardlessOfControllerIndex boolean
+---@field passUnhandledEventsToAllChildren boolean
+---@field dontFocusASpecificChildWidget boolean
+---@field dpadLeftRightTabsThruListItems boolean
+---@field dpadUpDownTabsThruListItems boolean
+---@field dpadLeftRightTabsThruChildren boolean
+---@field dpadUpDownTabsThruChildren boolean
+---@field flashBackgroundBitmap boolean
+---@field pauseGameTime boolean
+---@field passUnhandledEventsToFocusedChild boolean
+
+---@class ScenarioSpawnNotPlaced
+---@field usePlayerAppearance boolean
+---@field onHard boolean
+---@field onNormal boolean
+---@field onEasy boolean
+---@field automatically boolean
+
+---@class HUDMessageText
+---@field textData TagRawData
+---@field messageElements HUDMessageTextElement[]
+---@field messages HUDMessageTextMessage[]
+
+---@class BipedNetworkDelta
+---@field grenadeCounts integer[2]
+---@field bodyVitality number
+---@field shieldVitality number
+---@field shieldStunTicksGreaterThanZero boolean
+
+---@class ScenarioCommandList
 ---@field name string
----@field flags ScenarioPlatoonFlags
----@field changeAttackingDefendingStateWhen ScenarioChangeAttackingDefendingStateWhen
----@field happensTo integer
----@field maneuverWhen ScenarioChangeAttackingDefendingStateWhen
----@field happensTo1 integer
+---@field flags ScenarioCommandListFlags
+---@field manualBspIndex integer
+---@field precomputedBspIndex integer
+---@field commands ScenarioCommand[]
+---@field points ScenarioCommandPoint[]
 
----@class ScenarioStructureBSPFogPlaneVertex
----@field point VectorXYZ
+---@class BipedObjectFlags
+---@field limping2 boolean
+---@field passes_through_other_bipeds boolean
+---@field no_collision boolean
+---@field absolute_movement boolean
+---@field slipping boolean
+---@field airborne boolean
 
----@class ActorVariantMovementSwitching
----@field movementType ActorVariantMovementType
----@field initialCrouchChance number
----@field crouchTime number[2]
----@field runTime number[2]
+---@class ActorFlags
+---@field avoidFriendsLineOfFire boolean
+---@field crouchWhenInLineOfFire boolean
+---@field fixedCrouchFacing boolean
+---@field cannotMoveWhileCrouching boolean
+---@field suicidalMeleeAttack boolean
+---@field swarm boolean
+---@field diveOffLedges boolean
+---@field alwaysChargeInAttackingMode boolean
+---@field crouchWhenHidingFromUnopposable boolean
+---@field panickedByUnopposableEnemy boolean
+---@field flying boolean
+---@field berserkingUsesPanickedMovement boolean
+---@field alwaysBerserkInAttackingMode boolean
+---@field stalkingFreezeIfExposed boolean
+---@field useStalkingBehavior boolean
+---@field defensiveCrouchWhileCharging boolean
+---@field crouchingMustMoveForward boolean
+---@field standingMustMoveForward boolean
+---@field startFiringBeforeAligned boolean
+---@field getsInVehiclesWithPlayer boolean
+---@field alwaysChargeAtEnemies boolean
+---@field panicWhenSurprised boolean
+---@field mustCrouchToShoot boolean
+---@field unused1 boolean
+---@field crouchWhenGuarding boolean
+---@field crouchWhenNotInCombat boolean
+---@field tryToStayStillWhenCrouched boolean
+---@field shootAtTargetsLastLocation boolean
+---@field unused boolean
+---@field sneakUncoveringPursuitPosition boolean
+---@field sneakUncoveringTarget boolean
+---@field canSeeInDarkness boolean
 
----@alias MachineCollisionResponse
----| "reverse_directions"
----| "pause_until_crushed"
+---@class UnitObject: DynamicObjectBase
+---@field actorTag TagHandle
+---@field swarmActorTag TagHandle
+---@field swarmNextUnit ObjectHandle
+---@field swarmPreviousUnit ObjectHandle
+---@field unitFlags UnitObjectFlags
+---@field unitControlFlags UnitControlFlags
+---@field shieldSnapping integer
+---@field baseSeatIndex integer
+---@field persistentControl UnitPersistentControl
+---@field controllingPlayer PlayerHandle
+---@field aiEffectType integer
+---@field emotionAnimationIndex integer
+---@field nextAiEffectTick integer
+---@field desiredFacingVector VectorIJK
+---@field desiredAimingVector VectorIJK
+---@field aimingVector VectorIJK
+---@field aimingVelocity VectorIJK
+---@field lookingAngles VectorPYR
+---@field lookingVector VectorIJK
+---@field lookingVelocity VectorIJK
+---@field throttle VectorIJK
+---@field primaryTrigger number
+---@field aimingSpeed integer
+---@field meleeState integer
+---@field meleeTimer integer
+---@field ticksUntilFlameToDeath integer
+---@field pingAnimationTicksLeft integer
+---@field grenadeState integer
+---@field unk1 integer
+---@field unk2 integer
+---@field grenadeProjectile TagHandle
+---@field animation UnitAnimationData
+---@field ambient number
+---@field illumination number
+---@field mouthFactor number
+---@field vehicleSeatId integer
+---@field currentWeaponId integer
+---@field nextWeaponId integer
+---@field weapons ObjectHandle[4]
+---@field weaponReadyTicks integer[4]
+---@field equipmentHandle ObjectHandle
+---@field currentGrenadeIndex integer
+---@field nextGrenadeIndex integer
+---@field grenadeCounts integer[2]
+---@field zoomLevel integer
+---@field desiredZoomLevel integer
+---@field ticksSinceLastVehicleSpeech integer
+---@field aimingChange integer
+---@field poweredSeatsRiders ObjectHandle[2]
+---@field unk3 TableResourceHandle
+---@field _someTickTime integer
+---@field encounterId integer
+---@field squadId integer
+---@field poweredSeatsPower number[2]
+---@field integratedLightPower number
+---@field integratedLightTogglePower number
+---@field integratedNightVisionTogglePower number
+---@field seatRelated VectorXYZ[4]
+---@field camoPower number
+---@field fullSpectrumVisionPower number
+---@field dialogueDefinition TagHandle
+---@field speech UnitSpeechData
+---@field damageResult UnitDamageResult
+---@field objectFlameCauser ObjectHandle
+---@field unk4 number
+---@field diedAtTick integer
+---@field feignDeathTimer integer
+---@field camoRegrowth boolean
+---@field stun number
+---@field stunTicks integer
+---@field spreeCount integer
+---@field spreeStartingTime integer
+---@field recentDamage UnitRecentDamager[4]
+---@field controlData UnitControlData
+---@field lastCompletedClientUpdateValid boolean
+---@field lastCompletedClientUpdateId integer
+
+---@alias ScenarioChangeAttackingDefendingStateWhen
+---| "all_dead"
+---| "all_but_one_dead"
+---| "_75_dead"
+---| "_50_dead"
+---| "_25_dead"
+---| "anybody_dead"
+---| "_25_strength"
+---| "_50_strength"
+---| "_75_strength"
+---| "never"
+
+---@class ShaderTransparentWater: Shader
+---@field properties ShaderTransparentWaterProperties
+---@field ripples ShaderTransparentWaterRipples
+
+---@class UnitDamageResult
+---@field category integer
+---@field aiTicksUntilHandle integer
+---@field amount number
+---@field responsibleUnit TagHandle
+
+---@class FogFlags
+---@field fogScreenOnly boolean
+---@field atmosphereDominant boolean
+---@field isWater boolean
+
+---@class DamageEffectPermanentCameraImpulse
+---@field angle number
+
+---@class ModelCollisionGeometryNode
+---@field name string
+---@field region integer
+---@field parentNode integer
+---@field nextSiblingNode integer
+---@field firstChildNode integer
+---@field nameThing integer
+---@field bsps ModelCollisionGeometryBSP[]
+
+---@class ShaderModelBullshit
+---@field bullshit number
 
 ---@alias UIGameDataInputReferenceFunction
 ---| "network_settings_update"
@@ -1210,104 +2294,1970 @@
 ---| "player_settings_menu_update_desc"
 ---| "null"
 
+---@class Antenna
+---@field attachmentMarkerName string
+---@field bitmaps TagReference
+---@field physics TagReference
+---@field springStrengthCoefficient number
+---@field falloffPixels number
+---@field cutoffPixels number
+---@field length number
+---@field vertices AntennaVertex[]
+
+---@alias ShaderModelDetailMask
+---| "auxiliary_mask"
+---| "auxiliary_mask_inverse"
+---| "change_color_mask"
+---| "change_color_mask_inverse"
+---| "self_illumination_mask"
+---| "self_illumination_mask_inverse"
+---| "reflection_mask"
+---| "reflection_mask_inverse"
+---| "none"
+
+---@class ScenarioSourceFile
+---@field name string
+---@field source TagRawData
+
+---@class ScenarioObjectName
+---@field name string
+---@field objectType ObjectType
+---@field objectIndex integer
+
+---@class UnitControlData
+---@field animationState integer
+---@field aimingSpeed integer
+---@field controlFlags UnitControlFlags
+---@field weaponIndex integer
+---@field grenadeIndex integer
+---@field zoomIndex integer
+---@field throttle VectorIJK
+---@field primaryTrigger number
+---@field facingVector VectorIJK
+---@field aimingVector VectorIJK
+---@field lookingVector VectorIJK
+
+---@alias WeaponType
+---| "rocket_launcher"
+---| "plasma_rifle"
+---| "plasma_pistol"
+---| "needler"
+---| "shotgun"
+---| "undefined"
+
+---@class ModelAnimationsAnimationGraphNodeFlags
+---@field noMovement boolean
+---@field hinge boolean
+---@field ballSocket boolean
+
+---@alias EquipmentPowerupType
+---| "grenade"
+---| "health"
+---| "full_spectrum_vision"
+---| "active_camouflage"
+---| "over_shield"
+---| "double_speed"
+---| "none"
+
+---@class UIWidgetDefinitionFlags1
+---@field dontDoThatWeirdFocusTest boolean
+---@field flashing boolean
+---@field password boolean
+---@field editable boolean
+
+---@class ModelRegionPermutation
+---@field name string
+---@field flags ModelRegionPermutationFlags
+---@field permutationNumber integer
+---@field superLow integer
+---@field low integer
+---@field medium integer
+---@field high integer
+---@field superHigh integer
+---@field markers ModelRegionPermutationMarker[]
+
+---@class ShaderEnvironmentFlags
+---@field useAlternateBumpAttenuation boolean
+---@field trueAtmosphericFog boolean
+---@field bumpMapIsSpecularMask boolean
+---@field alphaTested boolean
+
+---@class ScenarioStructureBSPGlobalDetailObjectCell
+---@field cellX integer
+---@field cellY integer
+---@field cellZ integer
+---@field offsetZ integer
+---@field validLayersFlags integer
+---@field startIndex integer
+---@field countIndex integer
+
+---@class UnitHUDInterfaceAuxiliaryElements
+---@field anchor HUDInterfaceAnchor
+---@field overlays UnitHUDInterfaceAuxiliaryOverlay[]
+---@field warningSounds UnitHUDInterfaceHUDSound[]
+---@field meters UnitHUDInterfaceAuxiliaryPanel[]
+
+---@class UnitSpeech
+---@field priority integer
+---@field screamType integer
+---@field soundTag TagHandle
+---@field ticks integer
+---@field unk1 integer
+---@field unk2 integer
+---@field aiCommunicationInfo AiCommunicationPacket
+
+---@class AiCommunicationPacket
+---@field type integer
+---@field broken boolean
+
+---@class HUDInterfaceElementPosition
+---@field anchorOffset VectorXYInt
+---@field widthScale number
+---@field heightScale number
+---@field scalingFlags HUDInterfaceScalingFlags
+
+---@alias UIJustification
+---| "center_justify"
+---| "right_justify"
+---| "left_justify"
+
+---@class ShaderTransparentGenericStageFlags
+---@field aOutControlsColor0Animation boolean
+---@field alphaMux boolean
+---@field colorMux boolean
+
+---@class ShaderTransparentPlasmaNoiseMap
+---@field animationPeriod number
+---@field animationDirection VectorXYZ
+---@field noiseMapScale number
+---@field noiseMap TagReference
+
+---@class UnitAnimationFlags
+---@field animationBit3Unknown boolean
+---@field animationBit2Unknown boolean
+---@field animationBit1Unknown boolean
+---@field animationBit0Unknown boolean
+
+---@class LightEffectParameters
+---@field duration number
+---@field falloffFunction FunctionType
+
+---@alias TagGroup
+---| "weapon_hud_interface"
+---| "wind"
+---| "weapon"
+---| "vehicle"
+---| "virtual_keyboard"
+---| "unicode_string_list"
+---| "unit"
+---| "unit_hud_interface"
+---| "dialogue"
+---| "camera_track"
+---| "tag_collection"
+---| "shader_transparent_water"
+---| "string_list"
+---| "sound_scenery"
+---| "shader_transparent_plasma"
+---| "ui_widget_collection"
+---| "shader_transparent_generic"
+---| "shader_model"
+---| "sound_environment"
+---| "sound"
+---| "shader_transparent_meter"
+---| "sky"
+---| "shader"
+---| "shader_transparent_glass"
+---| "shader_environment"
+---| "scenario"
+---| "shader_transparent_chicago"
+---| "shader_transparent_chicago_extended"
+---| "scenery"
+---| "scenario_structure_bsp"
+---| "weather_particle_system"
+---| "projectile"
+---| "point_physics"
+---| "placeholder"
+---| "physics"
+---| "particle_system"
+---| "particle"
+---| "object"
+---| "preferences_network_game"
+---| "null"
+---| "multiplayer_scenario_description"
+---| "model"
+---| "gbxmodel"
+---| "light_volume"
+---| "meter"
+---| "globals"
+---| "device_machine"
+---| "sound_looping"
+---| "light"
+---| "device_light_fixture"
+---| "lightning"
+---| "lens_flare"
+---| "damage_effect"
+---| "item_collection"
+---| "item"
+---| "hud_globals"
+---| "hud_number"
+---| "hud_message_text"
+---| "grenade_hud_interface"
+---| "glow"
+---| "garbage"
+---| "material_effects"
+---| "font"
+---| "fog"
+---| "flag"
+---| "equipment"
+---| "effect"
+---| "detail_object_collection"
+---| "device"
+---| "input_device_defaults"
+---| "ui_widget_definition"
+---| "decal"
+---| "device_control"
+---| "contrail"
+---| "color_table"
+---| "model_collision_geometry"
+---| "continuous_damage_effect"
+---| "spheroid"
+---| "bitmap"
+---| "biped"
+---| "model_animations"
+---| "antenna"
+---| "actor_variant"
+---| "actor"
+
+---@class UnitHUDInterfaceHealthMeter: HUDInterfaceMeterElement
+---@field mediumHealthLeftColor integer
+---@field maxColorHealthFractionCutoff number
+---@field minColorHealthFractionCutoff number
+
+---@class Flag
+---@field flags IsUnusedFlag
+---@field trailingEdgeShape FlagTrailingEdgeShape
+---@field trailingEdgeShapeOffset integer
+---@field attachedEdgeShape FlagAttachedEdgeShape
+---@field width integer
+---@field height integer
+---@field cellWidth number
+---@field cellHeight number
+---@field redFlagShader TagReference
+---@field physics TagReference
+---@field windNoise number
+---@field blueFlagShader TagReference
+---@field attachmentPoints FlagAttachmentPoint[]
+
+---@alias UnitFunctionIn
+---| "shield_sapping"
+---| "can_blink"
+---| "integrated_light_power"
+---| "mouth_aperture"
+---| "aiming_change"
+---| "gunner_seat_power"
+---| "driver_seat_power"
+---| "none"
+
+---@class UnitRecentDamager
+---@field lastDamageTime integer
+---@field totalDamage number
+---@field object ObjectHandle
+---@field player PlayerHandle
+
+---@class VectorXYZ
+---@field x number
+---@field y number
+---@field z number
+
+---@class LightningMarker
+---@field attachmentMarker string
+---@field flags LightningMarkerFlag
+---@field octavesToNextMarker integer
+---@field randomPositionBounds VectorXYZ
+---@field randomJitter number
+---@field thickness number
+---@field tint ColorARGB
+
+---@class ScenarioEncounterFlags
+---@field manualBspIndexSpecified boolean
+---@field _3dFiringPositions boolean
+---@field initiallyBraindead boolean
+---@field initiallyDeaf boolean
+---@field initiallyBlind boolean
+---@field respawnEnabled boolean
+---@field notInitiallyCreated boolean
+
+---@class SoundLooping
+---@field flags SoundLoopingFlags
+---@field zeroDetailSoundPeriod number
+---@field zeroDetailUnknownFloats number[2]
+---@field oneDetailSoundPeriod number
+---@field oneDetailUnknownFloats number[2]
+---@field runtimeScriptingSound TagHandle
+---@field maximumDistance number
+---@field continuousDamageEffect TagReference
+---@field tracks SoundLoopingTrack[]
+---@field detailSounds SoundLoopingDetail[]
+
+---@class ModelAnimationsAnimationGraphVehicleAnimations
+---@field rightYawPerFrame number
+---@field leftYawPerFrame number
+---@field rightFrameCount integer
+---@field leftFrameCount integer
+---@field downPitchPerFrame number
+---@field upPitchPerFrame number
+---@field downPitchFrameCount integer
+---@field upPitchFrameCount integer
+---@field animations ModelAnimationsVehicleAnimation[]
+---@field suspensionAnimations ModelAnimationSuspensionAnimation[]
+
+---@alias FunctionBoundsMode
+---| "scale_to_fit"
+---| "clip_and_normalize"
+---| "clip"
+
+---@class PlayerActions
+---@field reload boolean
+---@field flashlight boolean
+---@field action boolean
+---@field melee boolean
+
+---@alias ActorVariantGrenadeStimulus
+---| "seek_cover"
+---| "visible_target"
+---| "never"
+
+---@class ShaderEnvironmentProperties
+---@field flags ShaderEnvironmentFlags
+---@field shaderEnvironmentType ShaderEnvironmentType
+
+---@class ShaderModelProperties
+---@field flags ShaderModelFlags
+---@field translucency number
+
+---@class DeviceFlags
+---@field positionNotInterpolated boolean
+---@field positionLoops boolean
+
+---@class NetworkPlayer
+---@field name string
+---@field colorIndex integer
+---@field iconIndex integer
+---@field machineIndex integer
+---@field controllerIndex integer
+---@field teamIndex integer
+---@field index integer
+
+---@alias ObjectFunctionIn
+---| "compass"
+---| "alive"
+---| "region_7"
+---| "region_6"
+---| "region_5"
+---| "region_4"
+---| "region_3"
+---| "region_2"
+---| "region_1"
+---| "region"
+---| "umbrella_shield_stun"
+---| "recent_umbrella_shield_vitality"
+---| "shield_stun"
+---| "umbrella_shield_vitality"
+---| "random_constant"
+---| "recent_shield_damage"
+---| "recent_body_damage"
+---| "shield_vitality"
+---| "body_vitality"
+---| "none"
+
+---@class EffectFlags
+---@field disabledInAnniversaryByBloodSetting boolean
+---@field mustBeDeterministicPc boolean
+---@field mustBeDeterministicXbox boolean
+---@field deletedWhenAttachmentDeactivates boolean
+
+---@class ShaderEffectSecondaryMap
+---@field bitmap TagReference
+---@field anchor ParticleAnchor
+---@field flags IsUnfilteredFlag
+---@field uAnimationSource FunctionOut
+---@field uAnimationFunction WaveFunction
+---@field uAnimationPeriod number
+---@field uAnimationPhase number
+---@field uAnimationScale number
+---@field vAnimationSource FunctionOut
+---@field vAnimationFunction WaveFunction
+---@field vAnimationPeriod number
+---@field vAnimationPhase number
+---@field vAnimationScale number
+---@field rotationAnimationSource FunctionOut
+---@field rotationAnimationFunction WaveFunction
+---@field rotationAnimationPeriod number
+---@field rotationAnimationPhase number
+---@field rotationAnimationScale number
+---@field rotationAnimationCenter VectorXY
+---@field zspriteRadiusScale number
+
+---@class HUDGlobalsAnniversaryRemapTargetFlags
+---@field legacyMode boolean
+
+---@class PlayerControlGlobals
+---@field actionTestFlags integer
+---@field testingForActionFlags integer
+---@field disabledButtonFlags integer
+---@field controlFlags integer
+---@field localPlayers PlayerControl[1]
+
+---@class ShaderEnvironmentDiffuse
+---@field flags ShaderEnvironmentDiffuseFlags
+---@field baseMap TagReference
+---@field detailMapFunction ShaderDetailFunction
+---@field primaryDetailMapScale number
+---@field primaryDetailMap TagReference
+---@field secondaryDetailMapScale number
+---@field secondaryDetailMap TagReference
+---@field microDetailMapFunction ShaderDetailFunction
+---@field microDetailMapScale number
+---@field microDetailMap TagReference
+---@field materialColor ColorRGB
+
+---@class PlayerControl
+---@field unitHandle ObjectHandle
+---@field controlFlags integer
+---@field desiredAngles VectorPY
+---@field throttle VectorIJ
+---@field primaryTrigger number
+---@field weaponIndex integer
+---@field grenadeIndex integer
+---@field zoomLevel integer
+---@field weaponSwapTicks integer
+---@field targetObjectIndex ObjectHandle
+---@field autoaimLevel number
+---@field magnetismLevel number
+---@field lookAccelerationTime number
+---@field pitchMinimum number
+---@field pitchMaximum number
+
+---@class PlayersGlobals
+---@field localPlayerNetworkId integer
+---@field localPlayers PlayerHandle[1]
+---@field localPlayerDeadUnits ObjectHandle[1]
+---@field localPlayerCount integer
+---@field doubleSpeedTicksRemaining integer
+---@field areAllDead boolean
+---@field inputDisabled boolean
+---@field bspSwitchTriggerIndex integer
+---@field respawnFailure integer
+---@field wasTeleported boolean
+
+---@class PlayerHandle
+---@field index integer
+---@field value integer
+---@field id integer
+
+---@class ModelCollisionGeometryFlags
+---@field onlyDamagedWhileOccupied boolean
+---@field onlyDamagedByExplosives boolean
+---@field parentNeverTakesBodyDamageForUs boolean
+---@field passesAreaDamageToChildren boolean
+---@field alwaysShieldsFriendlyDamage boolean
+---@field takesBodyDamageForChildren boolean
+---@field takesShieldDamageForChildren boolean
+
+---@class DynamicObjectBase
+---@field tagHandle TagHandle
+---@field networkRole integer
+---@field flags0 integer
+---@field existenceTime integer
+---@field flags1 BaseDynamicObjectFlags
+---@field objectMarkerId integer
+---@field network BaseObjectNetwork
+---@field position VectorXYZ
+---@field velocity VectorXYZ
+---@field rotation VectorIJK[2]
+---@field rotationVelocity VectorPYR
+---@field scenarioLocation ScenarioLocation
+---@field center VectorXYZ
+---@field boundingRadius number
+---@field scale number
+---@field objectType integer
+---@field teamOwner integer
+---@field nameListIndex integer
+---@field movingTime integer
+---@field variantIndex integer
+---@field player TableResourceHandle
+---@field ownerObject ObjectHandle
+---@field animationData ObjectAnimationData
+---@field vitals BaseObjectVitals
+---@field clusterPartition TableResourceHandle
+---@field unknownObject ObjectHandle
+---@field nextObject ObjectHandle
+---@field firstObject ObjectHandle
+---@field parentObject ObjectHandle
+---@field parentAttachmentNode integer
+---@field forceShieldUpdate boolean
+---@field validOutgoingFunctions ObjectValidOutGoingFunctions
+---@field incomingFunctionValues number[4]
+---@field outgoingFunctionValues number[4]
+---@field attachmentData BaseObjectAttachmentsData
+---@field cachedRenderState TableResourceHandle
+---@field regionDestroyeds BaseObjectRegionDestroyeds
+---@field shaderPermutation integer
+---@field regionHealths integer[8]
+---@field regionPermutationIds integer[8]
+---@field colorChange ColorRGB[4]
+---@field colorChange2 ColorRGB[4]
+---@field nodeOrientations BaseObjectBlockReference[2]
+---@field nodeMatricesBlock BaseObjectBlockReference
+
+---@class ObjectAnimationData
+---@field animationTagHandle TagHandle
+---@field animationState ObjectAnimationState
+---@field animationInterpolationFrame integer
+---@field animationInterpolationFrameCount integer
+
+---@class VectorXY
+---@field x number
+---@field y number
+
+---@class AnimationStateInterpolation
+---@field state ObjectAnimationState
+---@field frameIndex number
+
+---@class ScenarioAIAnimationReference
+---@field animationName string
+---@field animationGraph TagReference
+
+---@class ObjectValidOutGoingFunctions
+---@field d boolean
+---@field c boolean
+---@field b boolean
+---@field a boolean
+
+---@class Model
+---@field flags ModelFlags
+---@field nodeListChecksum integer
+---@field detailCutoff ModelDetailCutoff
+---@field detailNodeCount ModelDetailNodeCount
+---@field baseMapUScale number
+---@field baseMapVScale number
+---@field runtimeMarkers ModelMarker[]
+---@field nodes ModelNode[]
+---@field regions ModelRegion[]
+---@field geometries ModelGeometry[]
+---@field shaders ModelShaderReference[]
+
+---@alias GameEngineType
+---| "race"
+---| "king"
+---| "oddball"
+---| "slayer"
+---| "ctf"
+---| "none"
+
+---@class BaseObjectRegionDestroyeds
+---@field region7 boolean
+---@field region6 boolean
+---@field region5 boolean
+---@field region4 boolean
+---@field region3 boolean
+---@field region2 boolean
+---@field region1 boolean
+---@field region0 boolean
+
+---@class ItemFlags
+---@field unaffectedByGravity boolean
+---@field destroyedByExplosions boolean
+---@field alwaysMaintainsZUp boolean
+
+---@class BaseObjectAttachmentsData
+---@field types integer[8]
+---@field attachments integer[8]
+---@field firstWidget integer
+
+---@class VectorXYInt
+---@field x integer
+---@field y integer
+
+---@class BaseObjectVitalsFlags
+---@field killedNoStats boolean
+---@field shieldRecharging boolean
+---@field invulnerable boolean
+---@field cannotMeleeAttack boolean
+---@field killedSilent boolean
+---@field killed boolean
+---@field shieldDepleted boolean
+---@field healthDepleted boolean
+---@field shieldDamageEffectApplied boolean
+---@field healthDamageEffectApplied boolean
+
+---@class LightVolumeFlags
+---@field moreColors boolean
+---@field interpolateColorInHsv boolean
+
+---@class TableResourceHandle
+---@field index integer
+---@field value integer
+---@field id integer
+
+---@class ShaderSpecularProperties
+---@field perpendicularBrightness number
+---@field perpendicularTintColor ColorRGB
+---@field parallelBrightness number
+---@field parallelTintColor ColorRGB
+
+---@class BaseDynamicObjectFlags
+---@field hasCollisionModel boolean
+---@field collidable boolean
+---@field outsideOfMap boolean
+---@field doNotReactivate boolean
+---@field deleteAtDeactivation boolean
+---@field noShadow boolean
+---@field isGarbage boolean
+---@field isElevator2 boolean
+---@field isElevator boolean
+---@field isDeviceMachine boolean
+---@field notPlacedAutomatically boolean
+---@field connectedToMap boolean
+---@field hasSoundLoopingAttachment boolean
+---@field noCollision2 boolean
+---@field stationary boolean
+---@field inWater boolean
+---@field ignoreGravity boolean
+---@field onGround boolean
+---@field noCollision boolean
+
+---@class BaseObjectNetwork
+---@field validPosition boolean
+---@field position VectorXYZ
+---@field validForwardAndUp boolean
+---@field orientation VectorXYZ[2]
+---@field validTransitionalVelocity boolean
+---@field transitionalVelocity VectorXYZ
+---@field validTimestamp boolean
+---@field timestamp integer
+
+---@alias MetagameType
+---| "pawn"
+---| "knight"
+---| "bishop"
+---| "phaeton"
+---| "wasp"
+---| "mantis"
+---| "lich"
+---| "mammoth"
+---| "broadsword"
+---| "tuning_fork"
+---| "guntower"
+---| "scarab"
+---| "phantom"
+---| "banshee"
+---| "wraith"
+---| "mauler"
+---| "chopper"
+---| "ghost"
+---| "watchtower"
+---| "shade"
+---| "seraph"
+---| "revenant"
+---| "pelican"
+---| "hornet"
+---| "scorpion"
+---| "warthog"
+---| "mongoose"
+---| "turret"
+---| "mule"
+---| "engineer"
+---| "elite"
+---| "sentinel"
+---| "flood_pure"
+---| "flood_combat"
+---| "flood_carrier"
+---| "flood_infection"
+---| "hunter"
+---| "bugger"
+---| "spartan"
+---| "marine"
+---| "skirmisher"
+---| "jackal"
+---| "grunt"
+---| "brute"
+
+---@class GrenadeHUDInterfaceOverlayType
+---@field showAlways boolean
+---@field showOnDefault boolean
+---@field showOnEmpty boolean
+---@field showOnFlashing boolean
+
+---@class BitmapFlags
+---@field useAverageColorForDetailFade boolean
+---@field invertDetailFade boolean
+---@field halfHudScale boolean
+---@field filthySpriteBugFix boolean
+---@field uniformSpriteSequences boolean
+---@field disableHeightMapCompression boolean
+---@field enableDiffusionDithering boolean
+
+---@class BitmapData
+---@field signature TagGroup
+---@field width integer
+---@field height integer
+---@field depth integer
+---@field type BitmapDataType
+---@field format BitmapDataFormat
+---@field flags BitmapDataFlags
+---@field registrationPoint VectorXYInt
+---@field mipmapCount integer
+---@field pixelDataOffset integer
+---@field pixelDataSize integer
+---@field bitmapTagId TagHandle
+---@field pointer integer
+---@field hardwareFormat integer
+---@field baseAddress integer
+
+---@class TagHandle
+---@field index integer
+---@field value integer
+---@field id integer
+
+---@class BaseObjectBlockReference
+---@field size integer
+---@field offset integer
+
+---@class CacheFileHeader
+---@field fileSize integer
+---@field name string
+---@field build string
+---@field gameType CacheFileType
+---@field crc32 integer
+
+---@class HUDInterfaceMessagingFlags
+---@field widthOffsetIsAbsoluteIconWidth boolean
+---@field overrideDefaultColor boolean
+---@field useTextFromStringListInstead boolean
+
+---@class ObjectFunction
+---@field flags ObjectFunctionFlags
+---@field period number
+---@field scalePeriodBy FunctionScaleBy
+---@field function WaveFunction
+---@field scaleFunctionBy FunctionScaleBy
+---@field wobbleFunction WaveFunction
+---@field wobblePeriod number
+---@field wobbleMagnitude number
+---@field squareWaveThreshold number
+---@field stepCount integer
+---@field mapTo FunctionType
+---@field sawtoothCount integer
+---@field add FunctionScaleBy
+---@field scaleResultBy FunctionScaleBy
+---@field boundsMode FunctionBoundsMode
+---@field bounds number[2]
+---@field turnOffWith integer
+---@field scaleBy number
+---@field inverseBounds number
+---@field inverseSawtooth number
+---@field inverseStep number
+---@field inversePeriod number
+---@field usage string
+
+---@class ScenarioStructureBSPCompiledHeaderCea
+---@field pointer integer
+---@field lightmapVertexSize integer
+---@field lightmapVertices integer
+---@field signature TagGroup
+
+---@class ShaderTransparentMeterColors
+---@field gradientMinColor ColorRGB
+---@field gradientMaxColor ColorRGB
+---@field backgroundColor ColorRGB
+---@field flashColor ColorRGB
+---@field meterTintColor ColorRGB
+---@field meterTransparency number
+---@field backgroundTransparency number
+
+---@class ModelCollisionGeometrySphere
+---@field node integer
+---@field center VectorXYZ
+---@field radius number
+
+---@alias DamageEffectScreenFlashPriority
+---| "high"
+---| "medium"
+---| "low"
+
+---@class GarbageObject: ItemObject
+---@field ticksUntilGarbageCollection integer
+
+---@class ContinuousDamageEffect
+---@field radius number[2]
+---@field cutoffScale number
+---@field vibrateParameters ContinuousDamageVibrateParameters
+---@field cameraShaking ContinuousDamageCameraShaking
+---@field damage DamageEffectDamage
+
+---@class ContinuousDamageCameraShaking
+---@field randomTranslation number
+---@field randomRotation number
+---@field wobbleFunction WaveFunction
+---@field wobblePeriod number
+---@field wobbleWeight number
+
+---@class Bitmap
+---@field type BitmapType
+---@field encodingFormat BitmapFormat
+---@field usage BitmapUsage
+---@field flags BitmapFlags
+---@field processing BitmapProcessing
+---@field spriteBudget BitmapSpriteBudget
+---@field colorPlate BitmapColorPlate
+---@field processedPixelData TagRawData
+---@field moreProcessing BitmapMoreProcessing
+---@field spriteProcessing BitmapSpriteProcessing
+---@field bitmapGroupSequence BitmapGroupSequence[]
+---@field bitmapData BitmapData[]
+
+---@alias EffectViolenceMode
+---| "nonviolent_mode_only"
+---| "violent_mode_only"
+---| "either_mode"
+
+---@alias GrenadeType
+---| "grenade_type_3"
+---| "grenade_type_2"
+---| "covenant_plasma"
+---| "human_fragmentation"
+
+---@class BitmapSpriteProcessing
+---@field usage BitmapSpriteUsage
+---@field spacing integer
+
+---@class ModelAnimationsFrameInfoDxDyDyaw
+---@field dx number
+---@field dy number
+---@field dyaw number
+
+---@class WeaponHUDInterfaceScreenEffectDefinitionNightVisionFlags
+---@field masked boolean
+---@field connectToFlashlight boolean
+---@field onlyWhenZoomed boolean
+
+---@class ScenarioCutsceneFlag
+---@field unknown integer
+---@field name string
+---@field position VectorXYZ
+---@field facing VectorPY
+
+---@class ScenarioStructureBSPWeatherPalette
+---@field name string
+---@field particleSystem TagReference
+---@field particleSystemScaleFunction string
+---@field wind TagReference
+---@field windDirection VectorXYZ
+---@field windMagnitude number
+---@field windScaleFunction string
+
+---@alias ScenarioSpawnType
+---| "all_except_race_and_ctf"
+---| "all_except_ctf"
+---| "all_games"
+---| "ignored_4"
+---| "ignored_3"
+---| "ignored_2"
+---| "ignored_1"
+---| "stub"
+---| "terminator"
+---| "race"
+---| "king_of_the_hill"
+---| "oddball"
+---| "slayer"
+---| "ctf"
+---| "none"
+
+---@class DamageEffect
+---@field radius number[2]
+---@field cutoffScale number
+---@field flags DamageEffectFlags
+---@field screenFlash DamageEffectScreenFlash
+---@field lowFrequencyVibrate DamageEffectVibrate
+---@field highFrequencyVibrate DamageEffectVibrate
+---@field temporaryCameraImpulse DamageEffectTemporaryCameraImpulse
+---@field permanentCameraImpulse DamageEffectPermanentCameraImpulse
+---@field cameraShaking DamageEffectCameraShaking
+---@field sound TagReference
+---@field breakingEffect DamageEffectBreakingEffect
+---@field damage DamageEffectDamage
+
+---@class ContrailScaleFlags
+---@field textureAnimationV boolean
+---@field textureAnimationU boolean
+---@field textureScaleV boolean
+---@field textureScaleU boolean
+---@field sequenceAnimationRate boolean
+---@field inheritedVelocityFraction boolean
+---@field pointVelocityConeAngle boolean
+---@field pointVelocityDelta boolean
+---@field pointVelocity boolean
+---@field pointGenerationRate boolean
+
+---@alias ScenarioJustification
+---| "center"
+---| "right"
+---| "left"
+
+---@class ShaderTransparentMeterProperties
+---@field flags ShaderTransparentMeterFlags
+---@field map TagReference
+
+---@class ModelAnimationsAnimationGraphObjectOverlay
+---@field animation integer
+---@field function AnimationFunction
+---@field functionControls AnimationFunctionControls
+
+---@alias GlowTrailingParticleDistribution
+---| "emit_randomly"
+---| "emit_normal_up"
+---| "emit_vertically"
+
+---@class ModelAnimationsWeaponAnimation
+---@field animation integer
+
+---@class WeaponHUDInterfaceNumberWeaponSpecificFlags
+---@field divideNumberByClipSize boolean
+
+---@class ShaderTransparentGenericMap
+---@field flags ShaderTransparentGenericMapFlag
+---@field parameters ShaderTransparentMapParameters
+---@field animation ShaderTransparentMapAnimation
+
+---@class ParticleSystemType
+---@field name string
+---@field flags ParticleSystemTypeFlags
+---@field initialParticleCount integer
+---@field complexSpriteRenderModes ParticleSystemComplexSpriteRenderMode
+---@field radius number
+---@field particleCreationPhysics ParticleSystemParticleCreationPhysics
+---@field physicsFlags IsUnusedFlag
+---@field physicsConstants ParticleSystemPhysicsConstant[]
+---@field states ParticleSystemTypeStates[]
+---@field particleStates ParticleSystemTypeParticleState[]
+
+---@class GlobalsVehicle
+---@field vehicle TagReference
+
+---@class ModelRegion
+---@field name string
+---@field permutations ModelRegionPermutation[]
+
+---@class DeviceLightFixture: Device
+
+---@class LightShape
+---@field radius number
+---@field radiusModifer number[2]
+---@field falloffAngle number
+---@field cutoffAngle number
+---@field lensFlareOnlyRadius number
+---@field cosFalloffAngle number
+---@field cosCutoffAngle number
+---@field specularRadiusMultiplier number
+---@field sinCutoffAngle number
+
+---@class DamageEffectVibrate
+---@field frequency number
+---@field duration number
+---@field fadeFunction FunctionType
+
+---@class LightGel
+---@field primaryCubeMap TagReference
+---@field textureAnimationFunction WaveFunction
+---@field textureAnimationPeriod number
+---@field secondaryCubeMap TagReference
+---@field yawFunction WaveFunction
+---@field yawPeriod number
+---@field rollFunction WaveFunction
+---@field rollPeriod number
+---@field pitchFunction WaveFunction
+---@field pitchPeriod number
+
+---@alias AnimationFunction
+---| "d_out"
+---| "c_out"
+---| "b_out"
+---| "a_out"
+
+---@class Globals
+---@field sounds GlobalsSound[]
+---@field camera GlobalsCamera[]
+---@field playerControl GlobalsPlayerControl[]
+---@field difficulty GlobalsDifficulty[]
+---@field grenades GlobalsGrenade[]
+---@field rasterizerData GlobalsRasterizerData[]
+---@field interfaceBitmaps GlobalsInterfaceBitmaps[]
+---@field weaponList GlobalsWeapon[]
+---@field cheatPowerups GlobalsCheatPowerup[]
+---@field multiplayerInformation GlobalsMultiplayerInformation[]
+---@field playerInformation GlobalsPlayerInformation[]
+---@field firstPersonInterface GlobalsFirstPersonInterface[]
+---@field fallingDamage GlobalsFallingDamage[]
+---@field materials GlobalsMaterial[]
+---@field playlistMembers GlobalsPlaylistMember[]
+
+---@class ScenarioScriptNodeTable
+---@field name string
+---@field maximumCount integer
+---@field elementSize integer
+---@field one integer
+---@field data integer
+---@field size integer
+---@field count integer
+---@field nextId integer
+---@field firstElementPtr integer
+
+---@class ParticleSystemTypeFlags
+---@field doNotDrawInThirdPerson boolean
+---@field doNotDrawInFirstPerson boolean
+---@field rotationRateScalesWithEffect boolean
+---@field animationRateScalesWithEffect boolean
+---@field scaleScalesWithEffect boolean
+---@field creationRateScalesWithEffect boolean
+---@field minimumCountScalesWithEffect boolean
+---@field initialCountScalesWithEffect boolean
+---@field tintByEffectColor boolean
+---@field disabled boolean
+---@field rotationalSpritesAnimateSideways boolean
+---@field particlesDieOnGround boolean
+---@field particlesDieInAir boolean
+---@field particlesDieInWater boolean
+---@field forwardBackward1 boolean
+---@field particleStatesLoop boolean
+---@field forwardBackward boolean
+---@field typeStatesLoop boolean
+
+---@class GlobalsCheatPowerup
+---@field powerup TagReference
+
+---@class HUDGlobalsAnniversaryRemapTarget
+---@field targetBitmap TagReference
+---@field language HUDGlobalsAnniversaryRemapTargetLanguage
+---@field flags HUDGlobalsAnniversaryRemapTargetFlags
+
+---@alias HUDGlobalsAnniversaryRemapTargetLanguage
+---| "simplified_chinese"
+---| "russian"
+---| "polish"
+---| "latam_spanish"
+---| "portuguese"
+---| "korean"
+---| "japanese"
+---| "traditional_chinese"
+---| "german"
+---| "italian"
+---| "spanish"
+---| "french"
+---| "english"
+
+---@class ScenarioNetgameFlags
+---@field position VectorXYZ
+---@field facing number
+---@field type ScenarioNetgameFlagType
+---@field usageId integer
+---@field weaponGroup TagReference
+
+---@class GlobalsDifficulty
+---@field easyEnemyDamage number
+---@field normalEnemyDamage number
+---@field hardEnemyDamage number
+---@field impossEnemyDamage number
+---@field easyEnemyVitality number
+---@field normalEnemyVitality number
+---@field hardEnemyVitality number
+---@field impossEnemyVitality number
+---@field easyEnemyShield number
+---@field normalEnemyShield number
+---@field hardEnemyShield number
+---@field impossEnemyShield number
+---@field easyEnemyRecharge number
+---@field normalEnemyRecharge number
+---@field hardEnemyRecharge number
+---@field impossEnemyRecharge number
+---@field easyFriendDamage number
+---@field normalFriendDamage number
+---@field hardFriendDamage number
+---@field impossFriendDamage number
+---@field easyFriendVitality number
+---@field normalFriendVitality number
+---@field hardFriendVitality number
+---@field impossFriendVitality number
+---@field easyFriendShield number
+---@field normalFriendShield number
+---@field hardFriendShield number
+---@field impossFriendShield number
+---@field easyFriendRecharge number
+---@field normalFriendRecharge number
+---@field hardFriendRecharge number
+---@field impossFriendRecharge number
+---@field easyInfectionForms number
+---@field normalInfectionForms number
+---@field hardInfectionForms number
+---@field impossInfectionForms number
+---@field easyRateOfFire number
+---@field normalRateOfFire number
+---@field hardRateOfFire number
+---@field impossRateOfFire number
+---@field easyProjectileError number
+---@field normalProjectileError number
+---@field hardProjectileError number
+---@field impossProjectileError number
+---@field easyBurstError number
+---@field normalBurstError number
+---@field hardBurstError number
+---@field impossBurstError number
+---@field easyNewTargetDelay number
+---@field normalNewTargetDelay number
+---@field hardNewTargetDelay number
+---@field impossNewTargetDelay number
+---@field easyBurstSeparation number
+---@field normalBurstSeparation number
+---@field hardBurstSeparation number
+---@field impossBurstSeparation number
+---@field easyTargetTracking number
+---@field normalTargetTracking number
+---@field hardTargetTracking number
+---@field impossTargetTracking number
+---@field easyTargetLeading number
+---@field normalTargetLeading number
+---@field hardTargetLeading number
+---@field impossTargetLeading number
+---@field easyOverchargeChance number
+---@field normalOverchargeChance number
+---@field hardOverchargeChance number
+---@field impossOverchargeChance number
+---@field easySpecialFireDelay number
+---@field normalSpecialFireDelay number
+---@field hardSpecialFireDelay number
+---@field impossSpecialFireDelay number
+---@field easyGuidanceVsPlayer number
+---@field normalGuidanceVsPlayer number
+---@field hardGuidanceVsPlayer number
+---@field impossGuidanceVsPlayer number
+---@field easyMeleeDelayBase number
+---@field normalMeleeDelayBase number
+---@field hardMeleeDelayBase number
+---@field impossMeleeDelayBase number
+---@field easyMeleeDelayScale number
+---@field normalMeleeDelayScale number
+---@field hardMeleeDelayScale number
+---@field impossMeleeDelayScale number
+---@field easyGrenadeChanceScale number
+---@field normalGrenadeChanceScale number
+---@field hardGrenadeChanceScale number
+---@field impossGrenadeChanceScale number
+---@field easyGrenadeTimerScale number
+---@field normalGrenadeTimerScale number
+---@field hardGrenadeTimerScale number
+---@field impossGrenadeTimerScale number
+---@field easyMajorUpgrade number
+---@field normalMajorUpgrade number
+---@field hardMajorUpgrade number
+---@field impossMajorUpgrade number
+---@field easyMajorUpgrade1 number
+---@field normalMajorUpgrade1 number
+---@field hardMajorUpgrade1 number
+---@field impossMajorUpgrade1 number
+---@field easyMajorUpgrade2 number
+---@field normalMajorUpgrade2 number
+---@field hardMajorUpgrade2 number
+---@field impossMajorUpgrade2 number
+
+---@alias WeaponHUDInterfaceCrosshairType
+---| "flash_when_firing_with_depleted_battery"
+---| "secondary_trigger_ready"
+---| "primary_trigger_ready"
+---| "low_secondary_ammo_and_none_left_to_reload"
+---| "flash_when_firing_secondary_trigger_with_no_ammo"
+---| "flash_secondary_reload"
+---| "flash_secondary_total_ammo"
+---| "should_reload_secondary_trigger"
+---| "low_ammo_and_none_left_to_reload"
+---| "flash_when_throwing_and_no_grenade"
+---| "flash_when_firing_and_no_ammo"
+---| "reload_overheat"
+---| "flash_battery"
+---| "flash_total_ammo"
+---| "flash_heat"
+---| "should_reload"
+---| "charge"
+---| "zoom_overlay"
+---| "aim"
+
+---@class GlobalsMultiplayerInformation
+---@field flag TagReference
+---@field unit TagReference
+---@field vehicles GlobalsVehicle[]
+---@field hillShader TagReference
+---@field flagShader TagReference
+---@field ball TagReference
+---@field sounds GlobalsSound[]
+
+---@class ModelAnimationsRotation
+---@field x integer
+---@field y integer
+---@field z integer
+---@field w integer
+
+---@class ScenarioScript
+---@field name string
+---@field scriptType ScenarioScriptType
+---@field returnType ScenarioScriptValueType
+---@field rootExpressionIndex integer
+---@field parameters ScenarioScriptParameter[]
+
+---@alias ShaderTypePc
+---| "transparent_plasma"
+---| "transparent_meter"
+---| "transparent_glass"
+---| "transparent_water"
+---| "transparent_chicago_extended"
+---| "transparent_chicago"
+---| "transparent_generic"
+---| "model"
+---| "environment"
+---| "decal"
+---| "effect"
+---| "screen"
+
+---@class ShaderModelReflection
+---@field falloffDistance number
+---@field cutoffDistance number
+---@field cubeMapProperties ShaderSpecularProperties
+---@field cubeMap TagReference
+
+---@class LightColor
+---@field interpolationFlags ColorInterpolationFlags
+---@field color ColorARGB
+
+---@class WeaponTrigger
+---@field flags WeaponTriggerFlags
+---@field maximumRateOfFire number[2]
+---@field accelerationTime number
+---@field decelerationTime number
+---@field blurredRateOfFire number
+---@field magazine integer
+---@field roundsPerShot integer
+---@field minimumRoundsLoaded integer
+---@field projectilesBetweenContrails integer
+---@field predictionType WeaponPredictionType
+---@field firingNoise ObjectNoise
+---@field error number[2]
+---@field errorAccelerationTime number
+---@field errorDecelerationTime number
+---@field chargingTime number
+---@field chargedTime number
+---@field overchargedAction WeaponOverchargedAction
+---@field chargedIllumination number
+---@field spewTime number
+---@field chargingEffect TagReference
+---@field distributionFunction WeaponDistributionFunction
+---@field projectilesPerShot integer
+---@field distributionAngle number
+---@field minimumError number
+---@field errorAngle number[2]
+---@field firstPersonOffset VectorXYZ
+---@field projectile TagReference
+---@field ejectionPortRecoveryTime number
+---@field illuminationRecoveryTime number
+---@field heatGeneratedPerRound number
+---@field ageGeneratedPerRound number
+---@field overloadTime number
+---@field illuminationRecoveryRate number
+---@field ejectionPortRecoveryRate number
+---@field firingAccelerationRate number
+---@field firingDecelerationRate number
+---@field errorAccelerationRate number
+---@field errorDecelerationRate number
+---@field firingEffects WeaponTriggerFiringEffect[]
+
+---@class ShaderEnvironment: Shader
+---@field properties ShaderEnvironmentProperties
+---@field lensFlares ShaderLensFlares
+---@field diffuse ShaderEnvironmentDiffuse
+---@field bump ShaderEnvironmentBump
+---@field textureScrollingAnimation ShaderEnvironmentTextureScrollingAnimation
+---@field selfIllumination ShaderEnvironmentSelfIllumination
+---@field specular ShaderEnvironmentSpecular
+---@field reflection ShaderEnvironmentReflection
+
+---@class UnitSpeechData
+---@field current UnitSpeech
+---@field next UnitSpeech
+---@field unk0 integer
+---@field unk1 integer
+---@field unk2 integer
+---@field unk3 integer
+---@field unk4 integer
+---@field unk6 boolean
+---@field unk7 boolean
+---@field unk8 boolean
+---@field unk9 integer
+---@field unk10 integer
+---@field unk11 integer
+---@field unk12 integer
+---@field unk13 integer
+
+---@class ScenarioCommandPoint
+---@field position VectorXYZ
+---@field surfaceIndex integer
+
+---@class ScenarioFlags
+---@field doNotApplyBungieCampaignTagPatches boolean
+---@field enableColorCorrection boolean
+---@field useDemoUi boolean
+---@field cortanaHack boolean
+
+---@alias ParticleSystemParticleCreationPhysics
+---| "jet"
+---| "explosion"
+---| "default"
+
+---@class BitmapGroupSprite
+---@field bitmapIndex integer
+---@field left number
+---@field right number
+---@field top number
+---@field bottom number
+---@field registrationPoint VectorXY
+
+---@class ShaderTransparentChicagoMapFlags
+---@field vClamped boolean
+---@field uClamped boolean
+---@field alphaReplicate boolean
+---@field unfiltered boolean
+
+---@class UnicodeStringList
+---@field strings UnicodeStringListString[]
+
+---@class ContinuousDamageVibrateParameters
+---@field lowFrequency number
+---@field highFrequency number
+
+---@alias PredictedResourceType
+---| "sound"
+---| "bitmap"
+
+---@class MultiplayerScenarioDescription
+---@field multiplayerScenarios MultiplayerScenarioDescriptionScenarioDescription[]
+
+---@class ScenarioStructureBSPFogPlane
+---@field frontRegion integer
+---@field materialType MaterialType
+---@field plane Plane3D
+---@field vertices ScenarioStructureBSPFogPlaneVertex[]
+
+---@class ScenarioDecalPalette
+---@field reference TagReference
+
+---@class HUDInterfaceMessagingInformation
+---@field sequenceIndex integer
+---@field widthOffset integer
+---@field offsetFromReferenceCorner VectorXYInt
+---@field overrideIconColor integer
+---@field frameRate integer
+---@field moreFlags HUDInterfaceMessagingFlags
+---@field textIndex integer
+
+---@class MaterialEffects
+---@field effects MaterialEffectsMaterialEffect[]
+
+---@class GrenadeHUDInterfaceTotalGrenadesOverlays
+---@field bitmap TagReference
+---@field overlays GrenadeHUDInterfaceOverlay[]
+---@field warningSounds GrenadeHUDInterfaceSound[]
+
+---@class ScenarioScriptNode
+---@field salt integer
+---@field indexUnion integer
+---@field type ScenarioScriptValueType
+---@field flags ScenarioScriptNodeFlags
+---@field nextNode integer
+---@field stringOffset integer
+---@field data ScenarioScriptNodeValue
+
+---@class Scenario
+---@field dontUse TagReference
+---@field wontUse TagReference
+---@field cantUse TagReference
+---@field skies ScenarioSky[]
+---@field type ScenarioType
+---@field flags ScenarioFlags
+---@field childScenarios ScenarioChildScenario[]
+---@field localNorth number
+---@field predictedResources PredictedResource[]
+---@field functions ScenarioFunction[]
+---@field editorScenarioData TagRawData
+---@field comments ScenarioEditorComment[]
+---@field scavengerHuntObjects ScenarioScavengerHuntObjects[]
+---@field objectNames ScenarioObjectName[]
+---@field scenery ScenarioScenery[]
+---@field sceneryPalette ScenarioSceneryPalette[]
+---@field bipeds ScenarioBiped[]
+---@field bipedPalette ScenarioBipedPalette[]
+---@field vehicles ScenarioVehicle[]
+---@field vehiclePalette ScenarioVehiclePalette[]
+---@field equipment ScenarioEquipment[]
+---@field equipmentPalette ScenarioEquipmentPalette[]
+---@field weapons ScenarioWeapon[]
+---@field weaponPalette ScenarioWeaponPalette[]
+---@field deviceGroups ScenarioDeviceGroup[]
+---@field machines ScenarioMachine[]
+---@field machinePalette ScenarioMachinePalette[]
+---@field controls ScenarioControl[]
+---@field controlPalette ScenarioControlPalette[]
+---@field lightFixtures ScenarioLightFixture[]
+---@field lightFixturePalette ScenarioLightFixturePalette[]
+---@field soundScenery ScenarioSoundScenery[]
+---@field soundSceneryPalette ScenarioSoundSceneryPalette[]
+---@field playerStartingProfile ScenarioPlayerStartingProfile[]
+---@field playerStartingLocations ScenarioPlayerStartingLocation[]
+---@field triggerVolumes ScenarioTriggerVolume[]
+---@field recordedAnimations ScenarioRecordedAnimation[]
+---@field netgameFlags ScenarioNetgameFlags[]
+---@field netgameEquipment ScenarioNetgameEquipment[]
+---@field startingEquipment ScenarioStartingEquipment[]
+---@field bspSwitchTriggerVolumes ScenarioBSPSwitchTriggerVolume[]
+---@field decals ScenarioDecal[]
+---@field decalPalette ScenarioDecalPalette[]
+---@field detailObjectCollectionPalette ScenarioDetailObjectCollectionPalette[]
+---@field actorPalette ScenarioActorPalette[]
+---@field encounters ScenarioEncounter[]
+---@field commandLists ScenarioCommandList[]
+---@field aiAnimationReferences ScenarioAIAnimationReference[]
+---@field aiScriptReferences ScenarioAIScriptReference[]
+---@field aiRecordingReferences ScenarioAIRecordingReference[]
+---@field aiConversations ScenarioAIConversation[]
+---@field scriptSyntaxData TagRawData
+---@field scriptStringData TagRawData
+---@field scripts ScenarioScript[]
+---@field globals ScenarioGlobal[]
+---@field references ScenarioReference[]
+---@field sourceFiles ScenarioSourceFile[]
+---@field cutsceneFlags ScenarioCutsceneFlag[]
+---@field cutsceneCameraPoints ScenarioCutsceneCameraPoint[]
+---@field cutsceneTitles ScenarioCutsceneTitle[]
+---@field customObjectNames TagReference
+---@field ingameHelpText TagReference
+---@field hudMessages TagReference
+---@field structureBsps ScenarioBSP[]
+
+---@class ScenarioCutsceneTitle
+---@field unknown integer
+---@field name string
+---@field textBounds Rectangle2D
+---@field stringIndex integer
+---@field textStyle ScenarioTextStyle
+---@field justification ScenarioJustification
+---@field textFlags ScenarioTextFlags
+---@field textColor integer
+---@field shadowColor integer
+---@field fadeInTime number
+---@field upTime number
+---@field fadeOutTime number
+
+---@class ScenarioCutsceneCameraPoint
+---@field unknown integer
+---@field name string
+---@field position VectorXYZ
+---@field orientation VectorPYR
+---@field fieldOfView number
+
+---@class Particle
+---@field flags ParticleFlags
+---@field bitmap TagReference
+---@field physics TagReference
+---@field collisionMaterialEffects TagReference
+---@field lifespan number[2]
+---@field fadeInTime number
+---@field fadeOutTime number
+---@field collisionEffect TagReference
+---@field deathEffect TagReference
+---@field minimumSize number
+---@field radiusAnimation number[2]
+---@field animationRate number[2]
+---@field contactDeterioration number
+---@field fadeStartSize number
+---@field fadeEndSize number
+---@field firstSequenceIndex integer
+---@field initialSequenceCount integer
+---@field loopingSequenceCount integer
+---@field finalSequenceCount integer
+---@field spriteSize number
+---@field orientation ParticleOrientation
+---@field shader ShaderEffect
+
+---@class ScenarioGlobal
+---@field name string
+---@field type ScenarioScriptValueType
+---@field initializationExpressionIndex integer
+
+---@class ModelMarker
+---@field name string
+---@field magicIdentifier integer
+---@field instances ModelMarkerInstance[]
+
+---@class UnitHUDInterfaceAuxiliaryOverlay
+---@field properties HUDInterfaceStaticElement
+---@field type UnitHUDInterfacePanelType
+---@field flags UnitHUDInterfaceAuxiliaryOverlayFlags
+
+---@class ScenarioStructureBSP
+---@field lightmapsBitmap TagReference
+---@field vehicleFloor number
+---@field vehicleCeiling number
+---@field defaultAmbientColor ColorRGB
+---@field defaultDistantLight0Color ColorRGB
+---@field defaultDistantLight0Direction VectorXYZ
+---@field defaultDistantLight1Color ColorRGB
+---@field defaultDistantLight1Direction VectorXYZ
+---@field defaultReflectionTint ColorARGB
+---@field defaultShadowVector VectorXYZ
+---@field defaultShadowColor ColorRGB
+---@field collisionMaterials ScenarioStructureBSPCollisionMaterial[]
+---@field collisionBsp ModelCollisionGeometryBSP[]
+---@field nodes ScenarioStructureBSPNode[]
+---@field worldBoundsX number[2]
+---@field worldBoundsY number[2]
+---@field worldBoundsZ number[2]
+---@field leaves ScenarioStructureBSPLeaf[]
+---@field leafSurfaces ScenarioStructureBSPSurfaceReference[]
+---@field surfaces ScenarioStructureBSPSurface[]
+---@field lightmaps ScenarioStructureBSPLightmap[]
+---@field lensFlares ScenarioStructureBSPLensFlare[]
+---@field lensFlareMarkers ScenarioStructureBSPLensFlareMarker[]
+---@field clusters ScenarioStructureBSPCluster[]
+---@field clusterData TagRawData
+---@field clusterPortals ScenarioStructureBSPClusterPortal[]
+---@field breakableSurfaces ScenarioStructureBSPBreakableSurface[]
+---@field fogPlanes ScenarioStructureBSPFogPlane[]
+---@field fogRegions ScenarioStructureBSPFogRegion[]
+---@field fogPalette ScenarioStructureBSPFogPalette[]
+---@field weatherPalette ScenarioStructureBSPWeatherPalette[]
+---@field weatherPolyhedra ScenarioStructureBSPWeatherPolyhedron[]
+---@field pathfindingSurfaces ScenarioStructureBSPPathfindingSurface[]
+---@field pathfindingEdges ScenarioStructureBSPPathfindingEdge[]
+---@field backgroundSoundPalette ScenarioStructureBSPBackgroundSoundPalette[]
+---@field soundEnvironmentPalette ScenarioStructureBSPSoundEnvironmentPalette[]
+---@field soundPasData TagRawData
+---@field markers ScenarioStructureBSPMarker[]
+---@field detailObjects ScenarioStructureBSPDetailObjectData[]
+---@field runtimeDecals ScenarioStructureBSPRuntimeDecal[]
+---@field leafMapLeaves ScenarioStructureBSPGlobalMapLeaf[]
+---@field leafMapPortals ScenarioStructureBSPGlobalLeafPortal[]
+
+---@alias ShaderTransparentGenericStageOutput
+---| "alpha_map_alpha_3"
+---| "alpha_map_alpha_2"
+---| "alpha_map_alpha_1"
+---| "alpha_map_alpha_0"
+---| "alpha_vertex_alpha_1"
+---| "alpha_vertex_alpha_0_fog"
+---| "alpha_scratch_alpha_1"
+---| "alpha_scratch_alpha_0_final_alpha"
+---| "alpha_discard"
+
+---@class ScenarioCommand
+---@field atomType ScenarioAtomType
+---@field atomModifier integer
+---@field parameter1 number
+---@field parameter2 number
+---@field point1 integer
+---@field point2 integer
+---@field animation integer
+---@field script integer
+---@field recording integer
+---@field command integer
+---@field objectName integer
+
+---@class ScenarioBSPSwitchTriggerVolume
+---@field triggerVolume integer
+---@field source integer
+---@field destination integer
+---@field unknown integer
+
+---@class ScenarioNetgameEquipment
+---@field flags ScenarioNetgameEquipmentFlags
+---@field type0 ScenarioSpawnType
+---@field type1 ScenarioSpawnType
+---@field type2 ScenarioSpawnType
+---@field type3 ScenarioSpawnType
+---@field teamIndex integer
+---@field spawnTime integer
+---@field unknownFfffffff integer
+---@field position VectorXYZ
+---@field facing number
+---@field itemCollection TagReference
+
+---@alias WeaponPredictionType
+---| "instant"
+---| "continuous"
+---| "none"
+
+---@class ScenarioTriggerVolume
+---@field type ScenarioTriggerVolumeType
+---@field name string
+---@field parameters number[3]
+---@field rotationVectorForward VectorXYZ
+---@field rotationVectorUp VectorXYZ
+---@field startingCorner VectorXYZ
+---@field endingCornerOffset VectorXYZ
+
+---@class SkyFunction
+---@field functionName string
+
+---@class DamageEffectDamage
+---@field sideEffect DamageEffectSideEffect
+---@field category DamageEffectCategory
+---@field flags DamageEffectDamageFlags
+---@field aoeCoreRadius number
+---@field lowerBound number
+---@field upperBound number[2]
+---@field vehiclePassthroughPenalty number
+---@field activeCamouflageDamage number
+---@field stun number
+---@field maximumStun number
+---@field stunTime number
+---@field instantaneousAcceleration VectorXYZ
+---@field modifiers DamageEffectMaterialModifier
+
+---@class UnicodeStringListString
+---@field string TagRawData
+
+---@class WeaponMagazineObject
+---@field rounds integer
+---@field equipment TagReference
+
+---@class ScenarioMachine
+---@field type integer
+---@field name integer
+---@field placement ScenarioObjectPlacement
+---@field appearancePlayerIndex integer
+---@field powerGroup integer
+---@field positionGroup integer
+---@field deviceFlags ScenarioDeviceFlags
+---@field machineFlags ScenarioMachineFlags
+
+---@alias WeaponFunctionIn
+---| "secondary_firing_on"
+---| "primary_firing_on"
+---| "secondary_firing"
+---| "primary_firing"
+---| "integrated_light"
+---| "age"
+---| "illumination"
+---| "secondary_charged"
+---| "primary_charged"
+---| "overheated"
+---| "secondary_ejection_port"
+---| "primary_ejection_port"
+---| "ready"
+---| "secondary_rate_of_fire"
+---| "primary_rate_of_fire"
+---| "secondary_ammunition"
+---| "primary_ammunition"
+---| "heat"
+---| "none"
+
+---@class BasicObject: Object
+---@field moreFlags BaseObjectFlags
+
+---@class ScenarioWeaponPalette
+---@field name TagReference
+
+---@class HUDInterfaceOverlayFlashFlags
+---@field flashesWhenActive boolean
+
+---@class Effect
+---@field flags EffectFlags
+---@field loopStartEvent integer
+---@field loopStopEvent integer
+---@field maximumDamageRadius number
+---@field locations EffectLocation[]
+---@field events EffectEvent[]
+
 ---@class ScenarioStructureBSPBreakableSurface
 ---@field centroid VectorXYZ
 ---@field radius number
 ---@field collisionSurfaceIndex integer
 
----@class UnitFlags
----@field integratedLightLastsForever boolean
----@field integratedLightControlsWeapon boolean
----@field shieldsFryInfectionForms boolean
----@field ignoredByAutoaiming boolean
----@field specialCinematicUnit boolean
----@field inconsequential boolean
----@field runsAroundFlaming boolean
----@field shieldSapping boolean
----@field notInstantlyKilledByMelee boolean
----@field meleeAttackersCannotAttach boolean
----@field cannotOpenDoorsAutomatically boolean
----@field impactMeleeDiesOnShields boolean
----@field impactMeleeAttachesToUnit boolean
----@field simpleCreature boolean
----@field hasNoAiming boolean
----@field dontRefaceDuringPings boolean
----@field meleeAttackIsFatal boolean
----@field resistsPings boolean
----@field causesPassengerDialogue boolean
----@field unused boolean
----@field entranceInsideBoundingSphere boolean
----@field firesFromCamera boolean
----@field halfSpeedInterpolation boolean
----@field destroyedAfterDying boolean
----@field circularAiming boolean
+---@class ScenarioVehiclePalette
+---@field name TagReference
 
----@class ScenarioItemFlags
----@field doesAccelerate boolean
----@field obsolete boolean
----@field initiallyAtRest boolean
+---@class ScenarioStructureBSPCompiledHeader
+---@field pointer integer
+---@field lightmapMaterialCount integer
+---@field renderedVertices integer
+---@field lightmapMaterialCountAgain integer
+---@field lightmapVertices integer
+---@field signature TagGroup
 
----@class ModelCollisionGeometryBSPEdge
----@field startVertex integer
----@field endVertex integer
----@field forwardEdge integer
----@field reverseEdge integer
----@field leftSurface integer
----@field rightSurface integer
+---@class ObjectChangeColors
+---@field darkenBy FunctionScaleBy
+---@field scaleBy FunctionScaleBy
+---@field flags ColorInterpolationFlags
+---@field color ColorRGB
+---@field permutations ObjectChangeColorsPermutation[]
 
----@class ShaderTransparentPlasmaColor
----@field specularProperties ShaderSpecularProperties
----@field tintColorSource FunctionNameNullable
+---@class ScenarioBiped
+---@field type integer
+---@field name integer
+---@field properties ScenarioUnitProperties
 
----@class ShaderTransparentGenericMapFlag
----@field vClamped boolean
----@field uClamped boolean
----@field unfiltered boolean
+---@class ModelRegionPermutationFlags
+---@field cannotBeChosenRandomly boolean
 
----@class ItemObject: DynamicObjectBase
----@field flags integer
----@field ticksUntilDetonation integer
----@field bspCollisionSurfaceId integer
----@field bspCollisionReferenceId integer
----@field droppedByUnit ObjectHandle
----@field lastUpdateTick integer
----@field collisionObject ObjectHandle
----@field collisionObjectPosition VectorXYZ
----@field unknownCollisionPosition VectorXYZ
----@field unknownCollisionAngle VectorPY
+---@class ScenarioStructureBSPRuntimeDecal
+---@field position VectorXYZ
+---@field decalType integer
+---@field yaw integer
+---@field pitch integer
 
----@class GarbageObject: ItemObject
----@field ticksUntilGarbageCollection integer
+---@class UnitPersistentControl
+---@field ticksRemaining integer
+---@field controlFlags UnitControlFlags
 
----@class EffectPartScalesValues
----@field typeSpecificScale boolean
----@field angularVelocityDelta boolean
----@field angularVelocity boolean
----@field velocityConeAngle boolean
----@field velocityDelta boolean
----@field velocity boolean
+---@alias EffectDistributionFunction
+---| "buildup_and_falloff"
+---| "falloff"
+---| "buildup"
+---| "constant"
+---| "end"
+---| "start"
 
----@class ProjectileNetwork
----@field unknown boolean
----@field baselineValid boolean
----@field baselineIndex integer
----@field messageIndex integer
----@field updateBaseline ProjectileNetworkData
----@field deltaValid boolean
----@field updateDelta ProjectileNetworkData
+---@alias ActorType
+---| "mounted_weapon"
+---| "none"
+---| "sentinel"
+---| "monitor"
+---| "carrier_form"
+---| "infection_form"
+---| "combat_form"
+---| "crew"
+---| "marine"
+---| "player"
+---| "assassin"
+---| "engineer"
+---| "hunter"
+---| "grunt"
+---| "jackal"
+---| "elite"
 
----@class GrenadeHUDInterface
----@field anchor HUDInterfaceAnchor
----@field canvasSize HUDInterfaceCanvasSize
----@field background HUDInterfaceStaticElement
----@field totalGrenadesBackground HUDInterfaceStaticElement
----@field totalGrenadesNumbers GrenadeHUDInterfaceTotalGrenadesNumberElement
----@field totalGrenadesOverlays GrenadeHUDInterfaceTotalGrenadesOverlays
----@field messagingInformation HUDInterfaceMessagingInformation
+---@class WeaponHUDInterfaceScreenEffect
+---@field maskFlags WeaponHUDInterfaceScreenEffectDefinitionMaskFlags
+---@field maskFullscreen TagReference
+---@field maskSplitscreen TagReference
+---@field convolutionFlags WeaponHUDInterfaceScreenEffectDefinitionMaskFlags
+---@field convolutionFovInBounds number[2]
+---@field convolutionRadiusOutBounds number[2]
+---@field evenMoreFlags WeaponHUDInterfaceScreenEffectDefinitionNightVisionFlags
+---@field nightVisionScriptSource integer
+---@field nightVisionIntensity number
+---@field desaturationFlags WeaponHUDInterfaceScreenEffectDefinitionDesaturationFlags
+---@field desaturationScriptSource integer
+---@field desaturationIntensity number
+---@field effectTint ColorRGB
 
----@class ScenarioStructureBSPGlobalMapLeaf
----@field faces ScenarioStructureBSPMapLeafFace[]
----@field portalIndices ScenarioStructureBSPMapLeafPortalIndex[]
+---@alias PhysicsFrictionType
+---| "up"
+---| "left"
+---| "forward"
+---| "point"
+
+---@class GlowColor
+---@field attachment FunctionOut
+---@field colorBound ColorARGB
+---@field scaleColor ColorARGB
+---@field colorRateOfChange number
+
+---@class PhysicsPoweredMassPoint
+---@field name string
+---@field flags PhysicsPoweredMassPointFlags
+---@field antigravStrength number
+---@field antigravOffset number
+---@field antigravHeight number
+---@field antigravDampFraction number
+---@field antigravNormalK1 number
+---@field antigravNormalK0 number
+
+---@class ScenarioEditorComment
+---@field position VectorXYZ
+---@field comment TagRawData
+
+---@class BitmapMoreProcessing
+---@field blurFilterSize number
+---@field alphaBias number
+---@field mipmapCount integer
+
+---@class ScenarioStructureBSPMaterialCompressedRenderedVertex
+---@field position VectorXYZ
+---@field normal integer
+---@field binormal integer
+---@field tangent integer
+---@field textureCoords VectorXY
+
+---@class GlobalsWeapon
+---@field weapon TagReference
+
+---@class ScenarioWeapon
+---@field type integer
+---@field name integer
+---@field placement ScenarioObjectPlacement
+---@field appearancePlayerIndex integer
+---@field roundsReserved integer
+---@field roundsLoaded integer
+---@field flags ScenarioItemFlags
+
+---@class PointPhysicsFlags
+---@field noGravity boolean
+---@field usesDampedWind boolean
+---@field usesSimpleWind boolean
+---@field collidesWithWaterSurface boolean
+---@field collidesWithStructures boolean
+---@field flamethrowerParticleCollision boolean
+
+---@alias HUDInterfaceCanvasSize
+---| "_960_p"
+---| "_480_p"
+
+---@class ScenarioStructureBSPMaterialUncompressedLightmapVertex
+---@field normal VectorXYZ
+---@field textureCoords VectorXY
+
+---@alias ItemFunctionIn
+---| "none"
+
+---@class BitmapDataFlags
+---@field environment boolean
+---@field external boolean
+---@field makeItActuallyWork boolean
+---@field runtimeCreated boolean
+---@field v16U16 boolean
+---@field linear boolean
+---@field swizzled boolean
+---@field palettized boolean
+---@field compressed boolean
+---@field powerOfTwoDimensions boolean
+
+---@class ScenarioStructureBSPMaterialCompressedLightmapVertex
+---@field normal integer
+---@field textureCoords integer
+
+---@alias SoundSampleRate
+---| "_44100_hz"
+---| "_22050_hz"
+
+---@class ShaderEnvironmentTextureScrollingAnimation
+---@field uAnimationFunction WaveFunction
+---@field uAnimationPeriod number
+---@field uAnimationScale number
+---@field vAnimationFunction WaveFunction
+---@field vAnimationPeriod number
+---@field vAnimationScale number
+
+---@class ModelAnimationsUnitSeatAnimation
+---@field animation integer
+
+---@class DamageEffectTemporaryCameraImpulse
+---@field duration number
+---@field fadeFunction FunctionType
+---@field rotation number
+---@field pushback number
+---@field jitter number[2]
+
+---@class ShaderEnvironmentSelfIllumination
+---@field flags IsUnfilteredFlag
+---@field primaryOnColor ColorRGB
+---@field primaryOffColor ColorRGB
+---@field primaryAnimationFunction WaveFunction
+---@field primaryAnimationPeriod number
+---@field primaryAnimationPhase number
+---@field secondaryOnColor ColorRGB
+---@field secondaryOffColor ColorRGB
+---@field secondaryAnimationFunction WaveFunction
+---@field secondaryAnimationPeriod number
+---@field secondaryAnimationPhase number
+---@field plasmaOnColor ColorRGB
+---@field plasmaOffColor ColorRGB
+---@field plasmaAnimationFunction WaveFunction
+---@field plasmaAnimationPeriod number
+---@field plasmaAnimationPhase number
+---@field mapScale number
+---@field map TagReference
+
+---@class ScenarioEquipmentPalette
+---@field name TagReference
+
+---@class HUDInterfaceNumberElement
+---@field position HUDInterfaceElementPosition
+---@field color HUDInterfaceElementColor
+---@field maximumNumberOfDigits integer
+---@field flags HUDInterfaceNumberFlags
+---@field numberOfFractionalDigits integer
+
+---@class HUDGlobalsAnniversaryRemap
+---@field sourceBitmap TagReference
+---@field targets HUDGlobalsAnniversaryRemapTarget[]
+
+---@class Lightning
+---@field count integer
+---@field nearFadeDistance number
+---@field farFadeDistance number
+---@field jitterScaleSource FunctionOut
+---@field thicknessScaleSource FunctionOut
+---@field tintModulationSource FunctionNameNullable
+---@field brightnessScaleSource FunctionOut
+---@field bitmap TagReference
+---@field markers LightningMarker[]
+---@field shader ShaderEffect[]
+
+---@class ScenarioAIConversationLine
+---@field flags ScenarioAIConversationLineFlags
+---@field participant integer
+---@field addressee ScenarioAddressee
+---@field addresseeParticipant integer
+---@field lineDelayTime number
+---@field variant1 TagReference
+---@field variant2 TagReference
+---@field variant3 TagReference
+---@field variant4 TagReference
+---@field variant5 TagReference
+---@field variant6 TagReference
+
+---@class ScenarioDecal
+---@field decalType integer
+---@field yaw integer
+---@field pitch integer
+---@field position VectorXYZ
+
+---@class GlobalsFirstPersonInterface
+---@field firstPersonHands TagReference
+---@field baseBitmap TagReference
+---@field shieldMeter TagReference
+---@field shieldMeterOrigin VectorXYInt
+---@field bodyMeter TagReference
+---@field bodyMeterOrigin VectorXYInt
+---@field nightVisionOnEffect TagReference
+---@field nightVisionOffEffect TagReference
+
+---@class ModelAnimationsDeviceAnimations
+---@field animations ModelAnimationsDeviceAnimation[]
+
+---@class ShaderTransparentWaterRipples
+---@field animationAngle number
+---@field animationVelocity number
+---@field scale number
+---@field maps TagReference
+---@field mipmapLevels integer
+---@field mipmapFadeFactor number
+---@field mipmapDetailBias number
+---@field ripples ShaderTransparentWaterRipple[]
 
 ---@class ModelCollisionGeometry
 ---@field flags ModelCollisionGeometryFlags
@@ -1345,256 +4295,1377 @@
 ---@field pathfindingSpheres ModelCollisionGeometrySphere[]
 ---@field nodes ModelCollisionGeometryNode[]
 
----@class GrenadeHUDInterfaceOverlayType
----@field showAlways boolean
----@field showOnDefault boolean
----@field showOnEmpty boolean
----@field showOnFlashing boolean
+---@alias ContrailRenderType
+---| "double_marker_linked"
+---| "viewer_facing"
+---| "ground_mapped"
+---| "media_mapped"
+---| "horizontal_orientation"
+---| "vertical_orientation"
 
----@class ShaderEffectFlags
----@field dontOverdrawFpWeapon boolean
----@field nonlinearTint boolean
----@field sortBias boolean
+---@class ModelCollisionGeometryModifier
 
----@class WeaponHUDInterfaceOverlayType
----@field showAlways boolean
----@field showOnDefault boolean
----@field showOnReloadOverheating boolean
----@field showOnEmpty boolean
----@field showOnFlashing boolean
+---@class ModelGeometryPart
+---@field flags ModelGeometryPartFlags
+---@field shaderIndex integer
+---@field prevFilthyPartIndex integer
+---@field nextFilthyPartIndex integer
+---@field centroidPrimaryNode integer
+---@field centroidSecondaryNode integer
+---@field centroidPrimaryWeight number
+---@field centroidSecondaryWeight number
+---@field centroid VectorXYZ
+---@field uncompressedVertices ModelVertexUncompressed[]
+---@field compressedVertices ModelVertexCompressed[]
+---@field triangleData ModelTriangleStripData[]
+---@field triangleBufferType TriangleBufferType
+---@field triangleCount integer
+---@field trianglePointer integer
+---@field trianglePointer2 integer
+---@field vertices ModelVertexReference
 
----@class ScenarioStructureBSPFogPlane
----@field frontRegion integer
----@field materialType MaterialType
----@field plane Plane3D
----@field vertices ScenarioStructureBSPFogPlaneVertex[]
+---@class ModelCollisionGeometryRegion
+---@field name string
+---@field flags ModelCollisionGeometryRegionFlags
+---@field damageThreshold number
+---@field destroyedEffect TagReference
+---@field permutations ModelCollisionGeometryPermutation[]
 
----@alias DeviceTriggersWhen
----| "destroyed"
----| "touched_by_player"
+---@class Sound
+---@field flags SoundFlags
+---@field soundClass SoundClass
+---@field sampleRate SoundSampleRate
+---@field distanceBounds number[2]
+---@field skipFraction number
+---@field randomPitchBounds number[2]
+---@field innerConeAngle number
+---@field outerConeAngle number
+---@field outerConeGain number
+---@field randomGainModifier number
+---@field maximumBendRate number
+---@field zeroSkipFractionModifier number
+---@field zeroGainModifier number
+---@field zeroPitchModifier number
+---@field oneSkipFractionModifier number
+---@field oneGainModifier number
+---@field onePitchModifier number
+---@field channelCount SoundChannelCount
+---@field format SoundFormat
+---@field promotionSound TagReference
+---@field promotionCount integer
+---@field longestPermutationLength integer
+---@field cumulativePromotionLength integer
+---@field lastPromotionTime integer
+---@field scriptedSoundRemainingTime integer
+---@field scriptedSoundIndex integer
+---@field pitchRanges SoundPitchRange[]
 
----@class ShaderEnvironmentSpecularFlags
----@field lightmapIsSpecular boolean
----@field extraShiny boolean
----@field overbright boolean
+---@class ScenarioSoundSceneryPalette
+---@field name TagReference
 
----@alias WeatherParticleSystemRenderDirectionSource
----| "from_acceleration"
----| "from_velocity"
+---@class Sky
+---@field model TagReference
+---@field animationGraph TagReference
+---@field indoorAmbientRadiosity SkyAmbientRadiosity
+---@field outdoorAmbientRadiosity SkyAmbientRadiosity
+---@field outdoorFog SkyFog
+---@field indoorFog SkyFog
+---@field indoorFogScreen TagReference
+---@field shaderFunctions SkyFunction[]
+---@field animations SkyAnimation[]
+---@field lights SkyLight[]
 
----@alias DecalType
----| "painted_sign"
----| "burn"
----| "splatter"
----| "scratch"
+---@class Meter
+---@field flags IsUnusedFlag
+---@field stencilBitmaps TagReference
+---@field sourceBitmap TagReference
+---@field stencilSequenceIndex integer
+---@field sourceSequenceIndex integer
+---@field interpolateColors MeterInterpolateColors
+---@field anchorColors MeterAnchorColors
+---@field emptyColor ColorARGB
+---@field fullColor ColorARGB
+---@field unmaskDistance number
+---@field maskDistance number
+---@field encodedStencil TagRawData
 
----@class ActorUnopposable
----@field unreachableDangerTrigger ActorUnreachableDangerTrigger
----@field vehicleDangerTrigger ActorUnreachableDangerTrigger
----@field playerDangerTrigger ActorUnreachableDangerTrigger
----@field dangerTriggerTime number[2]
----@field friendsKilledTrigger integer
----@field friendsRetreatingTrigger integer
----@field retreatTime number[2]
+---@class ActorVariant
+---@field flags ActorVariantFlags
+---@field actorDefinition TagReference
+---@field unit TagReference
+---@field majorVariant TagReference
+---@field metagameProperties MetagameProperties
+---@field movementSwitching ActorVariantMovementSwitching
+---@field rangedCombat ActorVariantRangedCombat
+---@field burstGeometry ActorVariantBurstGeometry
+---@field firingPatterns ActorVariantFiringPatterns
+---@field specialCaseFiringProperties ActorVariantSpecialCaseFiringProperties
+---@field berserkingAndMelee ActorVariantBerserkingAndMelee
+---@field grenades ActorVariantGrenades
+---@field items ActorVariantItems
+---@field unitProperties ActorVariantUnitProperties
 
----@class DecalAnimation
----@field animationLoopFrame integer
----@field animationSpeed integer
----@field lifetime number[2]
----@field decayTime number[2]
+---@class ScenarioStructureBSPGlobalLeafPortal
+---@field planeIndex integer
+---@field backLeafIndex integer
+---@field frontLeafIndex integer
+---@field vertices ScenarioStructureBSPLeafPortalVertex[]
 
----@class ObjectFlags
----@field doesNotHaveAnniversaryGeometry boolean
----@field castShadowByDefault boolean
----@field extensionOfParent boolean
----@field notAPathfindingObstacle boolean
----@field brighterThanItShouldBe boolean
----@field transparentSelfOcclusion boolean
----@field doesNotCastShadow boolean
+---@class ScenarioStructureBSPLeafPortalVertex
+---@field point VectorXYZ
 
----@class ActorVariantItems
----@field equipment TagReference
----@field grenadeCount integer[2]
----@field dontDropGrenadesChance number
----@field dropWeaponLoaded number[2]
----@field dropWeaponAmmo integer[2]
+---@class ShaderTransparentChicagoExtraFlags
+---@field customEditionBlending boolean
+---@field numericCountdownTimer boolean
+---@field dontFadeActiveCamouflage boolean
 
----@class UIWidgetDefinitionFlags
----@field forceHandleMouse boolean
----@field dontPushHistory boolean
----@field alwaysUseNiftyRenderFx boolean
----@field alwaysUseTagControllerIndex boolean
----@field returnToMainMenuIfNoHistory boolean
----@field passHandledEventsToAllChildren boolean
----@field renderRegardlessOfControllerIndex boolean
----@field passUnhandledEventsToAllChildren boolean
----@field dontFocusASpecificChildWidget boolean
----@field dpadLeftRightTabsThruListItems boolean
----@field dpadUpDownTabsThruListItems boolean
----@field dpadLeftRightTabsThruChildren boolean
----@field dpadUpDownTabsThruChildren boolean
----@field flashBackgroundBitmap boolean
----@field pauseGameTime boolean
----@field passUnhandledEventsToFocusedChild boolean
+---@class SoundPermutation
+---@field name string
+---@field skipFraction number
+---@field gain number
+---@field format SoundFormat
+---@field nextPermutationIndex integer
+---@field samplesPointer integer
+---@field tagId0 TagHandle
+---@field bufferSize integer
+---@field tagId1 TagHandle
+---@field samples TagRawData
+---@field mouthData TagRawData
+---@field subtitleData TagRawData
 
----@class VectorPY
----@field pitch number
----@field yaw number
+---@class PhysicsPoweredMassPointFlags
+---@field antigrav boolean
+---@field thrust boolean
+---@field airLift boolean
+---@field waterLift boolean
+---@field airFriction boolean
+---@field waterFriction boolean
+---@field groundFriction boolean
 
----@class Wind
----@field velocity number[2]
----@field variationArea VectorPY
----@field localVariationWeight number
----@field localVariationRate number
----@field damping number
+---@class ObjectWidget
+---@field reference TagReference
 
----@class SoundLoopingFlags
----@field siegeOfMadrigal boolean
----@field stopsMusic boolean
----@field notALoop boolean
----@field deafeningToAis boolean
+---@class ActorCommunication
+---@field noncombatIdleSpeechTime number[2]
+---@field combatIdleSpeechTime number[2]
+---@field neverUse TagReference
 
----@class UIWidgetDefinitionFlags2
----@field listSinglePreviewNoScroll boolean
----@field listItemsOnlyOneTooltip boolean
----@field listItemsFromStringListTag boolean
----@field listItemsGeneratedInCode boolean
+---@class ScenarioStructureBSPSurfaceReference
+---@field surface integer
+---@field node integer
 
----@alias ScenarioScriptValueType
----| "scenery_name"
----| "device_name"
----| "weapon_name"
----| "vehicle_name"
----| "unit_name"
----| "object_name"
----| "scenery"
----| "device"
----| "weapon"
----| "vehicle"
----| "unit"
----| "object"
----| "hud_corner"
----| "actor_type"
----| "ai_default_state"
----| "team"
----| "game_difficulty"
----| "object_definition"
----| "damage_effect"
----| "actor_variant"
----| "animation_graph"
----| "looping_sound"
----| "damage"
----| "effect"
----| "sound"
----| "object_list"
----| "hud_message"
----| "navpoint"
----| "conversation"
----| "starting_profile"
----| "ai_command_list"
----| "ai"
----| "device_group"
----| "cutscene_recording"
----| "cutscene_title"
----| "cutscene_camera_point"
----| "cutscene_flag"
----| "trigger_volume"
----| "script"
----| "string"
----| "long"
----| "short"
----| "real"
----| "boolean"
----| "void"
----| "passthrough"
----| "function_name"
----| "special_form"
----| "unparsed"
+---@class HUDGlobalsWaypointArrowFlags
+---@field dontRotateWhenPointingOffscreen boolean
+
+---@class ScenarioLightFixture
+---@field type integer
+---@field name integer
+---@field placement ScenarioObjectPlacement
+---@field bspIndices integer
+---@field appearancePlayerIndex integer
+---@field powerGroup integer
+---@field positionGroup integer
+---@field deviceFlags ScenarioDeviceFlags
+---@field color ColorRGB
+---@field intensity number
+---@field falloffAngle number
+---@field cutoffAngle number
+
+---@class ModelAnimationsFrameInfoDxDyDzDyaw
+---@field dx number
+---@field dy number
+---@field dz number
+---@field dyaw number
+
+---@class ScenarioStructureBSPSurface
+---@field vertex0Index integer
+---@field vertex1Index integer
+---@field vertex2Index integer
+
+---@class ScenarioStructureBSPFogPalette
+---@field name string
+---@field fog TagReference
+---@field fogScaleFunction string
+
+---@class ScenarioDeviceGroupFlags
+---@field canChangeOnlyOnce boolean
+
+---@class DeviceMachineObjectFlags
+---@field openedByMeleeAttack boolean
+---@field neverAppearsLocked boolean
+---@field machineOneSided boolean
+---@field doesNotOperateAutomatically boolean
+
+---@class ScenarioStructureBSPClusterPortal
+---@field frontCluster integer
+---@field backCluster integer
+---@field planeIndex integer
+---@field centroid VectorXYZ
+---@field boundingRadius number
+---@field flags ScenarioStructureBSPClusterPortalFlags
+---@field vertices ScenarioStructureBSPClusterPortalVertex[]
+
+---@class DecalShader
+---@field framebufferBlendFunction FramebufferBlendFunction
+---@field map TagReference
+
+---@class ScenarioDeviceGroup
+---@field name string
+---@field initialValue number
+---@field flags ScenarioDeviceGroupFlags
+
+---@class EffectParticleFlags
+---@field acrossTheLongHuePath boolean
+---@field interpolateTintAsHsv boolean
+---@field tintFromObjectColor boolean
+---@field randomInitialAngle boolean
+---@field stayAttachedToMarker boolean
+
+---@class CameraTrack
+---@field flags IsUnusedFlag
+---@field controlPoints CameraTrackControlPoint[]
+
+---@class DetailObjectCollectionTypeFlags
+---@field moreColors boolean
+---@field interpolateColorInHsv boolean
+---@field unused1 boolean
+---@field unused boolean
+
+---@class VehicleFlags
+---@field autoaimWhenTeamless boolean
+---@field canTriggerAutomaticOpeningDoors boolean
+---@field noFrictionWithDriver boolean
+---@field noncombatVehicle boolean
+---@field hasEbrake boolean
+---@field unused boolean
+---@field vehicleSteersDirectly boolean
+---@field aiDriverHovering boolean
+---@field aiDriverCanSidestep boolean
+---@field aiDriverFlying boolean
+---@field aiDriverEnable boolean
+---@field aiUnused boolean
+---@field aiDoesNotRequireDriver boolean
+---@field aiWeaponCannotRotate boolean
+---@field causesCollisionDamage boolean
+---@field killsRidersAtTerminalVelocity boolean
+---@field slideWakesPhysics boolean
+---@field controlOppositeSpeedSetsBrake boolean
+---@field gunnerPowerWakesPhysics boolean
+---@field driverPowerWakesPhysics boolean
+---@field turnWakesPhysics boolean
+---@field speedWakesPhysics boolean
+
+---@class HUDInterfaceMultitextureOverlayEffector
+---@field destinationType HUDInterfaceDestinationType
+---@field destination HUDInterfaceDestination
+---@field source HUDInterfaceSource
+---@field inBounds number[2]
+---@field outBounds number[2]
+---@field tint ColorRGB
+---@field periodicFunction WaveFunction
+---@field functionPeriod number
+---@field functionPhase number
+
+---@class ActorVariantFiringPatterns
+---@field newTargetBurstDuration number
+---@field newTargetBurstSeparation number
+---@field newTargetRateOfFire number
+---@field newTargetProjectileError number
+---@field movingBurstDuration number
+---@field movingBurstSeparation number
+---@field movingRateOfFire number
+---@field movingProjectileError number
+---@field berserkBurstDuration number
+---@field berserkBurstSeparation number
+---@field berserkRateOfFire number
+---@field berserkProjectileError number
+
+---@class ScenarioStructureBSPPathfindingSurface
+---@field data integer
+
+---@class CameraTrackControlPoint
+---@field position VectorXYZ
+---@field orientation Quaternion
+
+---@class Equipment: Item
+---@field powerupType EquipmentPowerupType
+---@field grenadeType GrenadeType
+---@field powerupTime number
+---@field pickupSound TagReference
+
+---@class ScenarioAIConversation
+---@field name string
+---@field flags ScenarioAIConversationFlags
+---@field triggerDistance number
+---@field runToPlayerDist number
+---@field participants ScenarioAIConversationParticipant[]
+---@field lines ScenarioAIConversationLine[]
+
+---@class ModelAnimationsUnitDamageAnimations
+---@field animation integer
+
+---@alias ScenarioType
+---| "user_interface"
+---| "multiplayer"
+---| "singleplayer"
+
+---@class Placeholder: BasicObject
+
+---@class ShaderModelChangeColor
+---@field changeColorSource FunctionNameNullable
+
+---@class ScenarioEquipment
+---@field type integer
+---@field name integer
+---@field placement ScenarioObjectPlacement
+---@field miscFlags ScenarioItemFlags
+---@field appearancePlayerIndex integer
+
+---@class ScenarioStructureBSPLightmap
+---@field bitmap integer
+---@field materials ScenarioStructureBSPMaterial[]
+
+---@class TagReference
+---@field tagGroup TagGroup
+---@field tagHandle TagHandle
+
+---@alias ScenarioTeamIndex
+---| "unused_9"
+---| "unused_8"
+---| "unused_7"
+---| "unused_6"
+---| "sentinel"
+---| "flood"
+---| "covenant"
+---| "human"
+---| "player"
+---| "default_by_unit"
+
+---@class Font
+---@field flags FontFlags
+---@field ascendingHeight integer
+---@field descendingHeight integer
+---@field leadingHeight integer
+---@field leadingWidth integer
+---@field encodingType FontEncodingType
+---@field characterOffset integer
+---@field characterTables FontCharacterTables[]
+---@field bold TagReference
+---@field italic TagReference
+---@field condense TagReference
+---@field underline TagReference
+---@field characters FontCharacter[]
+---@field pixels TagRawData
+
+---@class WeaponHUDInterfaceCrosshairOverlay
+---@field position HUDInterfaceElementPosition
+---@field color HUDInterfaceElementColor
+---@field frameRate integer
+---@field sequenceIndex integer
+---@field flags WeaponHUDInterfaceCrosshairOverlayFlags
+
+---@class HUDInterfaceMeterFlags
+---@field useXboxShading boolean
+---@field invertInterpolation boolean
+---@field moreColorsForHsvInterpolation boolean
+---@field interpolateColorAlongHsvSpace boolean
+---@field interpolateBetweenMinMaxFlashColorsAsStateChanges boolean
+---@field useMinMaxForStateChanges boolean
+
+---@class ScenarioRecordedAnimation
+---@field name string
+---@field version integer
+---@field rawAnimationData integer
+---@field unitControlDataVersion integer
+---@field lengthOfAnimation integer
+---@field recordedAnimationEventStream TagRawData
+
+---@class LightVolumeFrame
+---@field offsetFromMarker number
+---@field offsetExponent number
+---@field length number
+---@field radiusHither number
+---@field radiusYon number
+---@field radiusExponent number
+---@field tintColorHither ColorARGB
+---@field tintColorYon ColorARGB
+---@field tintColorExponent number
+---@field brightnessExponent number
+
+---@class ShaderTransparentGlassFlags
+---@field bumpMapIsSpecularMask boolean
+---@field twoSided boolean
+---@field decal boolean
+---@field alphaTested boolean
+
+---@alias HUDInterfaceChildAnchor
+---| "right_center"
+---| "left_center"
+---| "bottom_center"
+---| "top_center"
+---| "center"
+---| "bottom_right"
+---| "bottom_left"
+---| "top_right"
+---| "top_left"
+---| "from_parent"
+
+---@class ScenarioStructureBSPLeaf
+---@field vertices integer[3]
+---@field cluster integer
+---@field surfaceReferenceCount integer
+---@field surfaceReferences integer
+
+---@class EffectLocation
+---@field markerName string
+
+---@class BaseObjectFlags
+---@field offInPegasus boolean
+
+---@alias MachineType
+---| "gear"
+---| "platform"
+---| "door"
+
+---@class EffectEvent
+---@field skipFraction number
+---@field delayBounds number[2]
+---@field durationBounds number[2]
+---@field parts EffectPart[]
+---@field particles EffectParticle[]
+
+---@class UnitHUDInterfaceAuxiliaryPanel
+---@field type UnitHUDInterfacePanelType
+---@field background HUDInterfaceStaticElement
+---@field meter HUDInterfaceMeterElement
+---@field minimumFractionCutoff number
+---@field moreFlags UnitHUDInterfaceAuxiliaryPanelMeterMoreFlags
+
+---@class Bounds2D
+---@field left number
+---@field right number
+---@field top number
+---@field bottom number
+
+---@class EffectPart
+---@field createIn EffectCreateIn
+---@field violenceMode EffectViolenceMode
+---@field location integer
+---@field flags EffectPartFlags
+---@field typeIdentifier TagGroup
+---@field type TagReference
+---@field velocityBounds number[2]
+---@field velocityConeAngle number
+---@field angularVelocityBounds number[2]
+---@field radiusModifierBounds number[2]
+---@field aScalesValues EffectPartScalesValues
+---@field bScalesValues EffectPartScalesValues
+
+---@alias VirtualKeyboardKeyboardKey
+---| "space"
+---| "right"
+---| "left"
+---| "backspace"
+---| "symbols"
+---| "caps_lock"
+---| "shift"
+---| "done"
+---| "z"
+---| "y"
+---| "x"
+---| "w"
+---| "v"
+---| "u"
+---| "t"
+---| "s"
+---| "r"
+---| "q"
+---| "p"
+---| "o"
+---| "n"
+---| "m"
+---| "l"
+---| "k"
+---| "j"
+---| "i"
+---| "h"
+---| "g"
+---| "f"
+---| "e"
+---| "d"
+---| "c"
+---| "b"
+---| "a"
+---| "_0"
+---| "_9"
+---| "_8"
+---| "_7"
+---| "_6"
+---| "_5"
+---| "_4"
+---| "_3"
+---| "_2"
+---| "_1"
+
+---@class ModelAnimationsScale
+---@field scale number
+
+---@class Object
+---@field type ObjectType
+---@field flags ObjectFlags
+---@field boundingRadius number
+---@field boundingOffset VectorXYZ
+---@field originOffset VectorXYZ
+---@field accelerationScale number
+---@field runtimeFlags ObjectRuntimeFlags
+---@field model TagReference
+---@field animationGraph TagReference
+---@field collisionModel TagReference
+---@field physics TagReference
+---@field modifierShader TagReference
+---@field creationEffect TagReference
+---@field renderBoundingRadius number
+---@field aIn ObjectFunctionIn
+---@field bIn ObjectFunctionIn
+---@field cIn ObjectFunctionIn
+---@field dIn ObjectFunctionIn
+---@field hudTextMessageIndex integer
+---@field forcedShaderPermutationIndex integer
+---@field attachments ObjectAttachment[]
+---@field widgets ObjectWidget[]
+---@field functions ObjectFunction[]
+---@field changeColors ObjectChangeColors[]
+---@field predictedResources PredictedResource[]
+
+---@class ColorTableColor
+---@field name string
+---@field color ColorARGB
+
+---@alias ShaderFirstMapType
+---| "first_map_is_viewer_centered_cube_map"
+---| "first_map_is_object_centered_cube_map"
+---| "first_map_is_reflection_cube_map"
+---| "_2d_map"
+
+---@class ShaderTransparentChicago: Shader
+---@field properties ShaderTransparentProperties
+---@field maps ShaderTransparentChicagoMap[]
+---@field extraFlags ShaderTransparentChicagoExtraFlags
+
+---@alias ProjectileDetonationTimerStarts
+---| "when_at_rest"
+---| "after_first_bounce"
+---| "immediately"
+
+---@class ScenarioSky
+---@field sky TagReference
+
+---@alias SoundClass
+---| "game_event"
+---| "unused_19"
+---| "unused_18"
+---| "scripted_dialog_force_unspatialized"
+---| "scripted_dialog_other"
+---| "scripted_effect"
+---| "scripted_dialog_player"
+---| "unused_17"
+---| "unused_16"
+---| "unused_15"
+---| "unused_14"
+---| "first_person_damage"
+---| "unused_13"
+---| "unused_12"
+---| "unused_11"
+---| "ambient_computers"
+---| "ambient_machinery"
+---| "ambient_nature"
+---| "music"
+---| "unused_10"
+---| "device_computers"
+---| "device_nature"
+---| "device_machinery"
+---| "device_force_field"
+---| "device_door"
+---| "unused_9"
+---| "unused_8"
+---| "vehicle_engine"
+---| "vehicle_collision"
+---| "unused_7"
+---| "unused_6"
+---| "unit_dialog"
+---| "unit_footsteps"
+---| "unused_5"
+---| "unused_4"
+---| "slow_particle_impacts"
+---| "particle_impacts"
+---| "object_impacts"
+---| "unused_3"
+---| "unused_2"
+---| "weapon_idle"
+---| "weapon_overheat"
+---| "weapon_charge"
+---| "weapon_empty"
+---| "weapon_reload"
+---| "weapon_ready"
+---| "weapon_fire"
+---| "unused_1"
+---| "unused"
+---| "projectile_detonation"
+---| "projectile_impact"
+
+---@class GameDataInputReference
+---@field function UIGameDataInputReferenceFunction
+
+---@class ScenarioStructureBSPWeatherPolyhedron
+---@field boundingSphereCenter VectorXYZ
+---@field boundingSphereRadius number
+---@field planes ScenarioStructureBSPWeatherPolyhedronPlane[]
+
+---@class DetailObjectCollectionObjectType
+---@field name string
+---@field sequenceIndex integer
+---@field flags DetailObjectCollectionTypeFlags
+---@field firstSpriteIndex integer
+---@field spriteCount integer
+---@field colorOverrideFactor number
+---@field nearFadeDistance number
+---@field farFadeDistance number
+---@field size number
+---@field minimumColor ColorRGB
+---@field maximumColor ColorRGB
+---@field ambientColor integer
+
+---@class FogScreenFlags
+---@field noTextureBasedFalloff boolean
+---@field noModelMultipass boolean
+---@field noEnvironmentMultipass boolean
 
 ---@class ObjectFunctionFlags
 ---@field alwaysActive boolean
 ---@field additive boolean
 ---@field invert boolean
 
----@alias HUDGlobalsAnniversaryRemapTargetLanguage
----| "simplified_chinese"
----| "russian"
----| "polish"
----| "latam_spanish"
----| "portuguese"
----| "korean"
----| "japanese"
----| "traditional_chinese"
----| "german"
----| "italian"
----| "spanish"
----| "french"
----| "english"
+---@class Light
+---@field flags LightFlags
+---@field shape LightShape
+---@field color LightColor
+---@field gel LightGel
+---@field lensFlare LightLensFlare
+---@field radiosity LightRadiosity
+---@field effectParameters LightEffectParameters
 
----@class HUDGlobalsCrap
----@field defaultWeaponHud TagReference
----@field motionSensorRange number
----@field motionSensorVelocitySensitivity number
----@field motionSensorScale number
----@field defaultChapterTitleBounds Rectangle2D
+---@class GlobalsLookFunction
+---@field scale number
 
----@class ModelAnimationsAnimationGraphWeaponAnimations
----@field animations ModelAnimationsWeaponAnimation[]
+---@class BitmapSpriteBudget
+---@field size BitmapSpriteBudgetSize
+---@field count integer
 
----@class ParticleSystemTypeFlags
----@field doNotDrawInThirdPerson boolean
----@field doNotDrawInFirstPerson boolean
----@field rotationRateScalesWithEffect boolean
----@field animationRateScalesWithEffect boolean
----@field scaleScalesWithEffect boolean
----@field creationRateScalesWithEffect boolean
----@field minimumCountScalesWithEffect boolean
----@field initialCountScalesWithEffect boolean
----@field tintByEffectColor boolean
----@field disabled boolean
----@field rotationalSpritesAnimateSideways boolean
----@field particlesDieOnGround boolean
----@field particlesDieInAir boolean
----@field particlesDieInWater boolean
----@field forwardBackward1 boolean
----@field particleStatesLoop boolean
----@field forwardBackward boolean
----@field typeStatesLoop boolean
+---@class ActorVariantGrenades
+---@field grenadeType GrenadeType
+---@field trajectoryType ActorVariantTrajectoryType
+---@field grenadeStimulus ActorVariantGrenadeStimulus
+---@field minimumEnemyCount integer
+---@field enemyRadius number
+---@field grenadeVelocity number
+---@field grenadeRanges number[2]
+---@field collateralDamageRadius number
+---@field grenadeChance number
+---@field grenadeCheckTime number
+---@field encounterGrenadeTimeout number
+
+---@class ShaderTransparentGlassDiffuse
+---@field diffuseMapScale number
+---@field diffuseMap TagReference
+---@field diffuseDetailMapScale number
+---@field diffuseDetailMap TagReference
+
+---@class ShaderTransparentGlass: Shader
+---@field properties ShaderTransparentGlassBase
+---@field backgroundTint ShaderTransparentGlassBackgroundTint
+---@field reflection ShaderTransparentGlassReflection
+---@field diffuse ShaderTransparentGlassDiffuse
+---@field specular ShaderTransparentGlassSpecular
+
+---@class GlobalsInterfaceBitmaps
+---@field fontSystem TagReference
+---@field fontTerminal TagReference
+---@field screenColorTable TagReference
+---@field hudColorTable TagReference
+---@field editorColorTable TagReference
+---@field dialogColorTable TagReference
+---@field hudGlobals TagReference
+---@field motionSensorSweepBitmap TagReference
+---@field motionSensorSweepBitmapMask TagReference
+---@field multiplayerHudBitmap TagReference
+---@field localization TagReference
+---@field hudDigitsDefinition TagReference
+---@field motionSensorBlipBitmap TagReference
+---@field interfaceGooMap1 TagReference
+---@field interfaceGooMap2 TagReference
+---@field interfaceGooMap3 TagReference
+
+---@class ActorVariantFlags
+---@field preferPassengerSeat boolean
+---@field cannotUseRangedWeapons boolean
+---@field superActiveCamouflage boolean
+---@field activeCamouflage boolean
+---@field movementSwitchingTryToStayWithFriends boolean
+---@field hasUnlimitedGrenades boolean
+---@field interpolateColorInHsv boolean
+---@field canShootWhileFlying boolean
+
+---@class ShaderTransparentGlassBase
+---@field shaderTransparentGlassFlags ShaderTransparentGlassFlags
+
+---@class UIWidgetDefinition
+---@field widgetType UIWidgetType
+---@field controllerIndex UIControllerIndex
+---@field name string
+---@field bounds Rectangle2D
+---@field flags UIWidgetDefinitionFlags
+---@field millisecondsToAutoClose integer
+---@field millisecondsAutoCloseFadeTime integer
+---@field backgroundBitmap TagReference
+---@field gameDataInputs GameDataInputReference[]
+---@field eventHandlers EventHandlerReference[]
+---@field searchAndReplaceFunctions SearchAndReplaceReference[]
+---@field textLabelUnicodeStringsList TagReference
+---@field textFont TagReference
+---@field textColor ColorARGB
+---@field justification UIJustification
+---@field flags1 UIWidgetDefinitionFlags1
+---@field stringListIndex integer
+---@field horizOffset integer
+---@field vertOffset integer
+---@field flags2 UIWidgetDefinitionFlags2
+---@field listHeaderBitmap TagReference
+---@field listFooterBitmap TagReference
+---@field headerBounds Rectangle2D
+---@field footerBounds Rectangle2D
+---@field extendedDescriptionWidget TagReference
+---@field conditionalWidgets ConditionalWidgetReference[]
+---@field childWidgets ChildWidgetReference[]
+
+---@class ContrailPointState
+---@field duration number[2]
+---@field transitionDuration number[2]
+---@field physics TagReference
+---@field width number
+---@field color ColorARGB
+---@field scaleFlags ContrailPointStateScaleFlags
+
+---@class UnitHUDInterfaceHUDSoundLatchedTo
+---@field healthMajorDamage boolean
+---@field healthMinorDamage boolean
+---@field healthEmpty boolean
+---@field healthLow boolean
+---@field shieldEmpty boolean
+---@field shieldLow boolean
+---@field shieldDamaged boolean
+---@field shieldRecharging boolean
+
+---@class ScenarioDetailObjectCollectionPalette
+---@field reference TagReference
+
+---@class ShaderModelMaps
+---@field mapUScale number
+---@field mapVScale number
+---@field baseMap TagReference
+---@field multipurposeMap TagReference
+---@field detailFunction ShaderDetailFunction
+---@field detailMask ShaderModelDetailMask
+---@field detailMapScale number
+---@field detailMap TagReference
+---@field detailMapVScale number
+
+---@class ActorVariantBurstGeometry
+---@field burstOriginRadius number
+---@field burstOriginAngle number
+---@field burstReturnLength number[2]
+---@field burstReturnAngle number
+---@field burstDuration number[2]
+---@field burstSeparation number[2]
+---@field burstAngularVelocity number
+---@field specialDamageModifier number
+---@field specialProjectileError number
+
+---@class Contrail
+---@field flags ContrailFlags
+---@field scaleFlags ContrailScaleFlags
+---@field pointGenerationRate number
+---@field pointVelocity number[2]
+---@field pointVelocityConeAngle number
+---@field inheritedVelocityFraction number
+---@field renderType ContrailRenderType
+---@field textureRepeatsU number
+---@field textureRepeatsV number
+---@field textureAnimationU number
+---@field textureAnimationV number
+---@field animationRate number
+---@field bitmap TagReference
+---@field firstSequenceIndex integer
+---@field sequenceCount integer
+---@field shader ShaderEffect
+---@field pointStates ContrailPointState[]
+
+---@class ScenarioSceneryPalette
+---@field name TagReference
+
+---@class ChildWidgetReference
+---@field widgetTag TagReference
+---@field name string
+---@field flags ChildWidgetReferenceFlags
+---@field customControllerIndex integer
+---@field verticalOffset integer
+---@field horizontalOffset integer
+
+---@class ProjectileMaterialResponseFlags
+---@field cannotBeOverpenetrated boolean
+
+---@class ScenarioSoundScenery
+---@field type integer
+---@field name integer
+---@field placement ScenarioObjectPlacement
+---@field appearancePlayerIndex integer
+
+---@class DamageEffectMaterialModifier
+---@field dirt number
+---@field sand number
+---@field stone number
+---@field snow number
+---@field wood number
+---@field metalHollow number
+---@field metalThin number
+---@field metalThick number
+---@field rubber number
+---@field glass number
+---@field forceField number
+---@field grunt number
+---@field hunterArmor number
+---@field hunterSkin number
+---@field elite number
+---@field jackal number
+---@field jackalEnergyShield number
+---@field engineerSkin number
+---@field engineerForceField number
+---@field floodCombatForm number
+---@field floodCarrierForm number
+---@field cyborgArmor number
+---@field cyborgEnergyShield number
+---@field humanArmor number
+---@field humanSkin number
+---@field sentinel number
+---@field monitor number
+---@field plastic number
+---@field water number
+---@field leaves number
+---@field eliteEnergyShield number
+---@field ice number
+---@field hunterShield number
+
+---@class ScenarioAIConversationParticipant
+---@field flags ScenarioAIConversationParticipantFlags
+---@field selectionType ScenarioSelectionType
+---@field actorType ActorType
+---@field useThisObject integer
+---@field setNewName integer
+---@field variantNumbers integer[6]
+---@field encounterName string
+---@field encounterIndex integer
+
+---@class ShaderTransparentGlassSpecular
+---@field specularMapScale number
+---@field specularMap TagReference
+---@field specularDetailMapScale number
+---@field specularDetailMap TagReference
 
 ---@class BitmapColorPlate
 ---@field width integer
 ---@field height integer
 ---@field compressedData TagRawData
 
----@class GlobalsSound
----@field sound TagReference
+---@alias FramebufferFadeMode
+---| "fade_when_parallel"
+---| "fade_when_perpendicular"
+---| "none"
 
----@class ScenarioObjectPlacement
----@field notPlaced ScenarioSpawnNotPlaced
----@field desiredPermutation integer
----@field position VectorXYZ
----@field rotation VectorPYR
+---@class ModelAnimationsAnimationFlags
+---@field _25HzPal boolean
+---@field worldRelative boolean
+---@field compressedData boolean
 
----@alias ShaderTransparentGenericStageOutputMapping
----| "color_expand_normal"
----| "color_bias_by_1_2"
----| "color_scale_by_4"
----| "color_scale_by_2"
----| "color_scale_by_1_2"
----| "color_identity"
+---@class HUDGlobalsObjectiveColors
+---@field properties HUDInterfaceElementColor
+---@field uptimeTicks integer
+---@field fadeTicks integer
 
----@alias FunctionType
----| "cosine"
----| "very_late"
----| "late"
----| "very_early"
----| "early"
----| "linear"
+---@class ShaderTransparentMeterFlags
+---@field unfiltered boolean
+---@field tintMode2 boolean
+---@field flashColorIsNegative boolean
+---@field twoSided boolean
+---@field decal boolean
 
----@class HUDInterfaceOverlayFlashFlags
----@field flashesWhenActive boolean
+---@alias ShaderEnvironmentType
+---| "blended_base_specular"
+---| "blended"
+---| "normal"
 
----@alias ShaderTransparentGenericStageInputColor
+---@class Weapon: Item
+---@field weaponFlags WeaponFlags
+---@field label string
+---@field secondaryTriggerMode WeaponSecondaryTriggerMode
+---@field maximumAlternateShotsLoaded integer
+---@field weaponAIn WeaponFunctionIn
+---@field weaponBIn WeaponFunctionIn
+---@field weaponCIn WeaponFunctionIn
+---@field weaponDIn WeaponFunctionIn
+---@field readyTime number
+---@field readyEffect TagReference
+---@field heatRecoveryThreshold number
+---@field overheatedThreshold number
+---@field heatDetonationThreshold number
+---@field heatDetonationFraction number
+---@field heatLossRate number
+---@field heatIllumination number
+---@field overheated TagReference
+---@field overheatDetonation TagReference
+---@field playerMeleeDamage TagReference
+---@field playerMeleeResponse TagReference
+---@field actorFiringParameters TagReference
+---@field nearReticleRange number
+---@field farReticleRange number
+---@field intersectionReticleRange number
+---@field zoomLevels integer
+---@field zoomMagnificationRange number[2]
+---@field autoaimAngle number
+---@field autoaimRange number
+---@field magnetismAngle number
+---@field magnetismRange number
+---@field deviationAngle number
+---@field movementPenalized WeaponMovementPenalized
+---@field forwardMovementPenalty number
+---@field sidewaysMovementPenalty number
+---@field minimumTargetRange number
+---@field lookingTimeModifier number
+---@field lightPowerOnTime number
+---@field lightPowerOffTime number
+---@field lightPowerOnEffect TagReference
+---@field lightPowerOffEffect TagReference
+---@field ageHeatRecoveryPenalty number
+---@field ageRateOfFirePenalty number
+---@field ageMisfireStart number
+---@field ageMisfireChance number
+---@field firstPersonModel TagReference
+---@field firstPersonAnimations TagReference
+---@field hudInterface TagReference
+---@field pickupSound TagReference
+---@field zoomInSound TagReference
+---@field zoomOutSound TagReference
+---@field activeCamoDing number
+---@field activeCamoRegrowthRate number
+---@field weaponType WeaponType
+---@field morePredictedResources PredictedResource[]
+---@field magazines WeaponMagazine[]
+---@field triggers WeaponTrigger[]
+
+---@class ScenarioStructureBSPGlobalDetailObject
+---@field positionX integer
+---@field positionY integer
+---@field positionZ integer
+---@field data integer
+---@field color integer
+
+---@class EffectPartFlags
+---@field makeEffectWork boolean
+---@field unused boolean
+---@field faceDownRegardlessOfLocationDecals boolean
+
+---@class SkyLight
+---@field lensFlare SkyLightLensFlare
+---@field radiosity SkyLightRadiosity
+
+---@class SkyLightRadiosity
+---@field flags SkyLightFlags
+---@field color ColorRGB
+---@field power number
+---@field testDistance number
+---@field direction VectorPY
+---@field diameter number
+
+---@class SkyAnimation
+---@field animationIndex integer
+---@field period number
+
+---@class SkyFog
+---@field color ColorRGB
+---@field maximumDensity number
+---@field startDistance number
+---@field opaqueDistance number
+
+---@alias FunctionScaleBy
+---| "d_out"
+---| "c_out"
+---| "b_out"
+---| "a_out"
+---| "d_in"
+---| "c_in"
+---| "b_in"
+---| "a_in"
+---| "none"
+
+---@class UnitHUDInterfaceAuxiliaryPanelMeterMoreFlags
+---@field flashOnceIfActivatedWhileDisabled boolean
+---@field showOnlyWhenActive boolean
+
+---@class ModelCollisionGeometryMaterial
+---@field name string
+---@field flags ModelCollisionGeometryMaterialFlags
+---@field materialType MaterialType
+---@field shieldLeakPercentage number
+---@field shieldDamageMultiplier number
+---@field bodyDamageMultiplier number
+
+---@alias DeviceIn
+---| "delay"
+---| "locked"
+---| "change_in_position"
+---| "position"
+---| "change_in_power"
+---| "power"
+---| "none"
+
+---@class VectorIJ
+---@field i integer
+---@field j integer
+
+---@class GlobalsGrenade
+---@field maximumCount integer
+---@field mpSpawnDefault integer
+---@field throwingEffect TagReference
+---@field hudInterface TagReference
+---@field equipment TagReference
+---@field projectile TagReference
+
+---@class PointPhysics
+---@field flags PointPhysicsFlags
+---@field massScale number
+---@field waterGravityScale number
+---@field airGravityScale number
+---@field density number
+---@field airFriction number
+---@field waterFriction number
+---@field surfaceFriction number
+---@field elasticity number
+
+---@class SoundPitchRange
+---@field name string
+---@field naturalPitch number
+---@field bendBounds number[2]
+---@field actualPermutationCount integer
+---@field playbackRate number
+---@field usedPermutations integer
+---@field lastPermutationIndex integer
+---@field nextPermutationIndex integer
+---@field permutations SoundPermutation[]
+
+---@class DecalProperties
+---@field flags DecalFlags
+---@field type DecalType
+---@field layer DecalLayer
+---@field nextDecalInChain TagReference
+
+---@class GrenadeHUDInterfaceOverlay
+---@field position HUDInterfaceElementPosition
+---@field color HUDInterfaceElementColor
+---@field frameRate number
+---@field sequenceIndex integer
+---@field type GrenadeHUDInterfaceOverlayType
+---@field flags HUDInterfaceOverlayFlashFlags
+
+---@alias GlowBoundaryEffect
+---| "wrap"
+---| "bounce"
+
+---@class ScenarioStructureBSPMapLeafFaceVertex
+---@field vertex VectorXY
+
+---@class ScenarioMachineFlags
+---@field openedByMeleeAttack boolean
+---@field neverAppearsLocked boolean
+---@field oneSided boolean
+---@field doesNotOperateAutomatically boolean
+
+---@class ShaderTransparentChicagoMap
+---@field flags ShaderTransparentChicagoMapFlags
+---@field colorFunction ShaderColorFunctionType
+---@field alphaFunction ShaderColorFunctionType
+---@field parameters ShaderTransparentMapParameters
+---@field animation ShaderTransparentMapAnimation
+
+---@class ShaderTransparentMapParameters
+---@field mapUScale number
+---@field mapVScale number
+---@field mapUOffset number
+---@field mapVOffset number
+---@field mapRotation number
+---@field mipmapBias number
+---@field map TagReference
+
+---@class ScenarioMachinePalette
+---@field name TagReference
+
+---@class ModelCollisionGeometryBSPVertex
+---@field point VectorXYZ
+---@field firstEdge integer
+
+---@alias ProjectileScaleEffectsBy
+---| "angle"
+---| "damage"
+
+---@class ShaderEnvironmentDiffuseFlags
+---@field rescaleBumpMap boolean
+---@field rescaleDetailMaps boolean
+
+---@class ShaderLensFlares
+---@field lensFlareSpacing number
+---@field lensFlare TagReference
+
+---@alias UICanvas
+---| "_1708_x960"
+---| "_1280_x960"
+---| "_854_x480"
+---| "_640_x480"
+
+---@class ScenarioScenery
+---@field type integer
+---@field name integer
+---@field placement ScenarioObjectPlacement
+---@field bspIndices integer
+---@field appearancePlayerIndex integer
+
+---@class GBXModelGeometry
+---@field flags IsUnusedFlag
+---@field parts GBXModelGeometryPart[]
+
+---@class ShaderTransparentMeter: Shader
+---@field properties ShaderTransparentMeterProperties
+---@field colors ShaderTransparentMeterColors
+---@field externalFunctionSources ShaderTransparentMeterExternalFunctionSources
+
+---@class ScenarioStructureBSPGlobalMapLeaf
+---@field faces ScenarioStructureBSPMapLeafFace[]
+---@field portalIndices ScenarioStructureBSPMapLeafPortalIndex[]
+
+---@class LensFlareReflection
+---@field flags LensFlareReflectionFlags
+---@field bitmapIndex integer
+---@field position number
+---@field rotationOffset number
+---@field radius number[2]
+---@field radiusScaledBy LensFlareRadiusScaledBy
+---@field brightness number[2]
+---@field brightnessScaledBy LensFlareRadiusScaledBy
+---@field tintColor ColorARGB
+---@field color ColorARGB
+---@field moreFlags LensFlareReflectionMoreFlags
+---@field animationFunction WaveFunction
+---@field animationPeriod number
+---@field animationPhase number
+
+---@class VectorFontStyle
+---@field data TagReference
+---@field hardwareFormat integer
+---@field spaceWidth integer
+
+---@class GlobalsPlaylistMember
+---@field mapName string
+---@field gameVariant string
+---@field minimumExperience integer
+---@field maximumExperience integer
+---@field minimumPlayerCount integer
+---@field maximumPlayerCount integer
+---@field rating integer
+
+---@class ModelCollisionGeometryPermutation
+---@field name string
+
+---@class ScenarioUnitProperties
+---@field placement ScenarioObjectPlacement
+---@field appearancePlayerIndex integer
+---@field bodyVitality number
+---@field flags ScenarioUnitFlags
+
+---@class ModelAnimationsAnimation
+---@field name string
+---@field type AnimationType
+---@field frameCount integer
+---@field frameSize integer
+---@field frameInfoType AnimationFrameInfoType
+---@field nodeListChecksum integer
+---@field nodeCount integer
+---@field loopFrameIndex integer
+---@field weight number
+---@field keyFrameIndex integer
+---@field secondKeyFrameIndex integer
+---@field nextAnimation integer
+---@field flags ModelAnimationsAnimationFlags
+---@field sound integer
+---@field soundFrameIndex integer
+---@field leftFootFrameIndex integer
+---@field rightFootFrameIndex integer
+---@field mainAnimationIndex integer
+---@field relativeWeight number
+---@field frameInfo TagRawData
+---@field nodeTransformFlagData integer[2]
+---@field nodeRotationFlagData integer[2]
+---@field nodeScaleFlagData integer[2]
+---@field offsetToCompressedData integer
+---@field defaultData TagRawData
+---@field frameData TagRawData
+
+---@class StringListString
+---@field string TagRawData
+
+---@class Actor
+---@field flags ActorFlags
+---@field moreFlags ActorMoreFlags
+---@field type ActorType
+---@field perception ActorPerception
+---@field movement ActorMovement
+---@field looking ActorLooking
+---@field unopposable ActorUnopposable
+---@field panic ActorPanic
+---@field defensive ActorDefensive
+---@field pursuit ActorPursuit
+---@field berserk ActorBerserk
+---@field firingPositions ActorFiringPositions
+---@field communication ActorCommunication
+
+---@class ActorPanic
+---@field coweringTime number[2]
+---@field friendKilledPanicChance number
+---@field leaderType ActorType
+---@field leaderKilledPanicChance number
+---@field panicDamageThreshold number
+---@field surpriseDistance number
+
+---@alias ScenarioNetgameFlagType
+---| "hill_flag"
+---| "teleport_to"
+---| "teleport_from"
+---| "vegas_bank"
+---| "race_vehicle"
+---| "race_track"
+---| "oddball_ball_spawn"
+---| "ctf_vehicle"
+---| "ctf_flag"
+
+---@class MultiplayerScenarioDescriptionScenarioDescription
+---@field descriptiveBitmap TagReference
+---@field displayedMapName TagReference
+---@field scenarioTagDirectoryPath string
+
+---@class WeaponHUDInterfaceNumber
+---@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
+---@field allowedViewType WeaponHUDInterfaceViewType
+---@field anchor HUDInterfaceChildAnchor
+---@field properties HUDInterfaceNumberElement
+---@field weaponSpecificFlags WeaponHUDInterfaceNumberWeaponSpecificFlags
+
+---@class ObjectHandle
+---@field index integer
+---@field value integer
+---@field id integer
+
+---@class GlobalsCamera
+---@field defaultUnitCameraTrack TagReference
+
+---@class Physics
+---@field radius number
+---@field momentScale number
+---@field mass number
+---@field centerOfMass VectorXYZ
+---@field density number
+---@field gravityScale number
+---@field groundFriction number
+---@field groundDepth number
+---@field groundDampFraction number
+---@field groundNormalK1 number
+---@field groundNormalK0 number
+---@field waterFriction number
+---@field waterDepth number
+---@field waterDensity number
+---@field airFriction number
+---@field xxMoment number
+---@field yyMoment number
+---@field zzMoment number
+---@field inertialMatrixAndInverse PhysicsInertialMatrix[]
+---@field poweredMassPoints PhysicsPoweredMassPoint[]
+---@field massPoints PhysicsMassPoint[]
+
+---@class ActorVariantSpecialCaseFiringProperties
+---@field superBallisticRange number
+---@field bombardmentRange number
+---@field modifiedVisionRange number
+---@field specialFireMode ActorVariantSpecialFireMode
+---@field specialFireSituation ActorVariantSpecialFireSituation
+---@field specialFireChance number
+---@field specialFireDelay number
+
+---@alias AnimationType
+---| "replacement"
+---| "overlay"
+---| "base"
+
+---@class ShaderModelTextureScrollingAnimation
+---@field uAnimationSource FunctionOut
+---@field uAnimationFunction WaveFunction
+---@field uAnimationPeriod number
+---@field uAnimationPhase number
+---@field uAnimationScale number
+---@field vAnimationSource FunctionOut
+---@field vAnimationFunction WaveFunction
+---@field vAnimationPeriod number
+---@field vAnimationPhase number
+---@field vAnimationScale number
+---@field rotationAnimationSource FunctionOut
+---@field rotationAnimationFunction WaveFunction
+---@field rotationAnimationPeriod number
+---@field rotationAnimationPhase number
+---@field rotationAnimationScale number
+---@field rotationAnimationCenter VectorXY
+
+---@class ShaderEnvironmentSpecularFlags
+---@field lightmapIsSpecular boolean
+---@field extraShiny boolean
+---@field overbright boolean
+
+---@class HUDNumber
+---@field digitsBitmap TagReference
+---@field bitmapDigitWidth integer
+---@field screenDigitWidth integer
+---@field xOffset integer
+---@field yOffset integer
+---@field decimalPointWidth integer
+---@field colonWidth integer
+
+---@class SearchAndReplaceReference
+---@field searchString string
+---@field replaceFunction UIReplaceFunction
+
+---@alias ShaderTransparentGenericStageInputAlpha
+---| "constant_blue_1"
+---| "constant_blue_0"
+---| "scratch_blue_1"
+---| "scratch_blue_0"
+---| "vertex_blue_1_fade_parallel"
+---| "vertex_blue_0_blue_light"
+---| "map_blue_3"
+---| "map_blue_2"
+---| "map_blue_1"
+---| "map_blue_0"
 ---| "constant_alpha_1"
 ---| "constant_alpha_0"
 ---| "scratch_alpha_1"
@@ -1605,98 +5676,322 @@
 ---| "map_alpha_2"
 ---| "map_alpha_1"
 ---| "map_alpha_0"
----| "constant_color_1"
----| "constant_color_0"
----| "scratch_color_1"
----| "scratch_color_0"
----| "vertex_color_1_fade_perpendicular"
----| "vertex_color_0_diffuse_light"
----| "map_color_3"
----| "map_color_2"
----| "map_color_1"
----| "map_color_0"
 ---| "negative_one_half"
 ---| "negative_one"
 ---| "one_half"
 ---| "one"
 ---| "zero"
 
----@class ScenarioObjectName
+---@class ScenarioLightFixturePalette
+---@field name TagReference
+
+---@class ScenarioPlayerStartingProfile
 ---@field name string
----@field objectType ObjectType
----@field objectIndex integer
+---@field startingHealthModifier number
+---@field startingShieldModifier number
+---@field primaryWeapon TagReference
+---@field primaryRoundsLoaded integer
+---@field primaryRoundsReserved integer
+---@field secondaryWeapon TagReference
+---@field secondaryRoundsLoaded integer
+---@field secondaryRoundsReserved integer
+---@field startingFragmentationGrenadeCount integer
+---@field startingPlasmaGrenadeCount integer
+---@field startingGrenadeType2Count integer
+---@field startingGrenadeType3Count integer
 
----@class ModelRegion
+---@class ModelAnimations
+---@field objects ModelAnimationsAnimationGraphObjectOverlay[]
+---@field units ModelAnimationsAnimationGraphUnitSeat[]
+---@field weapons ModelAnimationsAnimationGraphWeaponAnimations[]
+---@field vehicles ModelAnimationsAnimationGraphVehicleAnimations[]
+---@field devices ModelAnimationsDeviceAnimations[]
+---@field unitDamage ModelAnimationsUnitDamageAnimations[]
+---@field firstPersonWeapons ModelAnimationsAnimationGraphFirstPersonWeaponAnimations[]
+---@field soundReferences ModelAnimationsAnimationGraphSoundReference[]
+---@field limpBodyNodeRadius number
+---@field flags ModelAnimationsFlags
+---@field nodes ModelAnimationsAnimationGraphNode[]
+---@field animations ModelAnimationsAnimation[]
+
+---@class SoundEnvironment
+---@field unknown integer
+---@field priority integer
+---@field roomIntensity number
+---@field roomIntensityHf number
+---@field roomRolloff number
+---@field decayTime number
+---@field decayHfRatio number
+---@field reflectionsIntensity number
+---@field reflectionsDelay number
+---@field reverbIntensity number
+---@field reverbDelay number
+---@field diffusion number
+---@field density number
+---@field hfReference number
+
+---@alias BitmapDataType
+---| "white"
+---| "cube_map"
+---| "_3d_texture"
+---| "_2d_texture"
+
+---@class ConditionalWidgetReference
+---@field widgetTag TagReference
 ---@field name string
----@field permutations ModelRegionPermutation[]
+---@field flags ConditionalWidgetReferenceFlags
+---@field customControllerIndex integer
 
----@alias ShaderDetailLevel
----| "turd"
----| "low"
----| "medium"
----| "high"
+---@class DamageEffectBreakingEffect
+---@field forwardVelocity number
+---@field forwardRadius number
+---@field forwardExponent number
+---@field outwardVelocity number
+---@field outwardRadius number
+---@field outwardExponent number
 
----@alias HUDInterfaceWrapMode
----| "wrap"
----| "clamp"
+---@alias SoundFormat
+---| "ogg_vorbis"
+---| "ima_adpcm"
+---| "xbox_adpcm"
+---| "pcm"
 
----@class DecalAppearance
----@field radius number[2]
----@field intensity number[2]
----@field color ColorRGB
+---@class ModelCollisionGeometryRegionFlags
+---@field causesHeadMaimedScream boolean
+---@field forcesDropWeapon boolean
+---@field inhibitsWalking boolean
+---@field inhibitsWeaponAttack boolean
+---@field inhibitsMeleeAttack boolean
+---@field disappearsWhenShieldIsOff boolean
+---@field diesWhenObjectIsDamaged boolean
+---@field diesWhenObjectDies boolean
+---@field forcesObjectToDie boolean
+---@field livesUntilObjectDies boolean
 
----@class HUDMessageTextElement
----@field type integer
----@field data integer
+---@class Player
+---@field playerId integer
+---@field localPlayerIndex integer
+---@field name string
+---@field squadIndex integer
+---@field teamIndex integer
+---@field interactionObjectHandle TableResourceHandle
+---@field interactionObjectType integer
+---@field interactionObjectSeat integer
+---@field respawnTime integer
+---@field respawnTimePenalty integer
+---@field unitHandle TableResourceHandle
+---@field deadUnitHandle TableResourceHandle
+---@field bspClusterIndex integer
+---@field weaponSwapResult boolean
+---@field autoAimTargetObject TableResourceHandle
+---@field lastFireTime integer
+---@field networkPlayerData NetworkPlayer
+---@field powerUpDurations integer[2]
+---@field multiplayerInfo MultiplayerPlayerInfo
+---@field killStreak integer
+---@field multikill integer
+---@field lastKillTime integer
+---@field kills integer[4]
+---@field assists integer[4]
+---@field betrays integer
+---@field deaths integer
+---@field suicides integer
+---@field teamKills integer
+---@field multiplayerStatistics PlayerMultiplayerStatistics
+---@field telefragTimer integer
+---@field quitTime integer
+---@field telefragDanger boolean
+---@field quit boolean
+---@field ping integer
+---@field teamKillCount integer
+---@field teamKillTicksSinceLast integer
+---@field position VectorXYZ
+---@field actions PlayerActions
+---@field baselineUpdateXyAim number
+---@field baselineUpdateZAim number
+---@field baselineUpdateForward number
+---@field baselineUpdateLeft number
+---@field baselineUpdateRateOfFire number
+---@field baselineUpdateWeaponSlot integer
+---@field baselineUpdateGrenadeSlot integer
+---@field updateAiming VectorXYZ
+---@field updatePosition VectorXYZ
 
----@class BipedObjectFlags
----@field limping2 boolean
----@field passes_through_other_bipeds boolean
----@field no_collision boolean
----@field absolute_movement boolean
----@field slipping boolean
----@field airborne boolean
+---@class SoundLoopingDetail
+---@field sound TagReference
+---@field randomPeriodBounds number[2]
+---@field gain number
+---@field flags SoundLoopingDetailFlags
+---@field yawBounds number[2]
+---@field pitchBounds number[2]
+---@field distanceBounds number[2]
 
----@class Device: Object
----@field flags DeviceFlags
----@field powerTransitionTime number
----@field powerAccelerationTime number
----@field positionTransitionTime number
----@field positionAccelerationTime number
----@field depoweredPositionTransitionTime number
----@field depoweredPositionAccelerationTime number
----@field aIn DeviceIn
----@field bIn DeviceIn
----@field cIn DeviceIn
----@field dIn DeviceIn
----@field open TagReference
----@field close TagReference
----@field opened TagReference
----@field closed TagReference
----@field depowered TagReference
----@field repowered TagReference
----@field delayTime number
----@field delayEffect TagReference
----@field automaticActivationRadius number
----@field inversePowerAccelerationTime number
----@field inversePowerTransitionTime number
----@field inverseDepoweredPositionAccelerationTime number
----@field inverseDepoweredPositionTransitionTime number
----@field inversePositionAccelerationTime number
----@field inversePositionTransitionTime number
----@field delayTimeTicks number
+---@alias WeatherParticleSystemRenderDirectionSource
+---| "from_acceleration"
+---| "from_velocity"
 
----@class ActorVariantChangeColors
----@field color ColorRGB
+---@class SkyLightLensFlare
+---@field lensFlare TagReference
+---@field lensFlareMarkerName string
 
----@class ActorVariantSpecialCaseFiringProperties
----@field superBallisticRange number
----@field bombardmentRange number
----@field modifiedVisionRange number
----@field specialFireMode ActorVariantSpecialFireMode
----@field specialFireSituation ActorVariantSpecialFireSituation
----@field specialFireChance number
----@field specialFireDelay number
+---@alias DecalLayer
+---| "water"
+---| "alpha_tested"
+---| "light"
+---| "secondary"
+---| "primary"
+
+---@class ActorBerserk
+---@field meleeAttackDelay number
+---@field meleeFudgeFactor number
+---@field meleeChargeTime number
+---@field meleeLeapRange number[2]
+---@field meleeLeapVelocity number
+---@field meleeLeapChance number
+---@field meleeLeapBallistic number
+---@field berserkDamageAmount number
+---@field berserkDamageThreshold number
+---@field berserkProximity number
+---@field suicideSensingDist number
+---@field berserkGrenadeChance number
+
+---@class LightningMarkerFlag
+---@field notConnectedToNextMarker boolean
+
+---@alias TriangleBufferType
+---| "triangle_strip"
+---| "triangle_list"
+
+---@alias BitmapFormat
+---| "bc_7"
+---| "monochrome"
+---| "_32_bit"
+---| "_16_bit"
+---| "dxt5"
+---| "dxt3"
+---| "dxt1"
+
+---@class HUDInterfaceFlashFlags
+---@field reverseDefaultFlashingColors boolean
+
+---@class ActorUnopposable
+---@field unreachableDangerTrigger ActorUnreachableDangerTrigger
+---@field vehicleDangerTrigger ActorUnreachableDangerTrigger
+---@field playerDangerTrigger ActorUnreachableDangerTrigger
+---@field dangerTriggerTime number[2]
+---@field friendsKilledTrigger integer
+---@field friendsRetreatingTrigger integer
+---@field retreatTime number[2]
+
+---@class GlobalsPlayerInformation
+---@field unit TagReference
+---@field walkingSpeed number
+---@field doubleSpeedMultiplier number
+---@field runForward number
+---@field runBackward number
+---@field runSideways number
+---@field runAcceleration number
+---@field sneakForward number
+---@field sneakBackward number
+---@field sneakSideways number
+---@field sneakAcceleration number
+---@field airborneAcceleration number
+---@field speedMultiplier number
+---@field grenadeOrigin VectorXYZ
+---@field stunMovementPenalty number
+---@field stunTurningPenalty number
+---@field stunJumpingPenalty number
+---@field minimumStunTime number
+---@field maximumStunTime number
+---@field firstPersonIdleTime number[2]
+---@field firstPersonSkipFraction number
+---@field coopRespawnEffect TagReference
+
+---@class Garbage: Item
+
+---@alias ActorVariantMovementType
+---| "switch_types"
+---| "always_crouch"
+---| "always_run"
+
+---@class Matrix
+---@field m VectorXYZ[3]
+
+---@class ActorLooking
+---@field maximumAimingDeviation VectorPY
+---@field maximumLookingDeviation VectorPY
+---@field noncombatLookDeltaL number
+---@field noncombatLookDeltaR number
+---@field combatLookDeltaL number
+---@field combatLookDeltaR number
+---@field idleAimingRange VectorPY
+---@field idleLookingRange VectorPY
+---@field eventLookTimeModifier number[2]
+---@field noncombatIdleFacing number[2]
+---@field noncombatIdleAiming number[2]
+---@field noncombatIdleLooking number[2]
+---@field guardIdleFacing number[2]
+---@field guardIdleAiming number[2]
+---@field guardIdleLooking number[2]
+---@field combatIdleFacing number[2]
+---@field combatIdleAiming number[2]
+---@field combatIdleLooking number[2]
+---@field cosineMaximumAimingDeviation VectorPY
+---@field cosineMaximumLookingDeviation VectorPY
+---@field dontUse TagReference
+---@field cantUse TagReference
+
+---@class ShaderTransparentGlassBackgroundTint
+---@field backgroundTintColor ColorRGB
+---@field backgroundTintMapScale number
+---@field backgroundTintMap TagReference
+
+---@class VectorFont
+---@field fontSize number
+---@field offsetX number
+---@field offsetY number
+---@field plain VectorFontStyle
+---@field bold VectorFontStyle
+---@field italic VectorFontStyle
+---@field condense VectorFontStyle
+---@field underline VectorFontStyle
+
+---@alias UIWidgetType
+---| "custom_not_implemented"
+---| "movie_not_implemented"
+---| "game_model_not_implemented"
+---| "column_list"
+---| "spinner_list"
+---| "text_box"
+---| "container"
+
+---@class ConditionalWidgetReferenceFlags
+---@field loadIfEventHandlerFunctionFails boolean
+
+---@class ShaderTransparentPlasmaOffset
+---@field offsetSource FunctionOut
+---@field offsetAmount number
+---@field offsetExponent number
+
+---@class Glow
+---@field attachmentMarker string
+---@field numberOfParticles integer
+---@field boundaryEffect GlowBoundaryEffect
+---@field normalParticleDistribution GlowNormalParticleDistribution
+---@field trailingParticleDistribution GlowTrailingParticleDistribution
+---@field glowFlags GlowFlags
+---@field particleRotationalVelocity GlowRotationalVelocity
+---@field effectRotationalVelocity GlowRotationalVelocity
+---@field effectTranslationalVelocity GlowTranslationalVelocity
+---@field particleDistanceToObject GlowDistanceToObject
+---@field particleSize GlowParticleSize
+---@field color GlowColor
+---@field fadingPercentageOfGlow number
+---@field particleGenerationRate number
+---@field lifetimeOfTrailingParticles number
+---@field velocityOfTrailingParticles number
+---@field trailingParticleT number[2]
+---@field texture TagReference
 
 ---@alias UIEventHandlerReferenceFunction
 ---| "load_game_menu_delete_finish"
@@ -1890,267 +6185,433 @@
 ---| "list_goto_next_item"
 ---| "null"
 
----@class ScenarioAIConversationLine
----@field flags ScenarioAIConversationLineFlags
----@field participant integer
----@field addressee ScenarioAddressee
----@field addresseeParticipant integer
----@field lineDelayTime number
----@field variant1 TagReference
----@field variant2 TagReference
----@field variant3 TagReference
----@field variant4 TagReference
----@field variant5 TagReference
----@field variant6 TagReference
+---@class UnitHUDInterfaceAuxiliaryOverlayFlags
+---@field useTeamColor boolean
 
----@class DeviceLightFixtureObject: DeviceObject
----@field lightColor ColorRGB
----@field lightIntensity number
----@field lightFalloffAngle number
----@field lightCutoffAngle number
+---@alias ShaderDetailLevel
+---| "turd"
+---| "low"
+---| "medium"
+---| "high"
 
----@class ModelCollisionGeometryBSPLeaf
----@field flags ModelCollisionGeometryBSPLeafFlags
----@field bsp2dReferenceCount integer
----@field firstBsp2dReference integer
+---@class ShaderTransparentPlasmaIntensity
+---@field intensitySource FunctionOut
+---@field intensityExponent number
 
----@class BaseObjectNetwork
----@field validPosition boolean
----@field position VectorXYZ
----@field validForwardAndUp boolean
----@field orientation VectorXYZ[2]
----@field validTransitionalVelocity boolean
----@field transitionalVelocity VectorXYZ
----@field validTimestamp boolean
----@field timestamp integer
+---@class HUDGlobals
+---@field messagingParameters HUDGlobalsMessagingParameters
+---@field helpTextColor HUDInterfaceElementColor
+---@field hudMessages TagReference
+---@field objectiveColors HUDGlobalsObjectiveColors
+---@field waypointParameters HUDGlobalsWaypointParameters
+---@field hudCrap HUDGlobalsCrap
+---@field indicators HUDGlobalsDamageIndicators
+---@field notMuchTimeLeftColor HUDInterfaceElementColor
+---@field timeOutColor HUDInterfaceElementColor
+---@field moreHudCrap HUDGlobalsExtraCrap
+---@field anniversaryHudRemaps HUDGlobalsAnniversaryRemap[]
 
----@class DeviceControlObject: DeviceObject
----@field deviceControlFlags DeviceControlObjectFlags
+---@class ScenarioBipedPalette
+---@field name TagReference
 
----@class GlobalsPlayerInformation
----@field unit TagReference
----@field walkingSpeed number
----@field doubleSpeedMultiplier number
----@field runForward number
----@field runBackward number
----@field runSideways number
----@field runAcceleration number
----@field sneakForward number
----@field sneakBackward number
----@field sneakSideways number
----@field sneakAcceleration number
----@field airborneAcceleration number
----@field speedMultiplier number
----@field grenadeOrigin VectorXYZ
----@field stunMovementPenalty number
----@field stunTurningPenalty number
----@field stunJumpingPenalty number
----@field minimumStunTime number
----@field maximumStunTime number
----@field firstPersonIdleTime number[2]
----@field firstPersonSkipFraction number
----@field coopRespawnEffect TagReference
+---@class HUDGlobalsCrap
+---@field defaultWeaponHud TagReference
+---@field motionSensorRange number
+---@field motionSensorVelocitySensitivity number
+---@field motionSensorScale number
+---@field defaultChapterTitleBounds Rectangle2D
 
----@alias CacheFileType
----| "userInterface"
----| "multiplayer"
----| "singlePlayer"
+---@class HUDGlobalsButtonIcon
+---@field sequenceIndex integer
+---@field widthOffset integer
+---@field offsetFromReferenceCorner VectorXYInt
+---@field overrideIconColor integer
+---@field frameRate integer
+---@field flags HUDInterfaceMessagingFlags
+---@field textIndex integer
 
----@class VehicleNetwork
----@field timeValid boolean
----@field baselineValid boolean
----@field baselineId integer
----@field messageId integer
----@field updateBaseline VehicleNetworkData
----@field deltaValid boolean
----@field updateDelta VehicleNetworkData
----@field lastMovedAtTick integer
----@field scenarioRespawnId integer
----@field respawnPosition VectorXYZ
+---@class Biped: Unit
+---@field movingTurningSpeed number
+---@field flags BipedFlags
+---@field stationaryTurningThreshold number
+---@field aIn BipedFunctionIn
+---@field bIn BipedFunctionIn
+---@field cIn BipedFunctionIn
+---@field dIn BipedFunctionIn
+---@field dontUse TagReference
+---@field bankAngle number
+---@field bankApplyTime number
+---@field bankDecayTime number
+---@field pitchRatio number
+---@field maxVelocity number
+---@field maxSidestepVelocity number
+---@field acceleration number
+---@field deceleration number
+---@field angularVelocityMaximum number
+---@field angularAccelerationMaximum number
+---@field crouchVelocityModifier number
+---@field maximumSlopeAngle number
+---@field downhillFalloffAngle number
+---@field downhillCutoffAngle number
+---@field downhillVelocityScale number
+---@field uphillFalloffAngle number
+---@field uphillCutoffAngle number
+---@field uphillVelocityScale number
+---@field footsteps TagReference
+---@field jumpVelocity number
+---@field maximumSoftLandingTime number
+---@field maximumHardLandingTime number
+---@field minimumSoftLandingVelocity number
+---@field minimumHardLandingVelocity number
+---@field maximumHardLandingVelocity number
+---@field deathHardLandingVelocity number
+---@field standingCameraHeight number
+---@field crouchingCameraHeight number
+---@field crouchTransitionTime number
+---@field standingCollisionHeight number
+---@field crouchingCollisionHeight number
+---@field collisionRadius number
+---@field autoaimWidth number
+---@field cosineStationaryTurningThreshold number
+---@field crouchCameraVelocity number
+---@field cosineMaximumSlopeAngle number
+---@field negativeSineDownhillFalloffAngle number
+---@field negativeSineDownhillCutoffAngle number
+---@field sineUphillFalloffAngle number
+---@field sineUphillCutoffAngle number
+---@field pelvisModelNodeIndex integer
+---@field headModelNodeIndex integer
+---@field contactPoint BipedContactPoint[]
 
----@alias ItemFunctionIn
----| "none"
+---@class ModelAnimationsAnimationGraphFirstPersonWeaponAnimations
+---@field animations ModelAnimationsFirstPersonWeapon[]
 
----@class DeviceObject: DynamicObjectBase
----@field flags1 DeviceObjectFlags1
----@field power DeviceObjectState
----@field position DeviceObjectState
----@field flags2 DeviceObjectFlags2
+---@class UnitControlFlags
+---@field exchangeWeapon boolean
+---@field grenade boolean
+---@field secondaryTrigger boolean
+---@field primaryTrigger boolean
+---@field reload boolean
+---@field forceAlert boolean
+---@field lookDontTurn boolean
+---@field melee boolean
+---@field action boolean
+---@field exactFacing boolean
+---@field light boolean
+---@field user2 boolean
+---@field user1 boolean
+---@field jump boolean
+---@field crouch boolean
 
----@class EffectFlags
----@field disabledInAnniversaryByBloodSetting boolean
----@field mustBeDeterministicPc boolean
----@field mustBeDeterministicXbox boolean
----@field deletedWhenAttachmentDeactivates boolean
+---@class UnitSeat
+---@field flags UnitSeatFlags
+---@field label string
+---@field markerName string
+---@field accelerationScale VectorXYZ
+---@field yawRate number
+---@field pitchRate number
+---@field cameraMarkerName string
+---@field cameraSubmergedMarkerName string
+---@field pitchAutoLevel number
+---@field pitchRange number[2]
+---@field cameraTracks UnitCameraTrack[]
+---@field hudInterface UnitUnitHUDInterface[]
+---@field hudTextMessageIndex integer
+---@field yawMinimum number
+---@field yawMaximum number
+---@field builtInGunner TagReference
 
----@class DeviceObjectFlags2
----@field operatesAutomatically boolean
----@field oneSided boolean
+---@class UnitWeapon
+---@field weapon TagReference
 
----@class DeviceObjectFlags1
----@field notUsableFromAnySide boolean
----@field positionReversed boolean
+---@class UnitPoweredSeat
+---@field driverPowerupTime number
+---@field driverPowerdownTime number
 
----@class DeviceObjectState
----@field deviceGroupId integer
----@field value number
----@field change number
+---@alias DecalType
+---| "painted_sign"
+---| "burn"
+---| "splatter"
+---| "scratch"
 
----@class WeaponObject: ItemObject
----@field flags integer
----@field ownerUnitFlags integer
----@field primaryTrigger number
----@field weaponState integer
----@field readyTicks integer
----@field heat number
----@field age number
----@field illuminationFraction number
----@field integratedLightPower number
----@field trackedObject ObjectHandle
----@field altShotsLoaded integer
----@field triggers WeaponObjectTrigger[2]
----@field magazines WeaponObjectMagazine[2]
----@field lastTriggerFireTick integer
----@field reloadStartingPoint WeaponReloadStartData
----@field network WeaponNetwork
+---@class ModelAnimationsTransform
+---@field transform VectorXYZ
 
----@class PhysicsPoweredMassPoint
+---@class Scenery: BasicObject
+
+---@class ActorDefensive
+---@field hideBehindCoverTime number[2]
+---@field hideTargetNotVisibleTime number
+---@field hideShieldFraction number
+---@field attackShieldFraction number
+---@field pursueShieldFraction number
+---@field defensiveCrouchType ActorDefensiveCrouchType
+---@field attackingCrouchThreshold number
+---@field defendingCrouchThreshold number
+---@field minStandTime number
+---@field minCrouchTime number
+---@field defendingHideTimeModifier number
+---@field attackingEvasionThreshold number
+---@field defendingEvasionThreshold number
+---@field evasionSeekCoverChance number
+---@field evasionDelayTime number
+---@field maxSeekCoverDistance number
+---@field coverDamageThreshold number
+---@field stalkingDiscoveryTime number
+---@field stalkingMaxDistance number
+---@field stationaryFacingAngle number
+---@field changeFacingStandTime number
+
+---@class ModelAnimationsAnimationGraphNode
 ---@field name string
----@field flags PhysicsPoweredMassPointFlags
----@field antigravStrength number
----@field antigravOffset number
----@field antigravHeight number
----@field antigravDampFraction number
----@field antigravNormalK1 number
----@field antigravNormalK0 number
+---@field nextSiblingNodeIndex integer
+---@field firstChildNodeIndex integer
+---@field parentNodeIndex integer
+---@field nodeJointFlags ModelAnimationsAnimationGraphNodeFlags
+---@field baseVector VectorXYZ
+---@field vectorRange number
 
----@class WeaponNetwork
----@field baselineValid boolean
----@field baselineIndex integer
----@field messageIndex integer
----@field updateBaseline WeaponNetworkData
----@field deltaValid boolean
----@field updateDelta WeaponNetworkData
+---@alias UnitMotionSensorBlipSize
+---| "large"
+---| "small"
+---| "medium"
 
----@class ModelAnimationsAnimationGraphUnitSeatikPoint
----@field marker string
----@field attachToMarker string
+---@class UnitHUDInterface
+---@field anchor HUDInterfaceAnchor
+---@field canvasSize HUDInterfaceCanvasSize
+---@field hudBackground HUDInterfaceStaticElement
+---@field shieldPanelBackground HUDInterfaceStaticElement
+---@field shieldPanelMeter UnitHUDInterfaceShieldMeter
+---@field healthPanelBackground HUDInterfaceStaticElement
+---@field healthPanelMeter UnitHUDInterfaceHealthMeter
+---@field motionSensorBackground HUDInterfaceStaticElement
+---@field motionSensorForeground HUDInterfaceStaticElement
+---@field motionSensorCenter UnitHUDInterfaceMotionSensorCenter
+---@field auxiliaryElements UnitHUDInterfaceAuxiliaryElements
 
----@class WeaponNetworkData
----@field position VectorXYZ
----@field transitionalVelocity VectorXYZ
----@field angularVelocity VectorXYZ
----@field magazineRoundsTotal integer[2]
----@field age number
+---@class UnitObjectFlags
+---@field desiresFlashlightOff boolean
+---@field desiresFlashlightOn boolean
+---@field possessed boolean
+---@field unknownNVRelated boolean
+---@field blind boolean
+---@field suspended boolean
+---@field impervious boolean
+---@field canBlink boolean
+---@field unknown boolean
+---@field willNotDropItems boolean
+---@field unknownIntegratedLightRelated boolean
+---@field berserking boolean
+---@field controllable boolean
+---@field powerUpAddition boolean
+---@field powerUp boolean
+---@field unknownBipedSpeechRelated boolean
 
----@class ScenarioCutsceneFlag
----@field unknown integer
+---@class HUDGlobalsWaypointArrow
 ---@field name string
----@field position VectorXYZ
----@field facing VectorPY
+---@field color integer
+---@field opacity number
+---@field translucency number
+---@field onScreenSequenceIndex integer
+---@field offScreenSequenceIndex integer
+---@field occludedSequenceIndex integer
+---@field flags HUDGlobalsWaypointArrowFlags
 
----@class GlobalsGrenade
----@field maximumCount integer
----@field mpSpawnDefault integer
----@field throwingEffect TagReference
----@field hudInterface TagReference
----@field equipment TagReference
----@field projectile TagReference
+---@class ScenarioFunction
+---@field flags ScenarioFunctionFlags
+---@field name string
+---@field period number
+---@field scalePeriodBy integer
+---@field function WaveFunction
+---@field scaleFunctionBy integer
+---@field wobbleFunction WaveFunction
+---@field wobblePeriod number
+---@field wobbleMagnitude number
+---@field squareWaveThreshold number
+---@field stepCount integer
+---@field mapTo FunctionType
+---@field sawtoothCount integer
+---@field scaleResultBy integer
+---@field boundsMode FunctionBoundsMode
+---@field bounds number[2]
+---@field turnOffWith integer
 
----@class WeaponObjectMagazine
----@field state integer
----@field reloadTicksRemaining integer
----@field reloadTicks integer
----@field roundsUnloaded integer
----@field roundsLoaded integer
----@field roundsLeftToRecharge integer
----@field unk1 integer
----@field unk2 integer
+---@class GrenadeHUDInterfaceSound
+---@field sound TagReference
+---@field latchedTo GrenadeHUDInterfaceSoundLatchedTo
+---@field scale number
 
----@class WeaponObjectTrigger
----@field idleTime integer
----@field state integer
----@field triggerTime integer
----@field notFiring integer
----@field autoReload integer
----@field roundsSinceLastTracer integer
----@field rateOfFire number
----@field ejectionPortRecoveryTime number
----@field illuminationRecoveryTime number
----@field projectileErrorRelated number
----@field charingEffect TableResourceHandle
----@field networkDelayTicks integer
+---@class ScenarioNetgameEquipmentFlags
+---@field levitate boolean
 
----@class ScenarioStructureBSPMaterialCompressedRenderedVertex
----@field position VectorXYZ
----@field normal integer
----@field binormal integer
----@field tangent integer
----@field textureCoords VectorXY
+---@alias UIControllerIndex
+---| "any_player"
+---| "player_4"
+---| "player_3"
+---| "player_2"
+---| "player_1"
 
----@class ProjectileObject: ItemObject
----@field projectileFlags ProjectileObjectFlags
----@field actionEnum integer
----@field materialId integer
----@field sourceUnit ObjectHandle
----@field targetObject ObjectHandle
----@field contrailAttachmentBlockId integer
----@field timeRemaining number
----@field armingRate number
----@field unknownProjFloat1 number
----@field unknownProjFloat2 number
----@field distanceTravelled number
----@field transitionalVelocity VectorXYZ
----@field waterDamageUpperBound number
----@field angularVelocity VectorXYZ
----@field unknownEuler VectorPY
----@field network ProjectileNetwork
+---@class ModelAnimationsFrameInfoDxDy
+---@field dx number
+---@field dy number
 
----@alias VirtualKeyboardKeyboardKey
----| "space"
----| "right"
----| "left"
----| "backspace"
----| "symbols"
----| "caps_lock"
----| "shift"
----| "done"
----| "z"
----| "y"
----| "x"
----| "w"
----| "v"
----| "u"
----| "t"
----| "s"
----| "r"
----| "q"
----| "p"
----| "o"
----| "n"
----| "m"
----| "l"
----| "k"
----| "j"
----| "i"
----| "h"
----| "g"
----| "f"
----| "e"
+---@class ObjectChangeColorsPermutation
+---@field weight number
+---@field color ColorRGB
+
+---@class EventHandlerReference
+---@field flags EventHandlerReferencesFlags
+---@field eventType UIEventType
+---@field function UIEventHandlerReferenceFunction
+---@field widgetTag TagReference
+---@field soundEffect TagReference
+---@field script string
+
+---@class ScenarioStructureBSPCluster
+---@field sky integer
+---@field fog integer
+---@field backgroundSound integer
+---@field soundEnvironment integer
+---@field weather integer
+---@field transitionStructureBsp integer
+---@field firstDecalIndex integer
+---@field decalCount integer
+---@field predictedResources PredictedResource[]
+---@field subclusters ScenarioStructureBSPSubcluster[]
+---@field firstLensFlareMarkerIndex integer
+---@field lensFlareMarkerCount integer
+---@field surfaceIndices ScenarioStructureBSPClusterSurfaceIndex[]
+---@field mirrors ScenarioStructureBSPMirror[]
+---@field portals ScenarioStructureBSPClusterPortalIndex[]
+
+---@class ShaderEnvironmentBump
+---@field bumpMapScale number
+---@field bumpMap TagReference
+---@field bumpMapScaleXy VectorXY
+
+---@class ScenarioStructureBSPClusterPortalIndex
+---@field portal integer
+
+---@class ScenarioStructureBSPMirror
+---@field plane Plane3D
+---@field shader TagReference
+---@field vertices ScenarioStructureBSPMirrorVertex[]
+
+---@class ScenarioItemFlags
+---@field doesAccelerate boolean
+---@field obsolete boolean
+---@field initiallyAtRest boolean
+
+---@class ModelGeometry
+---@field flags IsUnusedFlag
+---@field parts ModelGeometryPart[]
+
+---@alias FunctionNameNullable
 ---| "d"
 ---| "c"
 ---| "b"
 ---| "a"
----| "_0"
----| "_9"
----| "_8"
----| "_7"
----| "_6"
----| "_5"
----| "_4"
----| "_3"
----| "_2"
----| "_1"
+---| "none"
+
+---@class WeaponHUDInterfaceFlags
+---@field useParentHudFlashingParameters boolean
+
+---@class ScenarioStructureBSPBackgroundSoundPalette
+---@field name string
+---@field backgroundSound TagReference
+---@field scaleFunction string
+
+---@class ScenarioPlatoon
+---@field name string
+---@field flags ScenarioPlatoonFlags
+---@field changeAttackingDefendingStateWhen ScenarioChangeAttackingDefendingStateWhen
+---@field happensTo integer
+---@field maneuverWhen ScenarioChangeAttackingDefendingStateWhen
+---@field happensTo1 integer
+
+---@alias EffectCreate
+---| "in_first_person_if_possible"
+---| "only_in_third_person"
+---| "only_in_first_person"
+---| "independent_of_camera_mode"
+
+---@class ContrailFlags
+---@field edgeEffectFadesSlowly boolean
+---@field pointsAlwaysPinnedToGround boolean
+---@field pointsAlwaysPinnedToMedia boolean
+---@field pointsStartPinnedToGround boolean
+---@field pointsStartPinnedToMedia boolean
+---@field lastPointUnfaded boolean
+---@field firstPointUnfaded boolean
+
+---@class ShaderModelSelfIllumination
+---@field flags ShaderModelSelfIlluminationFlags
+---@field colorSource FunctionNameNullable
+---@field animationFunction WaveFunction
+---@field animationPeriod number
+---@field animationColor ColorRGB
+
+---@class ScenarioStructureBSPDetailObjectData
+---@field cells ScenarioStructureBSPGlobalDetailObjectCell[]
+---@field instances ScenarioStructureBSPGlobalDetailObject[]
+---@field counts ScenarioStructureBSPGlobalDetailObjectCount[]
+---@field zReferenceVectors ScenarioStructureBSPGlobalZrEferenceVector[]
+---@field bullshit integer
+
+---@class ScenarioStructureBSPGlobalZrEferenceVector
+---@field zReferenceI number
+---@field zReferenceJ number
+---@field zReferenceK number
+---@field zReferenceL number
+
+---@class LightFlags
+---@field dontFadeActiveCamouflage boolean
+---@field firstPersonFlashlight boolean
+---@field supersizeInFirstPerson boolean
+---@field dontLightOwnObject boolean
+---@field noSpecular boolean
+---@field dynamic boolean
+
+---@class ScenarioStructureBSPGlobalDetailObjectCount
+---@field count integer
+
+---@class ScenarioStructureBSPLensFlareMarker
+---@field position VectorXYZ
+---@field directionIComponent integer
+---@field directionJComponent integer
+---@field directionKComponent integer
+---@field lensFlareIndex integer
+
+---@class ActorVariantUnitProperties
+---@field bodyVitality number
+---@field shieldVitality number
+---@field shieldSappingRadius number
+---@field forcedShaderPermutation integer
+---@field changeColors ActorVariantChangeColors[]
+
+---@class WeaponMagazine
+---@field flags WeaponMagazineFlags
+---@field roundsRecharged integer
+---@field roundsTotalInitial integer
+---@field roundsReservedMaximum integer
+---@field roundsLoadedMaximum integer
+---@field reloadTime number
+---@field roundsReloaded integer
+---@field chamberTime number
+---@field reloadingEffect TagReference
+---@field chamberingEffect TagReference
+---@field magazineObjects WeaponMagazineObject[]
+
+---@class WeaponHUDInterfaceScreenEffectDefinitionDesaturationFlags
+---@field masked boolean
+---@field additive boolean
+---@field connectToFlashlight boolean
+---@field onlyWhenZoomed boolean
+
+---@class ParticleShaderFlags
+---@field dontOverdrawFpWeapon boolean
+---@field nonlinearTint boolean
+---@field sortBias boolean
 
 ---@class WeaponFlags
 ---@field uses3rdPersonCamera boolean
@@ -2172,786 +6633,101 @@
 ---@field mutuallyExclusiveTriggers boolean
 ---@field verticalHeatDisplay boolean
 
----@class WeaponHUDInterface
----@field childHud TagReference
----@field flags WeaponHUDInterfaceFlags
----@field totalAmmoCutoff integer
----@field loadedAmmoCutoff integer
----@field heatCutoff integer
----@field ageCutoff integer
----@field anchor HUDInterfaceAnchor
----@field canvasSize HUDInterfaceCanvasSize
----@field staticElements WeaponHUDInterfaceStaticElement[]
----@field meterElements WeaponHUDInterfaceMeter[]
----@field numberElements WeaponHUDInterfaceNumber[]
----@field crosshairs WeaponHUDInterfaceCrosshair[]
----@field overlayElements WeaponHUDInterfaceOverlayElement[]
----@field crosshairTypes WeaponHUDInterfaceCrosshairTypeFlags
----@field screenEffect WeaponHUDInterfaceScreenEffect[]
----@field messagingInformation HUDInterfaceMessagingInformation
-
----@alias FunctionNameNullable
----| "d"
----| "c"
----| "b"
----| "a"
----| "none"
-
----@class ProjectileNetworkData
----@field position VectorXYZ
----@field transitionalVelocity VectorXYZ
-
----@class EffectParticleFlags
----@field acrossTheLongHuePath boolean
----@field interpolateTintAsHsv boolean
----@field tintFromObjectColor boolean
----@field randomInitialAngle boolean
----@field stayAttachedToMarker boolean
-
----@class ModelAnimationsUnitDamageAnimations
----@field animation integer
-
----@class EquipmentObject: ItemObject
----@field network EquipmentNetwork
-
----@alias GlowTrailingParticleDistribution
----| "emit_randomly"
----| "emit_normal_up"
----| "emit_vertically"
-
----@class EquipmentNetwork
----@field baselineValid boolean
----@field baselineIndex integer
----@field messageIndex integer
----@field updateBaseline EquipmentNetworkData
----@field deltaValid boolean
----@field updateDelta EquipmentNetworkData
-
----@class EquipmentNetworkData
----@field position VectorXYZ
----@field transitionalVelocity VectorXYZ
----@field angularVelocity VectorXYZ
-
----@class Particle
----@field flags ParticleFlags
----@field bitmap TagReference
----@field physics TagReference
----@field collisionMaterialEffects TagReference
----@field lifespan number[2]
----@field fadeInTime number
----@field fadeOutTime number
----@field collisionEffect TagReference
----@field deathEffect TagReference
----@field minimumSize number
----@field radiusAnimation number[2]
----@field animationRate number[2]
----@field contactDeterioration number
----@field fadeStartSize number
----@field fadeEndSize number
----@field firstSequenceIndex integer
----@field initialSequenceCount integer
----@field loopingSequenceCount integer
----@field finalSequenceCount integer
----@field spriteSize number
----@field orientation ParticleOrientation
----@field shader ShaderEffect
-
----@class VehicleObject: UnitObject
----@field vehicleFlags VehicleObjectFlags
----@field speed number
----@field slide number
----@field turn number
----@field tirePosition number
----@field threadPositionLeft number
----@field threadPositionRight number
----@field hover number
----@field thrust number
----@field suspensionStates integer[8]
----@field hoverPosition VectorXYZ
----@field unk5 VectorXYZ
----@field unk6 VectorXYZ
----@field unk7 integer
----@field network VehicleNetwork
-
----@class HUDInterfaceMultitextureOverlayEffector
----@field destinationType HUDInterfaceDestinationType
----@field destination HUDInterfaceDestination
----@field source HUDInterfaceSource
----@field inBounds number[2]
----@field outBounds number[2]
----@field tint ColorRGB
----@field periodicFunction WaveFunction
----@field functionPeriod number
----@field functionPhase number
-
----@class ShaderEnvironmentFlags
----@field useAlternateBumpAttenuation boolean
----@field trueAtmosphericFog boolean
----@field bumpMapIsSpecularMask boolean
----@field alphaTested boolean
-
----@class DeviceMachineObjectFlags
----@field openedByMeleeAttack boolean
----@field neverAppearsLocked boolean
----@field machineOneSided boolean
----@field doesNotOperateAutomatically boolean
-
----@alias UIWidgetType
----| "custom_not_implemented"
----| "movie_not_implemented"
----| "game_model_not_implemented"
----| "column_list"
----| "spinner_list"
----| "text_box"
----| "container"
-
----@class ScenarioCutsceneTitle
----@field unknown integer
----@field name string
----@field textBounds Rectangle2D
----@field stringIndex integer
----@field textStyle ScenarioTextStyle
----@field justification ScenarioJustification
----@field textFlags ScenarioTextFlags
----@field textColor integer
----@field shadowColor integer
----@field fadeInTime number
----@field upTime number
----@field fadeOutTime number
-
----@class ShaderTransparentGenericMap
----@field flags ShaderTransparentGenericMapFlag
----@field parameters ShaderTransparentMapParameters
----@field animation ShaderTransparentMapAnimation
-
----@class ScenarioScavengerHuntObjects
----@field name string
----@field objectNameIndex integer
-
----@alias ParticleSystemParticleUpdatePhysics
----| "default"
-
----@class ObjectHandle
----@field index integer
----@field value integer
----@field id integer
-
----@class EventHandlerReference
----@field flags EventHandlerReferencesFlags
----@field eventType UIEventType
----@field function UIEventHandlerReferenceFunction
----@field widgetTag TagReference
----@field soundEffect TagReference
----@field script string
-
----@class VehicleObjectFlags
----@field jumping boolean
----@field crouched boolean
----@field hovering boolean
-
----@class BipedObject: UnitObject
----@field bipedFlags BipedObjectFlags
----@field landingTimer integer
----@field landingForce integer
----@field movementState integer
----@field unk5 integer
----@field actionFlags integer
----@field unk6 integer
----@field bipedPosition VectorXYZ
----@field walkingCounter integer
----@field bumpObject ObjectHandle
----@field ticksSinceLastBump integer
----@field airborneTicks integer
----@field slippingTicks integer
----@field digitalThrottle integer
----@field jumpTicks integer
----@field meleeTicks integer
----@field meleeInflictTicks integer
----@field unk7 integer
----@field crouchScale number
----@field unk8 number
----@field unknownBipedPhysicsRelated Plane3D
----@field network BipedNetwork
-
----@alias GlowNormalParticleDistribution
----| "distributed_uniformly"
----| "distributed_randomly"
-
----@class ModelDetailCutoff
----@field superHigh number
----@field high number
----@field medium number
----@field low number
----@field superLow number
-
----@class ShaderEnvironmentDiffuse
----@field flags ShaderEnvironmentDiffuseFlags
----@field baseMap TagReference
----@field detailMapFunction ShaderDetailFunction
----@field primaryDetailMapScale number
----@field primaryDetailMap TagReference
----@field secondaryDetailMapScale number
----@field secondaryDetailMap TagReference
----@field microDetailMapFunction ShaderDetailFunction
----@field microDetailMapScale number
----@field microDetailMap TagReference
----@field materialColor ColorRGB
-
----@alias ShaderTransparentGenericStageOutput
----| "alpha_map_alpha_3"
----| "alpha_map_alpha_2"
----| "alpha_map_alpha_1"
----| "alpha_map_alpha_0"
----| "alpha_vertex_alpha_1"
----| "alpha_vertex_alpha_0_fog"
----| "alpha_scratch_alpha_1"
----| "alpha_scratch_alpha_0_final_alpha"
----| "alpha_discard"
-
----@class Meter
----@field flags IsUnusedFlag
----@field stencilBitmaps TagReference
----@field sourceBitmap TagReference
----@field stencilSequenceIndex integer
----@field sourceSequenceIndex integer
----@field interpolateColors MeterInterpolateColors
----@field anchorColors MeterAnchorColors
----@field emptyColor ColorARGB
----@field fullColor ColorARGB
----@field unmaskDistance number
----@field maskDistance number
----@field encodedStencil TagRawData
-
----@class DetailObjectCollectionTypeFlags
----@field moreColors boolean
----@field interpolateColorInHsv boolean
----@field unused1 boolean
----@field unused boolean
-
----@class BipedNetworkDelta
----@field grenadeCounts integer[2]
----@field bodyVitality number
----@field shieldVitality number
----@field shieldStunTicksGreaterThanZero boolean
-
----@class ScenarioPlayerStartingProfile
----@field name string
----@field startingHealthModifier number
----@field startingShieldModifier number
----@field primaryWeapon TagReference
----@field primaryRoundsLoaded integer
----@field primaryRoundsReserved integer
----@field secondaryWeapon TagReference
----@field secondaryRoundsLoaded integer
----@field secondaryRoundsReserved integer
----@field startingFragmentationGrenadeCount integer
----@field startingPlasmaGrenadeCount integer
----@field startingGrenadeType2Count integer
----@field startingGrenadeType3Count integer
-
----@alias BitmapUsage
----| "vector_map"
----| "light_map"
----| "detail_map"
----| "height_map"
----| "default"
----| "alpha_blend"
-
----@class InputDeviceDefaults
----@field deviceType InputDeviceDefaultsDeviceType
----@field flags InputDeviceDefaultsFlags
----@field deviceId TagRawData
----@field profile TagRawData
-
----@alias ActorVariantSpecialFireSituation
----| "strafing"
----| "enemy_out_of_sight"
----| "enemy_visible"
----| "never"
-
----@class UnitDamageResult
----@field category integer
----@field aiTicksUntilHandle integer
----@field amount number
----@field responsibleUnit TagHandle
-
----@class UnitPersistentControl
----@field ticksRemaining integer
----@field controlFlags UnitControlFlags
-
----@class ScenarioSourceFile
----@field name string
----@field source TagRawData
-
----@class Light
----@field flags LightFlags
----@field shape LightShape
----@field color LightColor
----@field gel LightGel
----@field lensFlare LightLensFlare
----@field radiosity LightRadiosity
----@field effectParameters LightEffectParameters
-
----@class ScenarioRecordedAnimation
----@field name string
----@field version integer
----@field rawAnimationData integer
----@field unitControlDataVersion integer
----@field lengthOfAnimation integer
----@field recordedAnimationEventStream TagRawData
-
----@class UnitSpeechData
----@field current UnitSpeech
----@field next UnitSpeech
----@field unk0 integer
----@field unk1 integer
----@field unk2 integer
----@field unk3 integer
----@field unk4 integer
----@field unk6 boolean
----@field unk7 boolean
----@field unk8 boolean
----@field unk9 integer
----@field unk10 integer
----@field unk11 integer
----@field unk12 integer
----@field unk13 integer
-
----@class ModelRegionPermutationMarker
----@field name string
----@field nodeIndex integer
----@field rotation Quaternion
----@field translation VectorXYZ
-
----@class UnitSpeech
----@field priority integer
----@field screamType integer
----@field soundTag TagHandle
----@field ticks integer
----@field unk1 integer
----@field unk2 integer
----@field aiCommunicationInfo AiCommunicationPacket
-
----@class AiCommunicationPacket
----@field type integer
----@field broken boolean
-
----@class ModelGeometryPart
----@field flags ModelGeometryPartFlags
----@field shaderIndex integer
----@field prevFilthyPartIndex integer
----@field nextFilthyPartIndex integer
----@field centroidPrimaryNode integer
----@field centroidSecondaryNode integer
----@field centroidPrimaryWeight number
----@field centroidSecondaryWeight number
----@field centroid VectorXYZ
----@field uncompressedVertices ModelVertexUncompressed[]
----@field compressedVertices ModelVertexCompressed[]
----@field triangleData ModelTriangleStripData[]
----@field triangleBufferType TriangleBufferType
----@field triangleCount integer
----@field trianglePointer integer
----@field trianglePointer2 integer
----@field vertices ModelVertexReference
-
----@alias SoundChannelCount
----| "stereo"
----| "mono"
-
----@class UnitAnimationFlags
----@field animationBit3Unknown boolean
----@field animationBit2Unknown boolean
----@field animationBit1Unknown boolean
----@field animationBit0Unknown boolean
-
----@class ShaderTransparentWaterProperties
----@field waterFlags ShaderTransparentWaterFlags
----@field baseMap TagReference
----@field reflectionMapProperties ShaderSpecularProperties
----@field reflectionMap TagReference
-
----@class UnitControlFlags
----@field exchangeWeapon boolean
----@field grenade boolean
----@field secondaryTrigger boolean
----@field primaryTrigger boolean
----@field reload boolean
----@field forceAlert boolean
----@field lookDontTurn boolean
----@field melee boolean
----@field action boolean
----@field exactFacing boolean
----@field light boolean
----@field user2 boolean
----@field user1 boolean
----@field jump boolean
----@field crouch boolean
-
----@class ScenarioStructureBSPClusterPortalFlags
----@field aiCantHearThroughThisShit boolean
-
----@class TagEntry
----@field primaryGroup TagGroup
----@field secondaryGroup TagGroup
----@field tertiaryGroup TagGroup
----@field handle TagHandle
----@field path string
-
----@class UnitObjectFlags
----@field desiresFlashlightOff boolean
----@field desiresFlashlightOn boolean
----@field possessed boolean
----@field unknownNVRelated boolean
----@field blind boolean
----@field suspended boolean
----@field impervious boolean
----@field canBlink boolean
----@field unknown boolean
----@field willNotDropItems boolean
----@field unknownIntegratedLightRelated boolean
----@field berserking boolean
----@field controllable boolean
----@field powerUpAddition boolean
----@field powerUp boolean
----@field unknownBipedSpeechRelated boolean
-
----@class BitmapDataFlags
----@field environment boolean
----@field external boolean
----@field makeItActuallyWork boolean
----@field runtimeCreated boolean
----@field v16U16 boolean
----@field linear boolean
----@field swizzled boolean
----@field palettized boolean
----@field compressed boolean
----@field powerOfTwoDimensions boolean
-
----@class GlobalsDifficulty
----@field easyEnemyDamage number
----@field normalEnemyDamage number
----@field hardEnemyDamage number
----@field impossEnemyDamage number
----@field easyEnemyVitality number
----@field normalEnemyVitality number
----@field hardEnemyVitality number
----@field impossEnemyVitality number
----@field easyEnemyShield number
----@field normalEnemyShield number
----@field hardEnemyShield number
----@field impossEnemyShield number
----@field easyEnemyRecharge number
----@field normalEnemyRecharge number
----@field hardEnemyRecharge number
----@field impossEnemyRecharge number
----@field easyFriendDamage number
----@field normalFriendDamage number
----@field hardFriendDamage number
----@field impossFriendDamage number
----@field easyFriendVitality number
----@field normalFriendVitality number
----@field hardFriendVitality number
----@field impossFriendVitality number
----@field easyFriendShield number
----@field normalFriendShield number
----@field hardFriendShield number
----@field impossFriendShield number
----@field easyFriendRecharge number
----@field normalFriendRecharge number
----@field hardFriendRecharge number
----@field impossFriendRecharge number
----@field easyInfectionForms number
----@field normalInfectionForms number
----@field hardInfectionForms number
----@field impossInfectionForms number
----@field easyRateOfFire number
----@field normalRateOfFire number
----@field hardRateOfFire number
----@field impossRateOfFire number
----@field easyProjectileError number
----@field normalProjectileError number
----@field hardProjectileError number
----@field impossProjectileError number
----@field easyBurstError number
----@field normalBurstError number
----@field hardBurstError number
----@field impossBurstError number
----@field easyNewTargetDelay number
----@field normalNewTargetDelay number
----@field hardNewTargetDelay number
----@field impossNewTargetDelay number
----@field easyBurstSeparation number
----@field normalBurstSeparation number
----@field hardBurstSeparation number
----@field impossBurstSeparation number
----@field easyTargetTracking number
----@field normalTargetTracking number
----@field hardTargetTracking number
----@field impossTargetTracking number
----@field easyTargetLeading number
----@field normalTargetLeading number
----@field hardTargetLeading number
----@field impossTargetLeading number
----@field easyOverchargeChance number
----@field normalOverchargeChance number
----@field hardOverchargeChance number
----@field impossOverchargeChance number
----@field easySpecialFireDelay number
----@field normalSpecialFireDelay number
----@field hardSpecialFireDelay number
----@field impossSpecialFireDelay number
----@field easyGuidanceVsPlayer number
----@field normalGuidanceVsPlayer number
----@field hardGuidanceVsPlayer number
----@field impossGuidanceVsPlayer number
----@field easyMeleeDelayBase number
----@field normalMeleeDelayBase number
----@field hardMeleeDelayBase number
----@field impossMeleeDelayBase number
----@field easyMeleeDelayScale number
----@field normalMeleeDelayScale number
----@field hardMeleeDelayScale number
----@field impossMeleeDelayScale number
----@field easyGrenadeChanceScale number
----@field normalGrenadeChanceScale number
----@field hardGrenadeChanceScale number
----@field impossGrenadeChanceScale number
----@field easyGrenadeTimerScale number
----@field normalGrenadeTimerScale number
----@field hardGrenadeTimerScale number
----@field impossGrenadeTimerScale number
----@field easyMajorUpgrade number
----@field normalMajorUpgrade number
----@field hardMajorUpgrade number
----@field impossMajorUpgrade number
----@field easyMajorUpgrade1 number
----@field normalMajorUpgrade1 number
----@field hardMajorUpgrade1 number
----@field impossMajorUpgrade1 number
----@field easyMajorUpgrade2 number
----@field normalMajorUpgrade2 number
----@field hardMajorUpgrade2 number
----@field impossMajorUpgrade2 number
-
----@class ObjectAttachment
----@field type TagReference
----@field marker string
----@field primaryScale FunctionOut
----@field secondaryScale FunctionOut
----@field changeColor FunctionNameNullable
-
----@class UnitRecentDamager
----@field lastDamageTime integer
----@field totalDamage number
----@field object ObjectHandle
----@field player PlayerHandle
-
----@class Player
----@field playerId integer
----@field localPlayerIndex integer
----@field name string
----@field squadIndex integer
----@field teamIndex integer
----@field interactionObjectHandle TableResourceHandle
----@field interactionObjectType integer
----@field interactionObjectSeat integer
----@field respawnTime integer
----@field respawnTimePenalty integer
----@field unitHandle TableResourceHandle
----@field deadUnitHandle TableResourceHandle
----@field bspClusterIndex integer
----@field weaponSwapResult boolean
----@field autoAimTargetObject TableResourceHandle
----@field lastFireTime integer
----@field networkPlayerData NetworkPlayer
----@field powerUpDurations integer[2]
----@field multiplayerInfo MultiplayerPlayerInfo
----@field killStreak integer
----@field multikill integer
----@field lastKillTime integer
----@field kills integer[4]
----@field assists integer[4]
----@field betrays integer
----@field deaths integer
----@field suicides integer
----@field teamKills integer
----@field multiplayerStatistics PlayerMultiplayerStatistics
----@field telefragTimer integer
----@field quitTime integer
----@field telefragDanger boolean
----@field quit boolean
----@field ping integer
----@field teamKillCount integer
----@field teamKillTicksSinceLast integer
----@field position VectorXYZ
----@field actions PlayerActions
----@field baselineUpdateXyAim number
----@field baselineUpdateZAim number
----@field baselineUpdateForward number
----@field baselineUpdateLeft number
----@field baselineUpdateRateOfFire number
----@field baselineUpdateWeaponSlot integer
----@field baselineUpdateGrenadeSlot integer
----@field updateAiming VectorXYZ
----@field updatePosition VectorXYZ
-
----@class ProjectileMaterialResponseFlags
----@field cannotBeOverpenetrated boolean
-
----@class HUDGlobalsAnniversaryRemapTargetFlags
----@field legacyMode boolean
-
----@class Decal
----@field properties DecalProperties
----@field appearance DecalAppearance
----@field animation DecalAnimation
----@field shader DecalShader
----@field maximumSpriteExtent number
-
----@class ContrailScaleFlags
----@field textureAnimationV boolean
----@field textureAnimationU boolean
----@field textureScaleV boolean
----@field textureScaleU boolean
----@field sequenceAnimationRate boolean
----@field inheritedVelocityFraction boolean
----@field pointVelocityConeAngle boolean
----@field pointVelocityDelta boolean
----@field pointVelocity boolean
----@field pointGenerationRate boolean
-
----@class Vehicle: Unit
----@field flags VehicleFlags
----@field type VehicleType
----@field maximumForwardSpeed number
----@field maximumReverseSpeed number
----@field speedAcceleration number
----@field speedDeceleration number
----@field maximumLeftTurn number
----@field maximumRightTurn number
----@field wheelCircumference number
----@field turnRate number
----@field blurSpeed number
----@field aIn VehicleFunctionIn
----@field bIn VehicleFunctionIn
----@field cIn VehicleFunctionIn
----@field dIn VehicleFunctionIn
----@field maximumLeftSlide number
----@field maximumRightSlide number
----@field slideAcceleration number
----@field slideDeceleration number
----@field minimumFlippingAngularVelocity number
----@field maximumFlippingAngularVelocity number
----@field fixedGunYaw number
----@field fixedGunPitch number
----@field aiSideslipDistance number
----@field aiDestinationRadius number
----@field aiAvoidanceDistance number
----@field aiPathfindingRadius number
----@field aiChargeRepeatTimeout number
----@field aiStrafingAbortRange number
----@field aiOversteeringBounds number[2]
----@field aiSteeringMaximum number
----@field aiThrottleMaximum number
----@field aiMovePositionTime number
----@field suspensionSound TagReference
----@field crashSound TagReference
----@field materialEffects TagReference
----@field effect TagReference
-
----@class ShaderEnvironmentReflection
----@field flags ShaderEnvironmentReflectionFlags
----@field type ShaderEnvironmentReflectionType
----@field lightmapBrightnessScale number
----@field perpendicularBrightness number
----@field parallelBrightness number
----@field reflectionCubeMap TagReference
-
----@class NetworkPlayer
----@field name string
----@field colorIndex integer
----@field iconIndex integer
----@field machineIndex integer
----@field controllerIndex integer
----@field teamIndex integer
----@field index integer
-
----@class PlayerMultiplayerStatistics
----@field raceTime integer
----@field kingHillScore integer
----@field oddballTime integer
----@field ctfFlagGrabs integer
----@field raceLaps integer
----@field oddballCarrierKills integer
----@field ctfFlagReturns integer
----@field raceBestTime integer
----@field oddballKills integer
----@field ctfFlagScores integer
-
----@class ScenarioStructureBSPMaterial
+---@class ScenarioAIConversationParticipantFlags
+---@field isAlternate boolean
+---@field hasAlternate boolean
+---@field optional boolean
+
+---@alias DeviceTriggersWhen
+---| "destroyed"
+---| "touched_by_player"
+
+---@class ScenarioStartingEquipment
+---@field flags ScenarioStartingEquipmentFlags
+---@field type0 ScenarioSpawnType
+---@field type1 ScenarioSpawnType
+---@field type2 ScenarioSpawnType
+---@field type3 ScenarioSpawnType
+---@field itemCollection1 TagReference
+---@field itemCollection2 TagReference
+---@field itemCollection3 TagReference
+---@field itemCollection4 TagReference
+---@field itemCollection5 TagReference
+---@field itemCollection6 TagReference
+
+---@alias MeterAnchorColors
+---| "at_full"
+---| "at_empty"
+---| "at_both_ends"
+
+---@class SkyLightFlags
+---@field affectsInteriors boolean
+---@field affectsExteriors boolean
+
+---@class Plane2D
+---@field i number
+---@field j number
+---@field w number
+
+---@class ScenarioStructureBSPCollisionMaterial
 ---@field shader TagReference
----@field shaderPermutation integer
----@field flags ScenarioStructureBSPMaterialFlags
----@field surfaces integer
----@field surfaceCount integer
----@field centroid VectorXYZ
----@field ambientColor ColorRGB
----@field distantLightCount integer
----@field distantLight0Color ColorRGB
----@field distantLight0Direction VectorXYZ
----@field distantLight1Color ColorRGB
----@field distantLight1Direction VectorXYZ
----@field reflectionTint ColorARGB
----@field shadowVector VectorXYZ
----@field shadowColor ColorRGB
----@field plane Plane3D
----@field breakableSurface integer
----@field renderedVertices ModelVertexReference
----@field lightmapVertices ModelVertexReference
----@field uncompressedVertices TagRawData
----@field compressedVertices TagRawData
+---@field material MaterialType
 
----@alias BipedFunctionIn
----| "flying_velocity"
----| "none"
+---@alias EffectCreateIn
+---| "space_only"
+---| "water_only"
+---| "air_only"
+---| "any_environment"
 
----@alias ShaderDetailFunction
----| "double_biased_add"
----| "multiply"
----| "double_biased_multiply"
+---@class PreferencesNetworkGame
+---@field name string
+---@field primaryColor ColorRGB
+---@field secondaryColor ColorRGB
+---@field pattern TagReference
+---@field patternBitmapIndex integer
+---@field decal TagReference
+---@field decalBitmapIndex integer
 
----@class ScenarioFlags
----@field doNotApplyBungieCampaignTagPatches boolean
----@field enableColorCorrection boolean
----@field useDemoUi boolean
----@field cortanaHack boolean
+---@class WeaponHUDInterfaceScreenEffectDefinitionMaskFlags
+---@field onlyWhenZoomed boolean
 
----@class ScenarioControlFlags
----@field usableFromBothSides boolean
+---@alias ShaderTransparentGenericStageOutputMapping
+---| "color_expand_normal"
+---| "color_bias_by_1_2"
+---| "color_scale_by_4"
+---| "color_scale_by_2"
+---| "color_scale_by_1_2"
+---| "color_identity"
 
----@class ShaderTransparentWaterRipples
----@field animationAngle number
----@field animationVelocity number
----@field scale number
----@field maps TagReference
----@field mipmapLevels integer
----@field mipmapFadeFactor number
----@field mipmapDetailBias number
----@field ripples ShaderTransparentWaterRipple[]
+---@class DetailObjectCollection
+---@field collectionType DetailObjectCollectionType
+---@field globalZOffset number
+---@field spritePlate TagReference
+---@field types DetailObjectCollectionObjectType[]
 
----@alias DeviceIn
----| "delay"
----| "locked"
----| "change_in_position"
----| "position"
----| "change_in_power"
----| "power"
----| "none"
+---@class ColorARGB
+---@field a integer
+---@field r integer
+---@field g integer
+---@field b integer
 
----@class ModelAnimationsFlags
----@field forceIdleCompression boolean
----@field compressAllAnimations boolean
+---@class VirtualKeyboardVirtualKey
+---@field keyboardKey VirtualKeyboardKeyboardKey
+---@field lowercaseCharacter integer
+---@field shiftCharacter integer
+---@field capsCharacter integer
+---@field symbolsCharacter integer
+---@field shiftCapsCharacter integer
+---@field shiftSymbolsCharacter integer
+---@field capsSymbolsCharacter integer
+---@field unselectedBackgroundBitmap TagReference
+---@field selectedBackgroundBitmap TagReference
+---@field activeBackgroundBitmap TagReference
+---@field stickyBackgroundBitmap TagReference
+
+---@class SoundLoopingDetailFlags
+---@field dontPlayWithoutAlternate boolean
+---@field dontPlayWithAlternate boolean
 
 ---@class Unit: Object
 ---@field flags UnitFlags
@@ -3007,231 +6783,13 @@
 ---@field weapons UnitWeapon[]
 ---@field seats UnitSeat[]
 
----@class PlayerHandle
----@field index integer
----@field value integer
----@field id integer
-
----@class ScenarioScriptNodeFlags
----@field isLocalVariable boolean
----@field isGarbageCollectable boolean
----@field isGlobal boolean
----@field isScriptCall boolean
----@field isPrimitive boolean
-
----@class TagCollectionTag
----@field reference TagReference
-
----@class DynamicObjectBase
----@field tagHandle TagHandle
----@field networkRole integer
----@field flags0 integer
----@field existenceTime integer
----@field flags1 BaseDynamicObjectFlags
----@field objectMarkerId integer
----@field network BaseObjectNetwork
----@field position VectorXYZ
----@field velocity VectorXYZ
----@field rotation VectorIJK[2]
----@field rotationVelocity VectorPYR
----@field scenarioLocation ScenarioLocation
----@field center VectorXYZ
----@field boundingRadius number
----@field scale number
----@field objectType integer
----@field teamOwner integer
----@field nameListIndex integer
----@field movingTime integer
----@field variantIndex integer
----@field player TableResourceHandle
----@field ownerObject ObjectHandle
----@field animationData ObjectAnimationData
----@field vitals BaseObjectVitals
----@field clusterPartition TableResourceHandle
----@field unknownObject ObjectHandle
----@field nextObject ObjectHandle
----@field firstObject ObjectHandle
----@field parentObject ObjectHandle
----@field parentAttachmentNode integer
----@field forceShieldUpdate boolean
----@field validOutgoingFunctions ObjectValidOutGoingFunctions
----@field incomingFunctionValues number[4]
----@field outgoingFunctionValues number[4]
----@field attachmentData BaseObjectAttachmentsData
----@field cachedRenderState TableResourceHandle
----@field regionDestroyeds BaseObjectRegionDestroyeds
----@field shaderPermutation integer
----@field regionHealths integer[8]
----@field regionPermutationIds integer[8]
----@field colorChange ColorRGB[4]
----@field colorChange2 ColorRGB[4]
----@field nodeOrientations BaseObjectBlockReference[2]
----@field nodeMatricesBlock BaseObjectBlockReference
-
----@class ScenarioBSP
----@field bspStart integer
----@field bspSize integer
----@field bspAddress integer
----@field structureBsp TagReference
-
----@alias LensFlareRadiusScaledBy
----| "distance_from_center"
----| "rotation_and_strafing"
----| "rotation"
----| "none"
-
----@class ObjectAnimationData
----@field animationTagHandle TagHandle
----@field animationState ObjectAnimationState
----@field animationInterpolationFrame integer
----@field animationInterpolationFrameCount integer
-
----@class MaterialEffectsMaterialEffect
----@field materials MaterialEffectsMaterialEffectMaterial[]
-
----@alias EquipmentPowerupType
----| "grenade"
----| "health"
----| "full_spectrum_vision"
----| "active_camouflage"
----| "over_shield"
----| "double_speed"
----| "none"
-
----@class ModelAnimationSuspensionAnimation
----@field massPointIndex integer
----@field animation integer
----@field fullExtensionGroundDepth number
----@field fullCompressionGroundDepth number
-
----@class DecalShader
----@field framebufferBlendFunction FramebufferBlendFunction
----@field map TagReference
-
----@class ModelAnimationsAnimationGraphSoundReference
----@field sound TagReference
-
----@class VectorIJK
----@field i integer
----@field j integer
----@field k integer
-
----@class ScenarioStructureBSPGlobalLeafPortal
----@field planeIndex integer
----@field backLeafIndex integer
----@field frontLeafIndex integer
----@field vertices ScenarioStructureBSPLeafPortalVertex[]
-
----@alias ParticleSystemSystemUpdatePhysics
----| "explosion"
----| "default"
-
----@alias BitmapType
----| "interface_bitmaps"
----| "sprites"
----| "cube_maps"
----| "_3d_textures"
----| "_2d_textures"
-
----@class BaseObjectBlockReference
----@field size integer
----@field offset integer
-
----@class BaseObjectRegionDestroyeds
----@field region7 boolean
----@field region6 boolean
----@field region5 boolean
----@field region4 boolean
----@field region3 boolean
----@field region2 boolean
----@field region1 boolean
----@field region0 boolean
-
----@class DamageEffectMaterialModifier
----@field dirt number
----@field sand number
----@field stone number
----@field snow number
----@field wood number
----@field metalHollow number
----@field metalThin number
----@field metalThick number
----@field rubber number
----@field glass number
----@field forceField number
----@field grunt number
----@field hunterArmor number
----@field hunterSkin number
----@field elite number
----@field jackal number
----@field jackalEnergyShield number
----@field engineerSkin number
----@field engineerForceField number
----@field floodCombatForm number
----@field floodCarrierForm number
----@field cyborgArmor number
----@field cyborgEnergyShield number
----@field humanArmor number
----@field humanSkin number
----@field sentinel number
----@field monitor number
----@field plastic number
----@field water number
----@field leaves number
----@field eliteEnergyShield number
----@field ice number
----@field hunterShield number
-
----@class BaseDynamicObjectFlags
----@field hasCollisionModel boolean
----@field collidable boolean
----@field outsideOfMap boolean
----@field doNotReactivate boolean
----@field deleteAtDeactivation boolean
----@field noShadow boolean
----@field isGarbage boolean
----@field isElevator2 boolean
----@field isElevator boolean
----@field isDeviceMachine boolean
----@field notPlacedAutomatically boolean
----@field connectedToMap boolean
----@field hasSoundLoopingAttachment boolean
----@field noCollision2 boolean
----@field stationary boolean
----@field inWater boolean
----@field ignoreGravity boolean
----@field onGround boolean
----@field noCollision boolean
-
----@class HUDInterfaceMeterElement
----@field position HUDInterfaceElementPosition
----@field meterBitmap TagReference
----@field colorAtMeterMinimum integer
----@field colorAtMeterMaximum integer
----@field flashColor integer
----@field emptyColor integer
----@field flags HUDInterfaceMeterFlags
----@field minimumMeterValue integer
----@field sequenceIndex integer
----@field alphaMultiplier integer
----@field alphaBias integer
----@field valueScale integer
----@field opacity number
----@field translucency number
----@field disabledColor integer
----@field minAlpha number
-
----@alias AnimationFunctionControls
----| "scale"
----| "frame"
-
----@class VehicleNetworkData
----@field atRest boolean
----@field position VectorXYZ
----@field transitionalVelocity VectorXYZ
----@field angularVelocity VectorXYZ
----@field forward VectorXYZ
----@field up VectorXYZ
+---@class ScenarioAIConversationLineFlags
+---@field waitUntilEveryoneNearby boolean
+---@field waitUntilSpeakerNearby boolean
+---@field waitAfterUntilToldToAdvance boolean
+---@field everyoneLookAtAddressee boolean
+---@field everyoneLookAtSpeaker boolean
+---@field addresseeLookAtSpeaker boolean
 
 ---@alias ShaderTypeXbox
 ---| "transparent_plasma"
@@ -3246,271 +6804,8 @@
 ---| "effect"
 ---| "screen"
 
----@alias GameEngineType
----| "race"
----| "king"
----| "oddball"
----| "slayer"
----| "ctf"
----| "none"
-
----@class CacheFileHeader
----@field fileSize integer
----@field name string
----@field build string
----@field gameType CacheFileType
----@field crc32 integer
-
----@class DeviceMachineObject: DeviceObject
----@field deviceFlags DeviceMachineObjectFlags
----@field ticksSinceStartedOpening integer
----@field elevatorPosition VectorXYZ
-
----@class LightVolume
----@field attachmentMarker string
----@field flags LightVolumeFlags
----@field nearFadeDistance number
----@field farFadeDistance number
----@field perpendicularBrightnessScale number
----@field parallelBrightnessScale number
----@field brightnessScaleSource FunctionOut
----@field map TagReference
----@field sequenceIndex integer
----@field count integer
----@field frameAnimationSource FunctionOut
----@field frames LightVolumeFrame[]
-
----@alias EffectCreate
----| "in_first_person_if_possible"
----| "only_in_third_person"
----| "only_in_first_person"
----| "independent_of_camera_mode"
-
----@alias MaterialType
----| "hunter_shield"
----| "ice"
----| "elite_energy_shield"
----| "leaves"
----| "water"
----| "plastic"
----| "monitor"
----| "sentinel"
----| "human_skin"
----| "human_armor"
----| "cyborg_energy_shield"
----| "cyborg_armor"
----| "flood_carrier_form"
----| "flood_combat_form"
----| "engineer_force_field"
----| "engineer_skin"
----| "jackal_energy_shield"
----| "jackal"
----| "elite"
----| "hunter_skin"
----| "hunter_armor"
----| "grunt"
----| "force_field"
----| "glass"
----| "rubber"
----| "metal_thick"
----| "metal_thin"
----| "metal_hollow"
----| "wood"
----| "snow"
----| "stone"
----| "sand"
----| "dirt"
-
----@class Contrail
----@field flags ContrailFlags
----@field scaleFlags ContrailScaleFlags
----@field pointGenerationRate number
----@field pointVelocity number[2]
----@field pointVelocityConeAngle number
----@field inheritedVelocityFraction number
----@field renderType ContrailRenderType
----@field textureRepeatsU number
----@field textureRepeatsV number
----@field textureAnimationU number
----@field textureAnimationV number
----@field animationRate number
----@field bitmap TagReference
----@field firstSequenceIndex integer
----@field sequenceCount integer
----@field shader ShaderEffect
----@field pointStates ContrailPointState[]
-
----@class GlobalsRasterizerData
----@field distanceAttenuation TagReference
----@field vectorNormalization TagReference
----@field atmosphericFogDensity TagReference
----@field planarFogDensity TagReference
----@field linearCornerFade TagReference
----@field activeCamouflageDistortion TagReference
----@field glow TagReference
----@field default2d TagReference
----@field default3d TagReference
----@field defaultCubeMap TagReference
----@field test0 TagReference
----@field test1 TagReference
----@field test2 TagReference
----@field test3 TagReference
----@field videoScanlineMap TagReference
----@field videoNoiseMap TagReference
----@field flags GlobalsRasterizerDataFlags
----@field refractionAmount number
----@field distanceFalloff number
----@field tintColor ColorRGB
----@field hyperStealthRefraction number
----@field hyperStealthDistanceFalloff number
----@field hyperStealthTintColor ColorRGB
----@field distanceAttenuation2d TagReference
-
----@class HUDGlobalsMessagingParameters
----@field anchor HUDInterfaceAnchor
----@field canvasSize HUDInterfaceCanvasSize
----@field position HUDInterfaceElementPosition
----@field fullscreenFont TagReference
----@field splitscreenFont TagReference
----@field upTime number
----@field fadeTime number
----@field iconColor ColorARGB
----@field textColor ColorARGB
----@field textSpacing number
----@field itemMessageText TagReference
----@field iconBitmap TagReference
----@field alternateIconText TagReference
----@field buttonIcons HUDGlobalsButtonIcon[]
-
----@class ContinuousDamageEffect
----@field radius number[2]
----@field cutoffScale number
----@field vibrateParameters ContinuousDamageVibrateParameters
----@field cameraShaking ContinuousDamageCameraShaking
----@field damage DamageEffectDamage
-
----@class ModelAnimationsFrameInfoDxDyDzDyaw
----@field dx number
----@field dy number
----@field dz number
----@field dyaw number
-
----@class ActorVariantGrenades
----@field grenadeType GrenadeType
----@field trajectoryType ActorVariantTrajectoryType
----@field grenadeStimulus ActorVariantGrenadeStimulus
----@field minimumEnemyCount integer
----@field enemyRadius number
----@field grenadeVelocity number
----@field grenadeRanges number[2]
----@field collateralDamageRadius number
----@field grenadeChance number
----@field grenadeCheckTime number
----@field encounterGrenadeTimeout number
-
----@alias DetailObjectCollectionType
----| "viewer_facing"
----| "screen_facing"
-
----@class ScenarioStructureBSPDetailObjectData
----@field cells ScenarioStructureBSPGlobalDetailObjectCell[]
----@field instances ScenarioStructureBSPGlobalDetailObject[]
----@field counts ScenarioStructureBSPGlobalDetailObjectCount[]
----@field zReferenceVectors ScenarioStructureBSPGlobalZrEferenceVector[]
----@field bullshit integer
-
----@class ModelAnimationsRotation
----@field x integer
----@field y integer
----@field z integer
----@field w integer
-
----@alias ObjectType
----| "sound_scenery"
----| "placeholder"
----| "device_light_fixture"
----| "device_control"
----| "device_machine"
----| "scenery"
----| "projectile"
----| "garbage"
----| "equipment"
----| "weapon"
----| "vehicle"
----| "biped"
-
----@class BitmapFlags
----@field useAverageColorForDetailFade boolean
----@field invertDetailFade boolean
----@field halfHudScale boolean
----@field filthySpriteBugFix boolean
----@field uniformSpriteSequences boolean
----@field disableHeightMapCompression boolean
----@field enableDiffusionDithering boolean
-
----@class BitmapMoreProcessing
----@field blurFilterSize number
----@field alphaBias number
----@field mipmapCount integer
-
----@class UnitHUDInterfaceShieldMeter: HUDInterfaceMeterElement
----@field overchargeMinimumColor integer
----@field overchargeMaximumColor integer
----@field overchargeFlashColor integer
----@field overchargeEmptyColor integer
-
----@class ContrailPointState
----@field duration number[2]
----@field transitionDuration number[2]
----@field physics TagReference
----@field width number
----@field color ColorARGB
----@field scaleFlags ContrailPointStateScaleFlags
-
----@class Physics
----@field radius number
----@field momentScale number
----@field mass number
----@field centerOfMass VectorXYZ
----@field density number
----@field gravityScale number
----@field groundFriction number
----@field groundDepth number
----@field groundDampFraction number
----@field groundNormalK1 number
----@field groundNormalK0 number
----@field waterFriction number
----@field waterDepth number
----@field waterDensity number
----@field airFriction number
----@field xxMoment number
----@field yyMoment number
----@field zzMoment number
----@field inertialMatrixAndInverse PhysicsInertialMatrix[]
----@field poweredMassPoints PhysicsPoweredMassPoint[]
----@field massPoints PhysicsMassPoint[]
-
----@class ShaderTransparentGeneric: Shader
----@field properties ShaderTransparentProperties
----@field maps ShaderTransparentGenericMap[]
----@field stages ShaderTransparentGenericStage[]
-
----@class EffectParticleScalesValues
----@field tint boolean
----@field particleRadiusDelta boolean
----@field particleRadius boolean
----@field distributionRadiusDelta boolean
----@field distributionRadius boolean
----@field countDelta boolean
----@field count boolean
----@field angularVelocityDelta boolean
----@field angularVelocity boolean
----@field velocityConeAngle boolean
----@field velocityDelta boolean
----@field velocity boolean
-
----@class Model
----@field flags ModelFlags
+---@class GBXModel
+---@field flags GBXModelFlags
 ---@field nodeListChecksum integer
 ---@field detailCutoff ModelDetailCutoff
 ---@field detailNodeCount ModelDetailNodeCount
@@ -3519,985 +6814,21 @@
 ---@field runtimeMarkers ModelMarker[]
 ---@field nodes ModelNode[]
 ---@field regions ModelRegion[]
----@field geometries ModelGeometry[]
+---@field geometries GBXModelGeometry[]
 ---@field shaders ModelShaderReference[]
 
----@class DeviceLightFixture: Device
+---@class ItemCollectionPermutation
+---@field weight number
+---@field item TagReference
 
----@alias ScenarioUniqueLeaderType
----| "sgt_lehto"
----| "sgt_johnson"
----| "random"
----| "none"
----| "normal"
-
----@class ItemFlags
----@field unaffectedByGravity boolean
----@field destroyedByExplosions boolean
----@field alwaysMaintainsZUp boolean
-
----@class ShaderTransparentWater: Shader
----@field properties ShaderTransparentWaterProperties
----@field ripples ShaderTransparentWaterRipples
-
----@class ScenarioDecalPalette
----@field reference TagReference
-
----@class ScenarioControlPalette
----@field name TagReference
-
----@class ScenarioMachinePalette
----@field name TagReference
-
----@class ModelCollisionGeometryBSPVertex
----@field point VectorXYZ
----@field firstEdge integer
-
----@class ModelCollisionGeometryFlags
----@field onlyDamagedWhileOccupied boolean
----@field onlyDamagedByExplosives boolean
----@field parentNeverTakesBodyDamageForUs boolean
----@field passesAreaDamageToChildren boolean
----@field alwaysShieldsFriendlyDamage boolean
----@field takesBodyDamageForChildren boolean
----@field takesShieldDamageForChildren boolean
-
----@class ScenarioVehiclePalette
----@field name TagReference
-
----@class MultiplayerScenarioDescriptionScenarioDescription
----@field descriptiveBitmap TagReference
----@field displayedMapName TagReference
----@field scenarioTagDirectoryPath string
-
----@class ScenarioAIConversationFlags
----@field playerMustBeLooking boolean
----@field keepTryingToPlay boolean
----@field stopOtherActions boolean
----@field playerMustBeVisible boolean
----@field stopIfAlertedToEnemy boolean
----@field stopIfVisibleEnemy boolean
----@field stopIfDamaged boolean
----@field stopIfDeath boolean
-
----@class ScenarioStructureBSPClusterPortal
----@field frontCluster integer
----@field backCluster integer
----@field planeIndex integer
----@field centroid VectorXYZ
----@field boundingRadius number
----@field flags ScenarioStructureBSPClusterPortalFlags
----@field vertices ScenarioStructureBSPClusterPortalVertex[]
-
----@class GrenadeHUDInterfaceSound
----@field sound TagReference
----@field latchedTo GrenadeHUDInterfaceSoundLatchedTo
----@field scale number
-
----@class UnitHUDInterfaceHUDSound
----@field sound TagReference
----@field latchedTo UnitHUDInterfaceHUDSoundLatchedTo
----@field scale number
-
----@alias DeviceType
----| "call_button"
----| "off_button"
----| "on_button"
----| "toggle_switch"
-
----@class ShaderModelFlags
----@field useXboxMultipurposeChannelOrder boolean
----@field disableTwoSidedCulling boolean
----@field trueAtmosphericFog boolean
----@field alphaBlendedDecal boolean
----@field notAlphaTested boolean
----@field twoSided boolean
----@field detailAfterReflection boolean
+---@class ScenarioTextFlags
+---@field bottomJustify boolean
+---@field centerVertically boolean
+---@field wrapVertically boolean
+---@field wrapHorizontally boolean
 
 ---@class ModelAnimationsDeviceAnimation
 ---@field animation integer
-
----@class MaterialEffects
----@field effects MaterialEffectsMaterialEffect[]
-
----@class Font
----@field flags FontFlags
----@field ascendingHeight integer
----@field descendingHeight integer
----@field leadingHeight integer
----@field leadingWidth integer
----@field encodingType FontEncodingType
----@field characterOffset integer
----@field characterTables FontCharacterTables[]
----@field bold TagReference
----@field italic TagReference
----@field condense TagReference
----@field underline TagReference
----@field characters FontCharacter[]
----@field pixels TagRawData
-
----@class HUDNumber
----@field digitsBitmap TagReference
----@field bitmapDigitWidth integer
----@field screenDigitWidth integer
----@field xOffset integer
----@field yOffset integer
----@field decimalPointWidth integer
----@field colonWidth integer
-
----@class AnimationStateInterpolation
----@field state ObjectAnimationState
----@field frameIndex number
-
----@class ScenarioStructureBSPPathfindingEdge
----@field midpoint integer
-
----@class ModelRegionPermutation
----@field name string
----@field flags ModelRegionPermutationFlags
----@field permutationNumber integer
----@field superLow integer
----@field low integer
----@field medium integer
----@field high integer
----@field superHigh integer
----@field markers ModelRegionPermutationMarker[]
-
----@class ScenarioBipedPalette
----@field name TagReference
-
----@class ScenarioWeaponPalette
----@field name TagReference
-
----@class ScenarioDeviceGroup
----@field name string
----@field initialValue number
----@field flags ScenarioDeviceGroupFlags
-
----@class WeaponReloadStartData
----@field totalRounds integer[2]
----@field loadedRounds integer[2]
-
----@class ScenarioSoundSceneryPalette
----@field name TagReference
-
----@class LightGel
----@field primaryCubeMap TagReference
----@field textureAnimationFunction WaveFunction
----@field textureAnimationPeriod number
----@field secondaryCubeMap TagReference
----@field yawFunction WaveFunction
----@field yawPeriod number
----@field rollFunction WaveFunction
----@field rollPeriod number
----@field pitchFunction WaveFunction
----@field pitchPeriod number
-
----@class ModelAnimationsFrameInfoDxDyDyaw
----@field dx number
----@field dy number
----@field dyaw number
-
----@class ModelTriangleStripData
----@field indices integer[3]
-
----@class EffectLocation
----@field markerName string
-
----@class Shader
----@field radiosity ShaderRadiosityProperties
----@field physics ShaderPhysicsProperties
-
----@class ShaderEnvironment: Shader
----@field properties ShaderEnvironmentProperties
----@field lensFlares ShaderLensFlares
----@field diffuse ShaderEnvironmentDiffuse
----@field bump ShaderEnvironmentBump
----@field textureScrollingAnimation ShaderEnvironmentTextureScrollingAnimation
----@field selfIllumination ShaderEnvironmentSelfIllumination
----@field specular ShaderEnvironmentSpecular
----@field reflection ShaderEnvironmentReflection
-
----@alias FlagAttachedEdgeShape
----| "concave_triangular"
----| "flat"
-
----@class HUDInterfaceFlashFlags
----@field reverseDefaultFlashingColors boolean
-
----@class ShaderEnvironmentSelfIllumination
----@field flags IsUnfilteredFlag
----@field primaryOnColor ColorRGB
----@field primaryOffColor ColorRGB
----@field primaryAnimationFunction WaveFunction
----@field primaryAnimationPeriod number
----@field primaryAnimationPhase number
----@field secondaryOnColor ColorRGB
----@field secondaryOffColor ColorRGB
----@field secondaryAnimationFunction WaveFunction
----@field secondaryAnimationPeriod number
----@field secondaryAnimationPhase number
----@field plasmaOnColor ColorRGB
----@field plasmaOffColor ColorRGB
----@field plasmaAnimationFunction WaveFunction
----@field plasmaAnimationPeriod number
----@field plasmaAnimationPhase number
----@field mapScale number
----@field map TagReference
-
----@class FontCharacter
----@field character integer
----@field characterWidth integer
----@field bitmapWidth integer
----@field bitmapHeight integer
----@field bitmapOriginX integer
----@field bitmapOriginY integer
----@field hardwareCharacterIndex integer
----@field drawGeneration integer
----@field pixelsOffset integer
-
----@class BitmapGroupSequence
----@field name string
----@field firstBitmapIndex integer
----@field bitmapCount integer
----@field sprites BitmapGroupSprite[]
-
----@class ContinuousDamageVibrateParameters
----@field lowFrequency number
----@field highFrequency number
-
----@class VectorXY
----@field x number
----@field y number
-
----@class UnitHUDInterfaceHealthMeter: HUDInterfaceMeterElement
----@field mediumHealthLeftColor integer
----@field maxColorHealthFractionCutoff number
----@field minColorHealthFractionCutoff number
-
----@class ScenarioAIRecordingReference
----@field recordingName string
-
----@class UnitHUDInterfaceHUDSoundLatchedTo
----@field healthMajorDamage boolean
----@field healthMinorDamage boolean
----@field healthEmpty boolean
----@field healthLow boolean
----@field shieldEmpty boolean
----@field shieldLow boolean
----@field shieldDamaged boolean
----@field shieldRecharging boolean
-
----@class ModelMarkerInstance
----@field regionIndex integer
----@field permutationIndex integer
----@field nodeIndex integer
----@field translation VectorXYZ
----@field rotation Quaternion
-
----@class GlobalsRasterizerDataFlags
----@field tintEdgeDensity boolean
-
----@class SoundFlags
----@field thirstyGrunt boolean
----@field splitLongSoundIntoPermutations boolean
----@field fitToAdpcmBlocksize boolean
-
----@class ScenarioAIConversationLineFlags
----@field waitUntilEveryoneNearby boolean
----@field waitUntilSpeakerNearby boolean
----@field waitAfterUntilToldToAdvance boolean
----@field everyoneLookAtAddressee boolean
----@field everyoneLookAtSpeaker boolean
----@field addresseeLookAtSpeaker boolean
-
----@class ModelCollisionGeometryModifier
-
----@alias ModelVertexType
----| "widget"
----| "unlit_zsprite"
----| "model_processed"
----| "model_uncompressed_ff"
----| "environment_lightmap_uncompressed_ff"
----| "environment_uncompressed_ff"
----| "detail_object"
----| "decal"
----| "debug"
----| "dynamic_screen"
----| "dynamic_lit"
----| "dynamic_unlit"
----| "model_compressed"
----| "model_uncompressed"
----| "environment_lightmap_compressed"
----| "environment_lightmap_uncompressed"
----| "environment_compressed"
----| "environment_uncompressed"
-
----@class ShaderTransparentGlassBackgroundTint
----@field backgroundTintColor ColorRGB
----@field backgroundTintMapScale number
----@field backgroundTintMap TagReference
-
----@class ModelMarker
----@field name string
----@field magicIdentifier integer
----@field instances ModelMarkerInstance[]
-
----@class FlagAttachmentPoint
----@field heightToNextAttachment integer
----@field markerName string
-
----@alias ProjectileScaleEffectsBy
----| "angle"
----| "damage"
-
----@class ShaderTransparentProperties
----@field numericCounterLimit integer
----@field flags ShaderTransparentFlags
----@field firstMapType ShaderFirstMapType
----@field framebufferBlendFunction FramebufferBlendFunction
----@field framebufferFadeMode FramebufferFadeMode
----@field framebufferFadeSource FunctionOut
----@field lensFlares ShaderLensFlares
----@field extraLayers ShaderTransparentExtraLayer[]
-
----@class DamageEffectFlags
----@field doNotScaleDamageByDistance boolean
-
----@class EventHandlerReferencesFlags
----@field tryToBranchOnFailure boolean
----@field runScenarioScript boolean
----@field goBackToPreviousWidget boolean
----@field replaceSelfWWidget boolean
----@field runFunction boolean
----@field giveFocusToWidget boolean
----@field reloadOtherWidget boolean
----@field reloadSelf boolean
----@field openWidget boolean
----@field closeAllWidgets boolean
----@field closeOtherWidget boolean
----@field closeCurrentWidget boolean
-
----@class Biped: Unit
----@field movingTurningSpeed number
----@field flags BipedFlags
----@field stationaryTurningThreshold number
----@field aIn BipedFunctionIn
----@field bIn BipedFunctionIn
----@field cIn BipedFunctionIn
----@field dIn BipedFunctionIn
----@field dontUse TagReference
----@field bankAngle number
----@field bankApplyTime number
----@field bankDecayTime number
----@field pitchRatio number
----@field maxVelocity number
----@field maxSidestepVelocity number
----@field acceleration number
----@field deceleration number
----@field angularVelocityMaximum number
----@field angularAccelerationMaximum number
----@field crouchVelocityModifier number
----@field maximumSlopeAngle number
----@field downhillFalloffAngle number
----@field downhillCutoffAngle number
----@field downhillVelocityScale number
----@field uphillFalloffAngle number
----@field uphillCutoffAngle number
----@field uphillVelocityScale number
----@field footsteps TagReference
----@field jumpVelocity number
----@field maximumSoftLandingTime number
----@field maximumHardLandingTime number
----@field minimumSoftLandingVelocity number
----@field minimumHardLandingVelocity number
----@field maximumHardLandingVelocity number
----@field deathHardLandingVelocity number
----@field standingCameraHeight number
----@field crouchingCameraHeight number
----@field crouchTransitionTime number
----@field standingCollisionHeight number
----@field crouchingCollisionHeight number
----@field collisionRadius number
----@field autoaimWidth number
----@field cosineStationaryTurningThreshold number
----@field crouchCameraVelocity number
----@field cosineMaximumSlopeAngle number
----@field negativeSineDownhillFalloffAngle number
----@field negativeSineDownhillCutoffAngle number
----@field sineUphillFalloffAngle number
----@field sineUphillCutoffAngle number
----@field pelvisModelNodeIndex integer
----@field headModelNodeIndex integer
----@field contactPoint BipedContactPoint[]
-
----@class WeaponHUDInterfaceCrosshair
----@field crosshairType WeaponHUDInterfaceCrosshairType
----@field allowedViewType WeaponHUDInterfaceViewType
----@field crosshairBitmap TagReference
----@field crosshairOverlays WeaponHUDInterfaceCrosshairOverlay[]
-
----@class WeaponHUDInterfaceOverlay
----@field position HUDInterfaceElementPosition
----@field color HUDInterfaceElementColor
----@field frameRate integer
----@field sequenceIndex integer
----@field type WeaponHUDInterfaceOverlayType
----@field flags HUDInterfaceOverlayFlashFlags
-
----@class PlayersGlobals
----@field localPlayerNetworkId integer
----@field localPlayers PlayerHandle[1]
----@field localPlayerDeadUnits ObjectHandle[1]
----@field localPlayerCount integer
----@field doubleSpeedTicksRemaining integer
----@field areAllDead boolean
----@field inputDisabled boolean
----@field bspSwitchTriggerIndex integer
----@field respawnFailure integer
----@field wasTeleported boolean
-
----@class ScenarioScript
----@field name string
----@field scriptType ScenarioScriptType
----@field returnType ScenarioScriptValueType
----@field rootExpressionIndex integer
----@field parameters ScenarioScriptParameter[]
-
----@class ModelCollisionGeometryRegion
----@field name string
----@field flags ModelCollisionGeometryRegionFlags
----@field damageThreshold number
----@field destroyedEffect TagReference
----@field permutations ModelCollisionGeometryPermutation[]
-
----@alias DecalLayer
----| "water"
----| "alpha_tested"
----| "light"
----| "secondary"
----| "primary"
-
----@class Sound
----@field flags SoundFlags
----@field soundClass SoundClass
----@field sampleRate SoundSampleRate
----@field distanceBounds number[2]
----@field skipFraction number
----@field randomPitchBounds number[2]
----@field innerConeAngle number
----@field outerConeAngle number
----@field outerConeGain number
----@field randomGainModifier number
----@field maximumBendRate number
----@field zeroSkipFractionModifier number
----@field zeroGainModifier number
----@field zeroPitchModifier number
----@field oneSkipFractionModifier number
----@field oneGainModifier number
----@field onePitchModifier number
----@field channelCount SoundChannelCount
----@field format SoundFormat
----@field promotionSound TagReference
----@field promotionCount integer
----@field longestPermutationLength integer
----@field cumulativePromotionLength integer
----@field lastPromotionTime integer
----@field scriptedSoundRemainingTime integer
----@field scriptedSoundIndex integer
----@field pitchRanges SoundPitchRange[]
-
----@class ShaderTransparentMapParameters
----@field mapUScale number
----@field mapVScale number
----@field mapUOffset number
----@field mapVOffset number
----@field mapRotation number
----@field mipmapBias number
----@field map TagReference
-
----@alias ScenarioSpawnType
----| "all_except_race_and_ctf"
----| "all_except_ctf"
----| "all_games"
----| "ignored_4"
----| "ignored_3"
----| "ignored_2"
----| "ignored_1"
----| "stub"
----| "terminator"
----| "race"
----| "king_of_the_hill"
----| "oddball"
----| "slayer"
----| "ctf"
----| "none"
-
----@alias UnitDefaultTeam
----| "unused_9"
----| "unused_8"
----| "unused_7"
----| "unused_6"
----| "sentinel"
----| "flood"
----| "covenant"
----| "human"
----| "player"
----| "none"
-
----@class ScenarioGlobal
----@field name string
----@field type ScenarioScriptValueType
----@field initializationExpressionIndex integer
-
----@class ScenarioChildScenario
----@field childScenario TagReference
-
----@class ShaderTransparentFlags
----@field numeric boolean
----@field scaleFirstMapWithDistance boolean
----@field ignoreEffect boolean
----@field drawBeforeWater boolean
----@field firstMapIsInScreenspace boolean
----@field twoSided boolean
----@field decal boolean
----@field alphaTested boolean
-
----@alias WeaponType
----| "rocket_launcher"
----| "plasma_rifle"
----| "plasma_pistol"
----| "needler"
----| "shotgun"
----| "undefined"
-
----@class ScenarioStructureBSPMirror
----@field plane Plane3D
----@field shader TagReference
----@field vertices ScenarioStructureBSPMirrorVertex[]
-
----@class UnitHUDInterfaceAuxiliaryPanel
----@field type UnitHUDInterfacePanelType
----@field background HUDInterfaceStaticElement
----@field meter HUDInterfaceMeterElement
----@field minimumFractionCutoff number
----@field moreFlags UnitHUDInterfaceAuxiliaryPanelMeterMoreFlags
-
----@class ScenarioCutsceneCameraPoint
----@field unknown integer
----@field name string
----@field position VectorXYZ
----@field orientation VectorPYR
----@field fieldOfView number
-
----@alias ContrailRenderType
----| "double_marker_linked"
----| "viewer_facing"
----| "ground_mapped"
----| "media_mapped"
----| "horizontal_orientation"
----| "vertical_orientation"
-
----@class ScenarioNetgameFlags
----@field position VectorXYZ
----@field facing number
----@field type ScenarioNetgameFlagType
----@field usageId integer
----@field weaponGroup TagReference
-
----@class ParticleSystemTypeParticleState
----@field name string
----@field durationBounds number[2]
----@field transitionTimeBounds number[2]
----@field bitmaps TagReference
----@field sequenceIndex integer
----@field scale number[2]
----@field animationRate number[2]
----@field rotationRate number[2]
----@field color1 ColorARGB
----@field color2 ColorARGB
----@field radiusMultiplier number
----@field pointPhysics TagReference
----@field shader ShaderEffect
----@field physicsConstants ParticleSystemPhysicsConstant[]
-
----@class ShaderModelChangeColor
----@field changeColorSource FunctionNameNullable
-
----@class ScenarioScriptNodeTable
----@field name string
----@field maximumCount integer
----@field elementSize integer
----@field one integer
----@field data integer
----@field size integer
----@field count integer
----@field nextId integer
----@field firstElementPtr integer
-
----@class GrenadeHUDInterfaceTotalGrenadesNumberElement
----@field properties HUDInterfaceNumberElement
----@field flashCutoff integer
-
----@alias ParticleOrientation
----| "perpendicular_to_direction"
----| "parallel_to_direction"
----| "screen_facing"
-
----@alias ShaderTransparentGlassReflectionType
----| "dynamic_mirror"
----| "flat_cube_map"
----| "bumped_cube_map"
-
----@class ScenarioBiped
----@field type integer
----@field name integer
----@field properties ScenarioUnitProperties
-
----@class ScenarioUnitFlags
----@field dead boolean
-
----@class ScenarioSceneryPalette
----@field name TagReference
-
----@class ScenarioStructureBSPClusterPortalIndex
----@field portal integer
-
----@class ScenarioCommandPoint
----@field position VectorXYZ
----@field surfaceIndex integer
-
----@class ModelCollisionGeometryMaterial
----@field name string
----@field flags ModelCollisionGeometryMaterialFlags
----@field materialType MaterialType
----@field shieldLeakPercentage number
----@field shieldDamageMultiplier number
----@field bodyDamageMultiplier number
-
----@class FogScreenFlags
----@field noTextureBasedFalloff boolean
----@field noModelMultipass boolean
----@field noEnvironmentMultipass boolean
-
----@alias ShaderColorFunctionType
----| "blend_next_map_alpha_inverse"
----| "blend_next_map_alpha"
----| "blend_current_alpha_inverse"
----| "blend_current_alpha"
----| "subtract_next_map"
----| "subtract_current"
----| "add_signed_next_map"
----| "add_signed_current"
----| "add"
----| "double_multiply"
----| "multiply"
----| "next_map"
----| "current"
-
----@class HUDInterfaceStaticElement
----@field position HUDInterfaceElementPosition
----@field interfaceBitmap TagReference
----@field color HUDInterfaceElementColor
----@field sequenceIndex integer
----@field multitextureOverlays HUDInterfaceMultitextureOverlay[]
-
----@alias VehicleType
----| "turret"
----| "alien_fighter"
----| "alien_scout"
----| "human_plane"
----| "human_boat"
----| "human_jeep"
----| "human_tank"
-
----@class GlowParticleSize
----@field attachment FunctionOut
----@field bounds number[2]
----@field multiplier number[2]
-
----@class ScenarioCommand
----@field atomType ScenarioAtomType
----@field atomModifier integer
----@field parameter1 number
----@field parameter2 number
----@field point1 integer
----@field point2 integer
----@field animation integer
----@field script integer
----@field recording integer
----@field command integer
----@field objectName integer
-
----@class ModelCollisionGeometryNode
----@field name string
----@field region integer
----@field parentNode integer
----@field nextSiblingNode integer
----@field firstChildNode integer
----@field nameThing integer
----@field bsps ModelCollisionGeometryBSP[]
-
----@class ObjectChangeColorsPermutation
----@field weight number
----@field color ColorRGB
-
----@class ScenarioStructureBSPSubcluster
----@field worldBoundsX number[2]
----@field worldBoundsY number[2]
----@field worldBoundsZ number[2]
----@field surfaceIndices ScenarioStructureBSPSubclusterSurfaceIndex[]
-
----@class LightEffectParameters
----@field duration number
----@field falloffFunction FunctionType
-
----@class Matrix
----@field m VectorXYZ[3]
-
----@class ShaderTransparentPlasmaNoiseMap
----@field animationPeriod number
----@field animationDirection VectorXYZ
----@field noiseMapScale number
----@field noiseMap TagReference
-
----@class ShaderTransparentGlassReflection
----@field reflectionType ShaderTransparentGlassReflectionType
----@field reflectionMapProperties ShaderSpecularProperties
----@field reflectionMap TagReference
----@field bumpMapScale number
----@field bumpMap TagReference
-
----@alias ScenarioTriggerVolumeType
----| "rotational"
----| "fixed"
-
----@class ScenarioStructureBSPWeatherPolyhedron
----@field boundingSphereCenter VectorXYZ
----@field boundingSphereRadius number
----@field planes ScenarioStructureBSPWeatherPolyhedronPlane[]
-
----@class VirtualKeyboardVirtualKey
----@field keyboardKey VirtualKeyboardKeyboardKey
----@field lowercaseCharacter integer
----@field shiftCharacter integer
----@field capsCharacter integer
----@field symbolsCharacter integer
----@field shiftCapsCharacter integer
----@field shiftSymbolsCharacter integer
----@field capsSymbolsCharacter integer
----@field unselectedBackgroundBitmap TagReference
----@field selectedBackgroundBitmap TagReference
----@field activeBackgroundBitmap TagReference
----@field stickyBackgroundBitmap TagReference
-
----@class ScenarioSquadFlags
----@field automaticMigration boolean
----@field magicSightAfterTimer boolean
----@field noTimerDelayForever boolean
----@field startTimerImmediately boolean
----@field neverSearch boolean
----@field unused boolean
-
----@class DamageEffectTemporaryCameraImpulse
----@field duration number
----@field fadeFunction FunctionType
----@field rotation number
----@field pushback number
----@field jitter number[2]
-
----@class DamageEffectScreenFlash
----@field type DamageEffectScreenFlashType
----@field priority DamageEffectScreenFlashPriority
----@field duration number
----@field fadeFunction FunctionType
----@field maximumIntensity number
----@field color ColorARGB
-
----@class WeaponHUDInterfaceOverlayElement
----@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
----@field allowedViewType WeaponHUDInterfaceViewType
----@field anchor HUDInterfaceChildAnchor
----@field overlayBitmap TagReference
----@field overlays WeaponHUDInterfaceOverlay[]
-
----@alias WeaponHUDInterfaceViewType
----| "splitscreen"
----| "fullscreen"
----| "any"
-
----@class BitmapSpriteBudget
----@field size BitmapSpriteBudgetSize
----@field count integer
-
----@class ActorVariant
----@field flags ActorVariantFlags
----@field actorDefinition TagReference
----@field unit TagReference
----@field majorVariant TagReference
----@field metagameProperties MetagameProperties
----@field movementSwitching ActorVariantMovementSwitching
----@field rangedCombat ActorVariantRangedCombat
----@field burstGeometry ActorVariantBurstGeometry
----@field firingPatterns ActorVariantFiringPatterns
----@field specialCaseFiringProperties ActorVariantSpecialCaseFiringProperties
----@field berserkingAndMelee ActorVariantBerserkingAndMelee
----@field grenades ActorVariantGrenades
----@field items ActorVariantItems
----@field unitProperties ActorVariantUnitProperties
-
----@alias ParticleAnchor
----| "zsprite"
----| "with_screen_space"
----| "with_primary"
-
----@class ModelAnimationsFirstPersonWeapon
----@field animation integer
-
----@class MetagameProperties
----@field metagameType MetagameType
----@field metagameClass MetagameClass
-
----@class Rectangle2D
----@field top integer
----@field left integer
----@field bottom integer
----@field right integer
-
----@class HUDGlobalsWaypointParameters
----@field topOffset number
----@field bottomOffset number
----@field leftOffset number
----@field rightOffset number
----@field arrowBitmap TagReference
----@field waypointArrows HUDGlobalsWaypointArrow[]
----@field hudScaleInMultiplayer number
-
----@class ActorVariantBerserkingAndMelee
----@field meleeRange number
----@field meleeAbortRange number
----@field berserkFiringRanges number[2]
----@field berserkMeleeRange number
----@field berserkMeleeAbortRange number
-
----@class UnitControlData
----@field animationState integer
----@field aimingSpeed integer
----@field controlFlags UnitControlFlags
----@field weaponIndex integer
----@field grenadeIndex integer
----@field zoomIndex integer
----@field throttle VectorIJK
----@field primaryTrigger number
----@field facingVector VectorIJK
----@field aimingVector VectorIJK
----@field lookingVector VectorIJK
-
----@class UnitHUDInterfaceMotionSensorCenter
----@field anchorOffset VectorXYInt
----@field widthScale number
----@field heightScale number
----@field scalingFlags HUDInterfaceScalingFlags
-
----@class VectorFontData
----@field fontFamilyName string
----@field format VectorFontDataFormat
----@field fontData TagRawData
----@field resourceHandle integer
----@field fallbackFont TagReference
-
----@class BipedContactPoint
----@field markerName string
-
----@class Sky
----@field model TagReference
----@field animationGraph TagReference
----@field indoorAmbientRadiosity SkyAmbientRadiosity
----@field outdoorAmbientRadiosity SkyAmbientRadiosity
----@field outdoorFog SkyFog
----@field indoorFog SkyFog
----@field indoorFogScreen TagReference
----@field shaderFunctions SkyFunction[]
----@field animations SkyAnimation[]
----@field lights SkyLight[]
-
----@alias DamageEffectScreenFlashType
----| "tint"
----| "invert"
----| "min"
----| "max"
----| "darken"
----| "lighten"
----| "none"
-
----@alias MeterInterpolateColors
----| "through_random_noise"
----| "faster_near_full"
----| "faster_near_empty"
----| "linearly"
-
----@class ShaderTransparentWaterFlags
----@field drawBeforeFog boolean
----@field atmosphericFog boolean
----@field baseMapColorModulatesBackground boolean
----@field baseMapAlphaModulatesReflection boolean
-
----@class LightVolumeFrame
----@field offsetFromMarker number
----@field offsetExponent number
----@field length number
----@field radiusHither number
----@field radiusYon number
----@field radiusExponent number
----@field tintColorHither ColorARGB
----@field tintColorYon ColorARGB
----@field tintColorExponent number
----@field brightnessExponent number
-
----@alias ScenarioSelectionType
----| "radio_sergeant"
----| "radio_unit"
----| "any_actor"
----| "prefer_sergeant"
----| "not_in_a_vehicle"
----| "in_player_s_vehicle"
----| "disembodied"
----| "friendly_actor"
-
----@class GlobalsVehicle
----@field vehicle TagReference
-
----@class ModelAnimationsAnimation
----@field name string
----@field type AnimationType
----@field frameCount integer
----@field frameSize integer
----@field frameInfoType AnimationFrameInfoType
----@field nodeListChecksum integer
----@field nodeCount integer
----@field loopFrameIndex integer
----@field weight number
----@field keyFrameIndex integer
----@field secondKeyFrameIndex integer
----@field nextAnimation integer
----@field flags ModelAnimationsAnimationFlags
----@field sound integer
----@field soundFrameIndex integer
----@field leftFootFrameIndex integer
----@field rightFootFrameIndex integer
----@field mainAnimationIndex integer
----@field relativeWeight number
----@field frameInfo TagRawData
----@field nodeTransformFlagData integer[2]
----@field nodeRotationFlagData integer[2]
----@field nodeScaleFlagData integer[2]
----@field offsetToCompressedData integer
----@field defaultData TagRawData
----@field frameData TagRawData
-
----@class WeaponMagazineFlags
----@field everyRoundMustBeChambered boolean
----@field wastesRoundsWhenReloaded boolean
 
 ---@class Fog
 ---@field flags FogFlags
@@ -4525,797 +6856,122 @@
 ---@field backgroundSound TagReference
 ---@field soundEnvironment TagReference
 
----@alias ScenarioAddressee
----| "participant"
----| "player"
----| "none"
+---@class ActorMoreFlags
+---@field noCorpseShooting boolean
+---@field panicInGroups boolean
+---@field pathfindingIgnoresDanger boolean
+---@field disallowVehicleCombat boolean
+---@field mustStopToFire boolean
+---@field mustStandToFire boolean
+---@field avoidAllEnemyAttackVectors boolean
 
----@class ScenarioStructureBSPBackgroundSoundPalette
+---@class ModelRegionPermutationMarker
 ---@field name string
----@field backgroundSound TagReference
----@field scaleFunction string
-
----@alias ParticleSystemParticleCreationPhysics
----| "jet"
----| "explosion"
----| "default"
-
----@alias ScenarioJustification
----| "center"
----| "right"
----| "left"
-
----@alias FramebufferBlendFunction
----| "alpha_multiply_add"
----| "component_max"
----| "component_min"
----| "subtract"
----| "add"
----| "double_multiply"
----| "multiply"
----| "alpha_blend"
-
----@class ModelAnimationsAnimationGraphUnitSeat
----@field label string
----@field rightYawPerFrame number
----@field leftYawPerFrame number
----@field rightFrameCount integer
----@field leftFrameCount integer
----@field downPitchPerFrame number
----@field upPitchPerFrame number
----@field downPitchFrameCount integer
----@field upPitchFrameCount integer
----@field animations ModelAnimationsAnimationWeaponClassAnimation[]
----@field ikPoints ModelAnimationsAnimationGraphUnitSeatikPoint[]
----@field weapons ModelAnimationsAnimationGraphWeapon[]
-
----@class DecalProperties
----@field flags DecalFlags
----@field type DecalType
----@field layer DecalLayer
----@field nextDecalInChain TagReference
-
----@class WeaponHUDInterfaceCrosshairOverlayFlags
----@field dontShowWhenZoomed boolean
----@field oneZoomLevel boolean
----@field hideAreaOutsideReticle boolean
----@field showSniperData boolean
----@field showOnlyWhenZoomed boolean
----@field notASprite boolean
----@field flashesWhenActive boolean
-
----@class LensFlareReflectionFlags
----@field occludedBySolidObjects boolean
----@field radiusScaledByOcclusionFactor boolean
----@field radiusNotScaledByDistance boolean
----@field alignRotationWithScreenCenter boolean
-
----@class Scenario
----@field dontUse TagReference
----@field wontUse TagReference
----@field cantUse TagReference
----@field skies ScenarioSky[]
----@field type ScenarioType
----@field flags ScenarioFlags
----@field childScenarios ScenarioChildScenario[]
----@field localNorth number
----@field predictedResources PredictedResource[]
----@field functions ScenarioFunction[]
----@field editorScenarioData TagRawData
----@field comments ScenarioEditorComment[]
----@field scavengerHuntObjects ScenarioScavengerHuntObjects[]
----@field objectNames ScenarioObjectName[]
----@field scenery ScenarioScenery[]
----@field sceneryPalette ScenarioSceneryPalette[]
----@field bipeds ScenarioBiped[]
----@field bipedPalette ScenarioBipedPalette[]
----@field vehicles ScenarioVehicle[]
----@field vehiclePalette ScenarioVehiclePalette[]
----@field equipment ScenarioEquipment[]
----@field equipmentPalette ScenarioEquipmentPalette[]
----@field weapons ScenarioWeapon[]
----@field weaponPalette ScenarioWeaponPalette[]
----@field deviceGroups ScenarioDeviceGroup[]
----@field machines ScenarioMachine[]
----@field machinePalette ScenarioMachinePalette[]
----@field controls ScenarioControl[]
----@field controlPalette ScenarioControlPalette[]
----@field lightFixtures ScenarioLightFixture[]
----@field lightFixturePalette ScenarioLightFixturePalette[]
----@field soundScenery ScenarioSoundScenery[]
----@field soundSceneryPalette ScenarioSoundSceneryPalette[]
----@field playerStartingProfile ScenarioPlayerStartingProfile[]
----@field playerStartingLocations ScenarioPlayerStartingLocation[]
----@field triggerVolumes ScenarioTriggerVolume[]
----@field recordedAnimations ScenarioRecordedAnimation[]
----@field netgameFlags ScenarioNetgameFlags[]
----@field netgameEquipment ScenarioNetgameEquipment[]
----@field startingEquipment ScenarioStartingEquipment[]
----@field bspSwitchTriggerVolumes ScenarioBSPSwitchTriggerVolume[]
----@field decals ScenarioDecal[]
----@field decalPalette ScenarioDecalPalette[]
----@field detailObjectCollectionPalette ScenarioDetailObjectCollectionPalette[]
----@field actorPalette ScenarioActorPalette[]
----@field encounters ScenarioEncounter[]
----@field commandLists ScenarioCommandList[]
----@field aiAnimationReferences ScenarioAIAnimationReference[]
----@field aiScriptReferences ScenarioAIScriptReference[]
----@field aiRecordingReferences ScenarioAIRecordingReference[]
----@field aiConversations ScenarioAIConversation[]
----@field scriptSyntaxData TagRawData
----@field scriptStringData TagRawData
----@field scripts ScenarioScript[]
----@field globals ScenarioGlobal[]
----@field references ScenarioReference[]
----@field sourceFiles ScenarioSourceFile[]
----@field cutsceneFlags ScenarioCutsceneFlag[]
----@field cutsceneCameraPoints ScenarioCutsceneCameraPoint[]
----@field cutsceneTitles ScenarioCutsceneTitle[]
----@field customObjectNames TagReference
----@field ingameHelpText TagReference
----@field hudMessages TagReference
----@field structureBsps ScenarioBSP[]
-
----@class ModelFlags
----@field blendSharedNormals boolean
-
----@class DetailObjectCollectionObjectType
----@field name string
----@field sequenceIndex integer
----@field flags DetailObjectCollectionTypeFlags
----@field firstSpriteIndex integer
----@field spriteCount integer
----@field colorOverrideFactor number
----@field nearFadeDistance number
----@field farFadeDistance number
----@field size number
----@field minimumColor ColorRGB
----@field maximumColor ColorRGB
----@field ambientColor integer
-
----@class GlowDistanceToObject
----@field attachment FunctionOut
----@field distance number[2]
----@field multiplier number[2]
-
----@class GlowTranslationalVelocity
----@field attachment FunctionOut
----@field velocity number
----@field multiplier number[2]
-
----@class HUDGlobalsWaypointArrow
----@field name string
----@field color integer
----@field opacity number
----@field translucency number
----@field onScreenSequenceIndex integer
----@field offScreenSequenceIndex integer
----@field occludedSequenceIndex integer
----@field flags HUDGlobalsWaypointArrowFlags
-
----@class WeaponHUDInterfaceScreenEffectDefinitionNightVisionFlags
----@field masked boolean
----@field connectToFlashlight boolean
----@field onlyWhenZoomed boolean
-
----@alias ActorVariantSpecialFireMode
----| "secondary_trigger"
----| "overcharge"
----| "none"
-
----@class ModelShaderReference
----@field shader TagReference
----@field permutation integer
-
----@class CameraTrack
----@field flags IsUnusedFlag
----@field controlPoints CameraTrackControlPoint[]
-
----@class Weapon: Item
----@field weaponFlags WeaponFlags
----@field label string
----@field secondaryTriggerMode WeaponSecondaryTriggerMode
----@field maximumAlternateShotsLoaded integer
----@field weaponAIn WeaponFunctionIn
----@field weaponBIn WeaponFunctionIn
----@field weaponCIn WeaponFunctionIn
----@field weaponDIn WeaponFunctionIn
----@field readyTime number
----@field readyEffect TagReference
----@field heatRecoveryThreshold number
----@field overheatedThreshold number
----@field heatDetonationThreshold number
----@field heatDetonationFraction number
----@field heatLossRate number
----@field heatIllumination number
----@field overheated TagReference
----@field overheatDetonation TagReference
----@field playerMeleeDamage TagReference
----@field playerMeleeResponse TagReference
----@field actorFiringParameters TagReference
----@field nearReticleRange number
----@field farReticleRange number
----@field intersectionReticleRange number
----@field zoomLevels integer
----@field zoomMagnificationRange number[2]
----@field autoaimAngle number
----@field autoaimRange number
----@field magnetismAngle number
----@field magnetismRange number
----@field deviationAngle number
----@field movementPenalized WeaponMovementPenalized
----@field forwardMovementPenalty number
----@field sidewaysMovementPenalty number
----@field minimumTargetRange number
----@field lookingTimeModifier number
----@field lightPowerOnTime number
----@field lightPowerOffTime number
----@field lightPowerOnEffect TagReference
----@field lightPowerOffEffect TagReference
----@field ageHeatRecoveryPenalty number
----@field ageRateOfFirePenalty number
----@field ageMisfireStart number
----@field ageMisfireChance number
----@field firstPersonModel TagReference
----@field firstPersonAnimations TagReference
----@field hudInterface TagReference
----@field pickupSound TagReference
----@field zoomInSound TagReference
----@field zoomOutSound TagReference
----@field activeCamoDing number
----@field activeCamoRegrowthRate number
----@field weaponType WeaponType
----@field morePredictedResources PredictedResource[]
----@field magazines WeaponMagazine[]
----@field triggers WeaponTrigger[]
-
----@alias AnimationType
----| "replacement"
----| "overlay"
----| "base"
-
----@alias ObjectFunctionIn
----| "compass"
----| "alive"
----| "region_7"
----| "region_6"
----| "region_5"
----| "region_4"
----| "region_3"
----| "region_2"
----| "region_1"
----| "region"
----| "umbrella_shield_stun"
----| "recent_umbrella_shield_vitality"
----| "shield_stun"
----| "umbrella_shield_vitality"
----| "random_constant"
----| "recent_shield_damage"
----| "recent_body_damage"
----| "shield_vitality"
----| "body_vitality"
----| "none"
-
----@alias UnitMotionSensorBlipSize
----| "large"
----| "small"
----| "medium"
-
----@class Object
----@field type ObjectType
----@field flags ObjectFlags
----@field boundingRadius number
----@field boundingOffset VectorXYZ
----@field originOffset VectorXYZ
----@field accelerationScale number
----@field runtimeFlags ObjectRuntimeFlags
----@field model TagReference
----@field animationGraph TagReference
----@field collisionModel TagReference
----@field physics TagReference
----@field modifierShader TagReference
----@field creationEffect TagReference
----@field renderBoundingRadius number
----@field aIn ObjectFunctionIn
----@field bIn ObjectFunctionIn
----@field cIn ObjectFunctionIn
----@field dIn ObjectFunctionIn
----@field hudTextMessageIndex integer
----@field forcedShaderPermutationIndex integer
----@field attachments ObjectAttachment[]
----@field widgets ObjectWidget[]
----@field functions ObjectFunction[]
----@field changeColors ObjectChangeColors[]
----@field predictedResources PredictedResource[]
-
----@class PredictedResource
----@field type PredictedResourceType
----@field resourceIndex integer
----@field tag TagHandle
-
----@class Scenery: BasicObject
-
----@alias UnitFunctionIn
----| "shield_sapping"
----| "can_blink"
----| "integrated_light_power"
----| "mouth_aperture"
----| "aiming_change"
----| "gunner_seat_power"
----| "driver_seat_power"
----| "none"
-
----@class LensFlare
----@field falloffAngle number
----@field cutoffAngle number
----@field cosFalloffAngle number
----@field cosCutoffAngle number
----@field occlusionRadius number
----@field occlusionOffsetDirection LensFlareOcclusionOffsetDirection
----@field nearFadeDistance number
----@field farFadeDistance number
----@field bitmap TagReference
----@field flags LensFlareFlags
----@field rotationFunction LensFlareRotationFunction
----@field rotationFunctionScale number
----@field horizontalScale number
----@field verticalScale number
----@field reflections LensFlareReflection[]
-
----@class UnitSeatFlags
----@field allowAiNoncombatants boolean
----@field notValidWithoutDriver boolean
----@field allowVehicleCommunicationAnimations boolean
----@field firstPersonCameraSlavedToGun boolean
----@field thirdPersonOnEnter boolean
----@field allowsWeapons boolean
----@field thirdPersonCamera boolean
----@field gunner boolean
----@field driver boolean
----@field locked boolean
----@field invisible boolean
-
----@class SoundScenery: BasicObject
-
----@alias ScenarioChangeAttackingDefendingStateWhen
----| "all_dead"
----| "all_but_one_dead"
----| "_75_dead"
----| "_50_dead"
----| "_25_dead"
----| "anybody_dead"
----| "_25_strength"
----| "_50_strength"
----| "_75_strength"
----| "never"
-
----@class ScenarioMachineFlags
----@field openedByMeleeAttack boolean
----@field neverAppearsLocked boolean
----@field oneSided boolean
----@field doesNotOperateAutomatically boolean
-
----@class ActorVariantBurstGeometry
----@field burstOriginRadius number
----@field burstOriginAngle number
----@field burstReturnLength number[2]
----@field burstReturnAngle number
----@field burstDuration number[2]
----@field burstSeparation number[2]
----@field burstAngularVelocity number
----@field specialDamageModifier number
----@field specialProjectileError number
-
----@alias HUDInterfaceAnchor
----| "right_center"
----| "left_center"
----| "bottom_center"
----| "top_center"
----| "center"
----| "bottom_right"
----| "bottom_left"
----| "top_right"
----| "top_left"
-
----@class LightFlags
----@field dontFadeActiveCamouflage boolean
----@field firstPersonFlashlight boolean
----@field supersizeInFirstPerson boolean
----@field dontLightOwnObject boolean
----@field noSpecular boolean
----@field dynamic boolean
-
----@class GlobalsLookFunction
----@field scale number
-
----@alias MetagameType
----| "pawn"
----| "knight"
----| "bishop"
----| "phaeton"
----| "wasp"
----| "mantis"
----| "lich"
----| "mammoth"
----| "broadsword"
----| "tuning_fork"
----| "guntower"
----| "scarab"
----| "phantom"
----| "banshee"
----| "wraith"
----| "mauler"
----| "chopper"
----| "ghost"
----| "watchtower"
----| "shade"
----| "seraph"
----| "revenant"
----| "pelican"
----| "hornet"
----| "scorpion"
----| "warthog"
----| "mongoose"
----| "turret"
----| "mule"
----| "engineer"
----| "elite"
----| "sentinel"
----| "flood_pure"
----| "flood_combat"
----| "flood_carrier"
----| "flood_infection"
----| "hunter"
----| "bugger"
----| "spartan"
----| "marine"
----| "skirmisher"
----| "jackal"
----| "grunt"
----| "brute"
-
----@class ActorPursuit
----@field uncoverDelayTime number[2]
----@field targetSearchTime number[2]
----@field pursuitPositionTime number[2]
----@field numPositionsCoord integer
----@field numPositionsNormal integer
-
----@class ModelNode
----@field name string
----@field nextSiblingNodeIndex integer
----@field firstChildNodeIndex integer
----@field parentNodeIndex integer
----@field defaultTranslation VectorXYZ
----@field defaultRotation Quaternion
----@field nodeDistanceFromParent number
----@field scale number
----@field rotation Matrix
+---@field nodeIndex integer
+---@field rotation Quaternion
 ---@field translation VectorXYZ
 
----@class BipedNetwork
----@field baselineValid boolean
----@field baselineId integer
----@field messageId integer
----@field updateBaseline BipedNetworkDelta
----@field deltaValid boolean
----@field updateDelta BipedNetworkDelta
+---@class WeaponHUDInterfaceCrosshairTypeFlags
+---@field flashWhenFiringWithDepletedBattery boolean
+---@field secondaryTriggerReady boolean
+---@field primaryTriggerReady boolean
+---@field lowSecondaryAmmoAndNoneLeftToReload boolean
+---@field flashWhenFiringSecondaryTriggerWithNoAmmo boolean
+---@field flashSecondaryReload boolean
+---@field flashSecondaryTotalAmmo boolean
+---@field shouldReloadSecondaryTrigger boolean
+---@field lowAmmoAndNoneLeftToReload boolean
+---@field flashWhenThrowingAndNoGrenade boolean
+---@field flashWhenFiringAndNoAmmo boolean
+---@field reloadOverheat boolean
+---@field flashBattery boolean
+---@field flashTotalAmmo boolean
+---@field flashHeat boolean
+---@field shouldReload boolean
+---@field charge boolean
+---@field zoomOverlay boolean
+---@field aim boolean
 
----@class ShaderEnvironmentProperties
----@field flags ShaderEnvironmentFlags
----@field shaderEnvironmentType ShaderEnvironmentType
+---@class ObjectFlags
+---@field doesNotHaveAnniversaryGeometry boolean
+---@field castShadowByDefault boolean
+---@field extensionOfParent boolean
+---@field notAPathfindingObstacle boolean
+---@field brighterThanItShouldBe boolean
+---@field transparentSelfOcclusion boolean
+---@field doesNotCastShadow boolean
 
----@class PlayerActions
----@field reload boolean
----@field flashlight boolean
----@field action boolean
----@field melee boolean
+---@alias ScenarioMajorUpgrade
+---| "all"
+---| "none"
+---| "many"
+---| "few"
+---| "normal"
 
----@class Equipment: Item
----@field powerupType EquipmentPowerupType
----@field grenadeType GrenadeType
----@field powerupTime number
----@field pickupSound TagReference
+---@class InputDeviceDefaults
+---@field deviceType InputDeviceDefaultsDeviceType
+---@field flags InputDeviceDefaultsFlags
+---@field deviceId TagRawData
+---@field profile TagRawData
 
----@class ShaderTransparentGenericStageFlags
----@field aOutControlsColor0Animation boolean
----@field alphaMux boolean
----@field colorMux boolean
+---@alias ProjectileResponse
+---| "attach"
+---| "overpenetrate"
+---| "reflect"
+---| "detonate"
+---| "disappear"
 
----@alias WeaponHUDInterfaceCrosshairType
----| "flash_when_firing_with_depleted_battery"
----| "secondary_trigger_ready"
----| "primary_trigger_ready"
----| "low_secondary_ammo_and_none_left_to_reload"
----| "flash_when_firing_secondary_trigger_with_no_ammo"
----| "flash_secondary_reload"
----| "flash_secondary_total_ammo"
----| "should_reload_secondary_trigger"
----| "low_ammo_and_none_left_to_reload"
----| "flash_when_throwing_and_no_grenade"
----| "flash_when_firing_and_no_ammo"
----| "reload_overheat"
----| "flash_battery"
----| "flash_total_ammo"
----| "flash_heat"
----| "should_reload"
----| "charge"
----| "zoom_overlay"
----| "aim"
+---@alias MachineCollisionResponse
+---| "reverse_directions"
+---| "pause_until_crushed"
 
----@class ScenarioWeapon
+---@class MachineFlags
+---@field elevator boolean
+---@field butNotWhenOpen boolean
+---@field pathfindingObstacle boolean
+
+---@alias DamageEffectSideEffect
+---| "emp"
+---| "lethal_to_the_unsuspecting"
+---| "harmless"
+---| "none"
+
+---@class HUDInterfaceMultitextureOverlay
 ---@field type integer
----@field name integer
----@field placement ScenarioObjectPlacement
----@field appearancePlayerIndex integer
----@field roundsReserved integer
----@field roundsLoaded integer
----@field flags ScenarioItemFlags
+---@field framebufferBlendFunction FramebufferBlendFunction
+---@field primaryAnchor HUDInterfaceMultitextureOverlayAnchor
+---@field secondaryAnchor HUDInterfaceMultitextureOverlayAnchor
+---@field tertiaryAnchor HUDInterfaceMultitextureOverlayAnchor
+---@field zeroToOneBlendFunction HUDInterfaceZeroToOneBlendFunction
+---@field oneToTwoBlendFunction HUDInterfaceZeroToOneBlendFunction
+---@field primaryScale VectorXY
+---@field secondaryScale VectorXY
+---@field tertiaryScale VectorXY
+---@field primaryOffset VectorXY
+---@field secondaryOffset VectorXY
+---@field tertiaryOffset VectorXY
+---@field primary TagReference
+---@field secondary TagReference
+---@field tertiary TagReference
+---@field primaryWrapMode HUDInterfaceWrapMode
+---@field secondaryWrapMode HUDInterfaceWrapMode
+---@field tertiaryWrapMode HUDInterfaceWrapMode
+---@field effectors HUDInterfaceMultitextureOverlayEffector[]
 
----@alias ShaderEnvironmentReflectionType
----| "bumped_radiosity"
+---@alias ShaderTransparentGlassReflectionType
+---| "dynamic_mirror"
 ---| "flat_cube_map"
 ---| "bumped_cube_map"
 
----@class ShaderEnvironmentTextureScrollingAnimation
----@field uAnimationFunction WaveFunction
----@field uAnimationPeriod number
----@field uAnimationScale number
----@field vAnimationFunction WaveFunction
----@field vAnimationPeriod number
----@field vAnimationScale number
+---@class ScenarioUnitFlags
+---@field dead boolean
 
----@class ShaderEnvironmentBump
----@field bumpMapScale number
----@field bumpMap TagReference
----@field bumpMapScaleXy VectorXY
-
----@alias ShaderEnvironmentType
----| "blended_base_specular"
----| "blended"
----| "normal"
-
----@class Placeholder: BasicObject
-
----@class SkyAnimation
----@field animationIndex integer
----@field period number
-
----@class ModelAnimationsAnimationGraphFirstPersonWeaponAnimations
----@field animations ModelAnimationsFirstPersonWeapon[]
-
----@class DecalFlags
----@field disabledByBloodSetting boolean
----@field preserveAspect boolean
----@field animationLoop boolean
----@field editorIncrementalCounter boolean
----@field editorSnapToAxis boolean
----@field waterEffect boolean
----@field noRandomRotation boolean
----@field moreColors boolean
----@field interpolateColorInHsv boolean
----@field geometryInheritedByNextDecalInChain boolean
-
----@class VirtualKeyboard
----@field displayFont TagReference
----@field backgroundBitmap TagReference
----@field specialKeyLabelsStringList TagReference
----@field virtualKeys VirtualKeyboardVirtualKey[]
-
----@class ObjectWidget
----@field reference TagReference
-
----@class ModelAnimationsAnimationGraphWeaponType
----@field label string
----@field animations ModelAnimationsAnimationWeaponTypeAnimation[]
-
----@class GlowColor
----@field attachment FunctionOut
----@field colorBound ColorARGB
----@field scaleColor ColorARGB
----@field colorRateOfChange number
-
----@class ScenarioReference
----@field reference TagReference
-
----@class ActorVariantFiringPatterns
----@field newTargetBurstDuration number
----@field newTargetBurstSeparation number
----@field newTargetRateOfFire number
----@field newTargetProjectileError number
----@field movingBurstDuration number
----@field movingBurstSeparation number
----@field movingRateOfFire number
----@field movingProjectileError number
----@field berserkBurstDuration number
----@field berserkBurstSeparation number
----@field berserkRateOfFire number
----@field berserkProjectileError number
-
----@class ShaderModel: Shader
----@field properties ShaderModelProperties
----@field changeColor ShaderModelChangeColor
----@field selfIllumination ShaderModelSelfIllumination
----@field maps ShaderModelMaps
----@field textureScrollingAnimation ShaderModelTextureScrollingAnimation
----@field reflection ShaderModelReflection
----@field bullshit ShaderModelBullshit
-
----@class ShaderModelBullshit
----@field bullshit number
-
----@class GrenadeHUDInterfaceTotalGrenadesOverlays
----@field bitmap TagReference
----@field overlays GrenadeHUDInterfaceOverlay[]
----@field warningSounds GrenadeHUDInterfaceSound[]
-
----@class ScenarioStructureBSPClusterSurfaceIndex
----@field index integer
-
----@class VectorPYR
----@field pitch number
----@field yaw number
----@field rotation number
-
----@class ShaderModelProperties
----@field flags ShaderModelFlags
----@field translucency number
-
----@alias WaveFunction
----| "spark"
----| "wander"
----| "jitter"
----| "noise"
----| "slide_variable_period"
----| "slide"
----| "diagonal_wave_variable_period"
----| "diagonal_wave"
----| "cosine_variable_period"
----| "cosine"
----| "zero"
----| "one"
-
----@class ShaderTransparentMeter: Shader
----@field properties ShaderTransparentMeterProperties
----@field colors ShaderTransparentMeterColors
----@field externalFunctionSources ShaderTransparentMeterExternalFunctionSources
-
----@class ScenarioStructureBSPGlobalDetailObject
----@field positionX integer
----@field positionY integer
----@field positionZ integer
----@field data integer
----@field color integer
-
----@class ModelAnimationsTransform
----@field transform VectorXYZ
-
----@class SoundLooping
----@field flags SoundLoopingFlags
----@field zeroDetailSoundPeriod number
----@field zeroDetailUnknownFloats number[2]
----@field oneDetailSoundPeriod number
----@field oneDetailUnknownFloats number[2]
----@field runtimeScriptingSound TagHandle
----@field maximumDistance number
----@field continuousDamageEffect TagReference
----@field tracks SoundLoopingTrack[]
----@field detailSounds SoundLoopingDetail[]
-
----@class UnitObject: DynamicObjectBase
----@field actorTag TagHandle
----@field swarmActorTag TagHandle
----@field swarmNextUnit ObjectHandle
----@field swarmPreviousUnit ObjectHandle
----@field unitFlags UnitObjectFlags
----@field unitControlFlags UnitControlFlags
----@field shieldSnapping integer
----@field baseSeatIndex integer
----@field persistentControl UnitPersistentControl
----@field controllingPlayer PlayerHandle
----@field aiEffectType integer
----@field emotionAnimationIndex integer
----@field nextAiEffectTick integer
----@field desiredFacingVector VectorIJK
----@field desiredAimingVector VectorIJK
----@field aimingVector VectorIJK
----@field aimingVelocity VectorIJK
----@field lookingAngles VectorPYR
----@field lookingVector VectorIJK
----@field lookingVelocity VectorIJK
----@field throttle VectorIJK
----@field primaryTrigger number
----@field aimingSpeed integer
----@field meleeState integer
----@field meleeTimer integer
----@field ticksUntilFlameToDeath integer
----@field pingAnimationTicksLeft integer
----@field grenadeState integer
----@field unk1 integer
----@field unk2 integer
----@field grenadeProjectile TagHandle
----@field animation UnitAnimationData
----@field ambient number
----@field illumination number
----@field mouthFactor number
----@field vehicleSeatId integer
----@field currentWeaponId integer
----@field nextWeaponId integer
----@field weapons ObjectHandle[4]
----@field weaponReadyTicks integer[4]
----@field equipmentHandle ObjectHandle
----@field currentGrenadeIndex integer
----@field nextGrenadeIndex integer
----@field grenadeCounts integer[2]
----@field zoomLevel integer
----@field desiredZoomLevel integer
----@field ticksSinceLastVehicleSpeech integer
----@field aimingChange integer
----@field poweredSeatsRiders ObjectHandle[2]
----@field unk3 TableResourceHandle
----@field _someTickTime integer
----@field encounterId integer
----@field squadId integer
----@field poweredSeatsPower number[2]
----@field integratedLightPower number
----@field integratedLightTogglePower number
----@field integratedNightVisionTogglePower number
----@field seatRelated VectorXYZ[4]
----@field camoPower number
----@field fullSpectrumVisionPower number
----@field dialogueDefinition TagHandle
----@field speech UnitSpeechData
----@field damageResult UnitDamageResult
----@field objectFlameCauser ObjectHandle
----@field unk4 number
----@field diedAtTick integer
----@field feignDeathTimer integer
----@field camoRegrowth boolean
----@field stun number
----@field stunTicks integer
----@field spreeCount integer
----@field spreeStartingTime integer
----@field recentDamage UnitRecentDamager[4]
----@field controlData UnitControlData
----@field lastCompletedClientUpdateValid boolean
----@field lastCompletedClientUpdateId integer
-
----@alias HUDInterfaceDestinationType
----| "fade_0_1"
----| "vertical_offset"
----| "horizontal_offset"
----| "tint_0_1"
-
----@alias UIReplaceFunction
----| "pid"
----| "build_number"
----| "widget_s_controller"
----| "null"
-
----@class ObjectFunction
----@field flags ObjectFunctionFlags
----@field period number
----@field scalePeriodBy FunctionScaleBy
----@field function WaveFunction
----@field scaleFunctionBy FunctionScaleBy
----@field wobbleFunction WaveFunction
----@field wobblePeriod number
----@field wobbleMagnitude number
----@field squareWaveThreshold number
----@field stepCount integer
----@field mapTo FunctionType
----@field sawtoothCount integer
----@field add FunctionScaleBy
----@field scaleResultBy FunctionScaleBy
----@field boundsMode FunctionBoundsMode
----@field bounds number[2]
----@field turnOffWith integer
----@field scaleBy number
----@field inverseBounds number
----@field inverseSawtooth number
----@field inverseStep number
----@field inversePeriod number
----@field usage string
+---@alias FlagTrailingEdgeShape
+---| "trapezoid_short_bottom"
+---| "trapezoid_short_top"
+---| "convex_triangular"
+---| "concave_triangular"
+---| "flat"
 
 ---@class ModelVertexCompressed
 ---@field position VectorXYZ
@@ -5328,383 +6984,78 @@
 ---@field node1Index integer
 ---@field node0Weight integer
 
----@class WeaponHUDInterfaceScreenEffect
----@field maskFlags WeaponHUDInterfaceScreenEffectDefinitionMaskFlags
----@field maskFullscreen TagReference
----@field maskSplitscreen TagReference
----@field convolutionFlags WeaponHUDInterfaceScreenEffectDefinitionMaskFlags
----@field convolutionFovInBounds number[2]
----@field convolutionRadiusOutBounds number[2]
----@field evenMoreFlags WeaponHUDInterfaceScreenEffectDefinitionNightVisionFlags
----@field nightVisionScriptSource integer
----@field nightVisionIntensity number
----@field desaturationFlags WeaponHUDInterfaceScreenEffectDefinitionDesaturationFlags
----@field desaturationScriptSource integer
----@field desaturationIntensity number
----@field effectTint ColorRGB
-
----@class ModelAnimationsWeaponAnimation
----@field animation integer
-
----@class GlobalsMaterial
----@field groundFrictionScale number
----@field groundFrictionNormalK1Scale number
----@field groundFrictionNormalK0Scale number
----@field groundDepthScale number
----@field groundDampFractionScale number
----@field maximumVitality number
----@field effect TagReference
----@field sound TagReference
----@field particleEffects GlobalsBreakableSurfaceParticleEffect[]
----@field meleeHitSound TagReference
-
----@class GlobalsFallingDamage
----@field harmfulFallingDistance number[2]
----@field fallingDamage TagReference
----@field maximumFallingDistance number
----@field distanceDamage TagReference
----@field vehicleEnvironmentCollisionDamage TagReference
----@field vehicleKilledUnitDamage TagReference
----@field vehicleCollisionDamage TagReference
----@field flamingDeathDamage TagReference
----@field maximumFallingVelocity number
----@field harmfulFallingVelocity number[2]
-
----@class DeviceControlObjectFlags
----@field usableFromBothSides boolean
-
----@class GlobalsMultiplayerInformation
----@field flag TagReference
----@field unit TagReference
----@field vehicles GlobalsVehicle[]
----@field hillShader TagReference
----@field flagShader TagReference
----@field ball TagReference
----@field sounds GlobalsSound[]
-
----@alias ActorVariantGrenadeStimulus
----| "seek_cover"
----| "visible_target"
----| "never"
-
----@class UnitHUDInterfaceAuxiliaryOverlayFlags
----@field useTeamColor boolean
-
----@class FontFlags
----@field disableMccFontOverride boolean
-
----@alias BitmapSpriteUsage
----| "double_multiply"
----| "multiply_min"
----| "blend_add_subtract_max"
-
----@class SkyLightLensFlare
----@field lensFlare TagReference
----@field lensFlareMarkerName string
-
----@class GlobalsInterfaceBitmaps
----@field fontSystem TagReference
----@field fontTerminal TagReference
----@field screenColorTable TagReference
----@field hudColorTable TagReference
----@field editorColorTable TagReference
----@field dialogColorTable TagReference
----@field hudGlobals TagReference
----@field motionSensorSweepBitmap TagReference
----@field motionSensorSweepBitmapMask TagReference
----@field multiplayerHudBitmap TagReference
----@field localization TagReference
----@field hudDigitsDefinition TagReference
----@field motionSensorBlipBitmap TagReference
----@field interfaceGooMap1 TagReference
----@field interfaceGooMap2 TagReference
----@field interfaceGooMap3 TagReference
-
----@class ModelCollisionGeometryRegionFlags
----@field causesHeadMaimedScream boolean
----@field forcesDropWeapon boolean
----@field inhibitsWalking boolean
----@field inhibitsWeaponAttack boolean
----@field inhibitsMeleeAttack boolean
----@field disappearsWhenShieldIsOff boolean
----@field diesWhenObjectIsDamaged boolean
----@field diesWhenObjectDies boolean
----@field forcesObjectToDie boolean
----@field livesUntilObjectDies boolean
-
----@class ScenarioStructureBSPMaterialCompressedLightmapVertex
----@field normal integer
----@field textureCoords integer
-
----@class ScenarioSoundScenery
----@field type integer
----@field name integer
----@field placement ScenarioObjectPlacement
----@field appearancePlayerIndex integer
-
----@class GlobalsCamera
----@field defaultUnitCameraTrack TagReference
-
----@alias DamageEffectScreenFlashPriority
----| "high"
----| "medium"
----| "low"
-
----@class UnitHUDInterfaceAuxiliaryOverlay
----@field properties HUDInterfaceStaticElement
----@field type UnitHUDInterfacePanelType
----@field flags UnitHUDInterfaceAuxiliaryOverlayFlags
-
----@class GlowFlags
----@field trailingParticlesSlowOverTime boolean
----@field trailingParticlesShrinkOverTime boolean
----@field trailingParticlesFadeOverTime boolean
----@field particesMoveInBothDirections boolean
----@field particlesMoveBackwards boolean
----@field modifyParticleColorInRange boolean
-
----@alias ShaderTypePc
----| "transparent_plasma"
----| "transparent_meter"
----| "transparent_glass"
----| "transparent_water"
----| "transparent_chicago_extended"
----| "transparent_chicago"
----| "transparent_generic"
----| "model"
----| "environment"
----| "decal"
----| "effect"
----| "screen"
-
----@class GlowRotationalVelocity
----@field attachment FunctionOut
----@field velocity number
----@field multiplier number[2]
-
----@class BitmapProcessing
----@field detailFadeFactor number
----@field sharpenAmount number
----@field bumpHeight number
-
----@class GlobalsFirstPersonInterface
----@field firstPersonHands TagReference
----@field baseBitmap TagReference
----@field shieldMeter TagReference
----@field shieldMeterOrigin VectorXYInt
----@field bodyMeter TagReference
----@field bodyMeterOrigin VectorXYInt
----@field nightVisionOnEffect TagReference
----@field nightVisionOffEffect TagReference
-
----@class InputDeviceDefaultsFlags
----@field unused boolean
-
----@class ScenarioDecal
----@field decalType integer
----@field yaw integer
----@field pitch integer
+---@class ModelVertexUncompressed
 ---@field position VectorXYZ
+---@field normal VectorXYZ
+---@field binormal VectorXYZ
+---@field tangent VectorXYZ
+---@field textureCoords VectorXY
+---@field node0Index integer
+---@field node1Index integer
+---@field node0Weight number
+---@field node1Weight number
 
----@class ShaderTransparentGlass: Shader
----@field properties ShaderTransparentGlassBase
----@field backgroundTint ShaderTransparentGlassBackgroundTint
----@field reflection ShaderTransparentGlassReflection
----@field diffuse ShaderTransparentGlassDiffuse
----@field specular ShaderTransparentGlassSpecular
+---@class EquipmentObject: ItemObject
+---@field network EquipmentNetwork
 
----@class WeaponHUDInterfaceScreenEffectDefinitionMaskFlags
----@field onlyWhenZoomed boolean
+---@class ScenarioAIScriptReference
+---@field scriptName string
 
----@alias ScenarioNetgameFlagType
----| "hill_flag"
----| "teleport_to"
----| "teleport_from"
----| "vegas_bank"
----| "race_vehicle"
----| "race_track"
----| "oddball_ball_spawn"
----| "ctf_vehicle"
----| "ctf_flag"
+---@class ModelMarkerInstance
+---@field regionIndex integer
+---@field permutationIndex integer
+---@field nodeIndex integer
+---@field translation VectorXYZ
+---@field rotation Quaternion
 
----@class ShaderTransparentGlassSpecular
----@field specularMapScale number
----@field specularMap TagReference
----@field specularDetailMapScale number
----@field specularDetailMap TagReference
+---@alias HUDInterfaceDestinationType
+---| "fade_0_1"
+---| "vertical_offset"
+---| "horizontal_offset"
+---| "tint_0_1"
 
----@class ModelAnimationsScale
----@field scale number
+---@alias ScenarioTextStyle
+---| "underline"
+---| "condense"
+---| "italic"
+---| "bold"
+---| "plain"
 
----@class ShaderTransparentGlassDiffuse
----@field diffuseMapScale number
----@field diffuseMap TagReference
----@field diffuseDetailMapScale number
----@field diffuseDetailMap TagReference
+---@class ColorInterpolationFlags
+---@field moreColors boolean
+---@field blendInHsv boolean
 
----@class ContinuousDamageCameraShaking
----@field randomTranslation number
----@field randomRotation number
----@field wobbleFunction WaveFunction
----@field wobblePeriod number
----@field wobbleWeight number
+---@class ScenarioScriptParameter
+---@field name string
+---@field returnType ScenarioScriptValueType
 
----@class DamageEffectBreakingEffect
----@field forwardVelocity number
----@field forwardRadius number
----@field forwardExponent number
----@field outwardVelocity number
----@field outwardRadius number
----@field outwardExponent number
+---@class ModelAnimationsAnimationGraphWeaponType
+---@field label string
+---@field animations ModelAnimationsAnimationWeaponTypeAnimation[]
 
----@class ScenarioEquipment
+---@class ShaderTransparentMeterExternalFunctionSources
+---@field meterBrightnessSource FunctionOut
+---@field flashBrightnessSource FunctionOut
+---@field valueSource FunctionOut
+---@field gradientSource FunctionOut
+---@field flashExtensionSource FunctionOut
+
+---@class ScenarioStructureBSPMapLeafPortalIndex
+---@field portalIndex integer
+
+---@class ShaderPhysicsProperties
+---@field materialType MaterialType
 ---@field type integer
----@field name integer
----@field placement ScenarioObjectPlacement
----@field miscFlags ScenarioItemFlags
----@field appearancePlayerIndex integer
 
----@class ShaderTransparentGlassBase
----@field shaderTransparentGlassFlags ShaderTransparentGlassFlags
+---@alias BipedFunctionIn
+---| "flying_velocity"
+---| "none"
 
----@class WeaponTriggerFlags
----@field useOriginalUnitAdjustProjectileRay boolean
----@field projectileIsClientSideOnly boolean
----@field projectilesHaveIdenticalError boolean
----@field projectileVectorCannotBeAdjusted boolean
----@field useErrorWhenUnzoomed boolean
----@field analogRateOfFire boolean
----@field dischargingSpews boolean
----@field ejectsDuringChamber boolean
----@field sticksWhenDropped boolean
----@field projectilesUseWeaponOrigin boolean
----@field locksInOnOffState boolean
----@field doesNotRepeatAutomatically boolean
----@field canFireWithPartialAmmo boolean
----@field randomFiringEffects boolean
----@field tracksFiredProjectile boolean
-
----@class EffectParticle
----@field createIn EffectCreateIn
----@field violenceMode EffectViolenceMode
----@field create EffectCreate
----@field location integer
----@field relativeDirection VectorPY
----@field relativeOffset VectorXYZ
----@field relativeDirectionVector VectorXYZ
----@field particleType TagReference
----@field flags EffectParticleFlags
----@field distributionFunction EffectDistributionFunction
----@field count integer[2]
----@field distributionRadius number[2]
----@field velocity number[2]
----@field velocityConeAngle number
----@field angularVelocity number[2]
----@field radius number[2]
----@field tint ColorARGB
----@field aScalesValues EffectParticleScalesValues
----@field bScalesValues EffectParticleScalesValues
-
----@class DetailObjectCollection
----@field collectionType DetailObjectCollectionType
----@field globalZOffset number
----@field spritePlate TagReference
----@field types DetailObjectCollectionObjectType[]
-
----@alias BitmapDataFormat
----| "bc_7"
----| "p8"
----| "dxt5"
----| "dxt3"
----| "dxt1"
----| "unused_5"
----| "unused_4"
----| "a8r8g8b8"
----| "x8r8g8b8"
----| "a4r4g4b4"
----| "a1r5g5b5"
----| "unused_3"
----| "r5g6b5"
----| "unused_2"
----| "unused_1"
----| "a8y8"
----| "ay_8"
----| "y8"
----| "a8"
-
----@class ActorPanic
----@field coweringTime number[2]
----@field friendKilledPanicChance number
----@field leaderType ActorType
----@field leaderKilledPanicChance number
----@field panicDamageThreshold number
----@field surpriseDistance number
-
----@class GrenadeHUDInterfaceOverlay
----@field position HUDInterfaceElementPosition
----@field color HUDInterfaceElementColor
----@field frameRate number
----@field sequenceIndex integer
----@field type GrenadeHUDInterfaceOverlayType
----@field flags HUDInterfaceOverlayFlashFlags
-
----@class Glow
----@field attachmentMarker string
----@field numberOfParticles integer
----@field boundaryEffect GlowBoundaryEffect
----@field normalParticleDistribution GlowNormalParticleDistribution
----@field trailingParticleDistribution GlowTrailingParticleDistribution
----@field glowFlags GlowFlags
----@field particleRotationalVelocity GlowRotationalVelocity
----@field effectRotationalVelocity GlowRotationalVelocity
----@field effectTranslationalVelocity GlowTranslationalVelocity
----@field particleDistanceToObject GlowDistanceToObject
----@field particleSize GlowParticleSize
----@field color GlowColor
----@field fadingPercentageOfGlow number
----@field particleGenerationRate number
----@field lifetimeOfTrailingParticles number
----@field velocityOfTrailingParticles number
----@field trailingParticleT number[2]
----@field texture TagReference
-
----@class PlayerControl
----@field unitHandle ObjectHandle
----@field controlFlags integer
----@field desiredAngles VectorPY
----@field throttle VectorIJ
----@field primaryTrigger number
----@field weaponIndex integer
----@field grenadeIndex integer
----@field zoomLevel integer
----@field weaponSwapTicks integer
----@field targetObjectIndex ObjectHandle
----@field autoaimLevel number
----@field magnetismLevel number
----@field lookAccelerationTime number
----@field pitchMinimum number
----@field pitchMaximum number
-
----@class ShaderTransparentWaterRipple
----@field contributionFactor number
----@field animationAngle number
----@field animationVelocity number
----@field mapOffset VectorXY
----@field mapRepeats integer
----@field mapIndex integer
-
----@class MultiplayerScenarioDescription
----@field multiplayerScenarios MultiplayerScenarioDescriptionScenarioDescription[]
-
----@class ItemCollectionPermutation
----@field weight number
----@field item TagReference
-
----@class ScenarioBSPSwitchTriggerVolume
----@field triggerVolume integer
----@field source integer
----@field destination integer
----@field unknown integer
+---@class ShaderTransparentChicagoExtended: Shader
+---@field properties ShaderTransparentProperties
+---@field _4StageMaps ShaderTransparentChicagoMap[]
+---@field _2StageMaps ShaderTransparentChicagoMap[]
+---@field extraFlags ShaderTransparentChicagoExtraFlags
 
 ---@class Dialogue
 ---@field idleNoncombat TagReference
@@ -5874,261 +7225,6 @@
 ---@field rout TagReference
 ---@field routRe TagReference
 
----@class PlayerControlGlobals
----@field actionTestFlags integer
----@field testingForActionFlags integer
----@field disabledButtonFlags integer
----@field controlFlags integer
----@field localPlayers PlayerControl[1]
-
----@class HUDGlobalsDamageIndicators
----@field topOffset integer
----@field bottomOffset integer
----@field leftOffset integer
----@field rightOffset integer
----@field bitmap TagReference
----@field sequenceIndex integer
----@field multiplayerSequenceIndex integer
----@field color integer
-
----@class PointPhysics
----@field flags PointPhysicsFlags
----@field massScale number
----@field waterGravityScale number
----@field airGravityScale number
----@field density number
----@field airFriction number
----@field waterFriction number
----@field surfaceFriction number
----@field elasticity number
-
----@class ChildWidgetReference
----@field widgetTag TagReference
----@field name string
----@field flags ChildWidgetReferenceFlags
----@field customControllerIndex integer
----@field verticalOffset integer
----@field horizontalOffset integer
-
----@class ScenarioSky
----@field sky TagReference
-
----@alias VectorFontDataFormat
----| "opentype"
----| "truetype"
-
----@class ScenarioControl
----@field type integer
----@field name integer
----@field placement ScenarioObjectPlacement
----@field appearancePlayerIndex integer
----@field powerGroup integer
----@field positionGroup integer
----@field deviceFlags ScenarioDeviceFlags
----@field controlFlags ScenarioControlFlags
----@field noName integer
-
----@class SoundEnvironment
----@field unknown integer
----@field priority integer
----@field roomIntensity number
----@field roomIntensityHf number
----@field roomRolloff number
----@field decayTime number
----@field decayHfRatio number
----@field reflectionsIntensity number
----@field reflectionsDelay number
----@field reverbIntensity number
----@field reverbDelay number
----@field diffusion number
----@field density number
----@field hfReference number
-
----@class ModelAnimations
----@field objects ModelAnimationsAnimationGraphObjectOverlay[]
----@field units ModelAnimationsAnimationGraphUnitSeat[]
----@field weapons ModelAnimationsAnimationGraphWeaponAnimations[]
----@field vehicles ModelAnimationsAnimationGraphVehicleAnimations[]
----@field devices ModelAnimationsDeviceAnimations[]
----@field unitDamage ModelAnimationsUnitDamageAnimations[]
----@field firstPersonWeapons ModelAnimationsAnimationGraphFirstPersonWeaponAnimations[]
----@field soundReferences ModelAnimationsAnimationGraphSoundReference[]
----@field limpBodyNodeRadius number
----@field flags ModelAnimationsFlags
----@field nodes ModelAnimationsAnimationGraphNode[]
----@field animations ModelAnimationsAnimation[]
-
----@class GlobalsBreakableSurfaceParticleEffectFlags
----@field moreColors boolean
----@field interpolateColorInHsv boolean
-
----@class ScenarioCommandList
----@field name string
----@field flags ScenarioCommandListFlags
----@field manualBspIndex integer
----@field precomputedBspIndex integer
----@field commands ScenarioCommand[]
----@field points ScenarioCommandPoint[]
-
----@class ActorCommunication
----@field noncombatIdleSpeechTime number[2]
----@field combatIdleSpeechTime number[2]
----@field neverUse TagReference
-
----@class ScenarioDeviceFlags
----@field notUsableFromAnySide boolean
----@field positionReversed boolean
----@field canChangeOnlyOnce boolean
----@field initiallyOff boolean
----@field initiallyOpen boolean
-
----@class ScenarioStructureBSPLensFlareMarker
----@field position VectorXYZ
----@field directionIComponent integer
----@field directionJComponent integer
----@field directionKComponent integer
----@field lensFlareIndex integer
-
----@class ActorBerserk
----@field meleeAttackDelay number
----@field meleeFudgeFactor number
----@field meleeChargeTime number
----@field meleeLeapRange number[2]
----@field meleeLeapVelocity number
----@field meleeLeapChance number
----@field meleeLeapBallistic number
----@field berserkDamageAmount number
----@field berserkDamageThreshold number
----@field berserkProximity number
----@field suicideSensingDist number
----@field berserkGrenadeChance number
-
----@class ParticleSystemPhysicsConstant
----@field k number
-
----@class ActorLooking
----@field maximumAimingDeviation VectorPY
----@field maximumLookingDeviation VectorPY
----@field noncombatLookDeltaL number
----@field noncombatLookDeltaR number
----@field combatLookDeltaL number
----@field combatLookDeltaR number
----@field idleAimingRange VectorPY
----@field idleLookingRange VectorPY
----@field eventLookTimeModifier number[2]
----@field noncombatIdleFacing number[2]
----@field noncombatIdleAiming number[2]
----@field noncombatIdleLooking number[2]
----@field guardIdleFacing number[2]
----@field guardIdleAiming number[2]
----@field guardIdleLooking number[2]
----@field combatIdleFacing number[2]
----@field combatIdleAiming number[2]
----@field combatIdleLooking number[2]
----@field cosineMaximumAimingDeviation VectorPY
----@field cosineMaximumLookingDeviation VectorPY
----@field dontUse TagReference
----@field cantUse TagReference
-
----@class SkyFog
----@field color ColorRGB
----@field maximumDensity number
----@field startDistance number
----@field opaqueDistance number
-
----@alias SoundSampleRate
----| "_44100_hz"
----| "_22050_hz"
-
----@class StringList
----@field strings StringListString[]
-
----@class ScenarioDeviceGroupFlags
----@field canChangeOnlyOnce boolean
-
----@class ObjectAnimationState
----@field index integer
----@field frame integer
-
----@class TagCollection
----@field tags TagCollectionTag[]
-
----@class SearchAndReplaceReference
----@field searchString string
----@field replaceFunction UIReplaceFunction
-
----@class UIWidgetCollection
----@field tags TagCollectionTag[]
-
----@alias ShaderTransparentGenericStageInputMappingColor
----| "x_1"
----| "x"
----| "_1_2_clamp_x"
----| "clamp_x_1_2"
----| "_1_2"
----| "_2"
----| "_1_clamp_x"
----| "clamp_x"
-
----@alias ScenarioType
----| "user_interface"
----| "multiplayer"
----| "singleplayer"
-
----@class ScenarioEquipmentPalette
----@field name TagReference
-
----@class ScenarioFunctionFlags
----@field alwaysActive boolean
----@field additive boolean
----@field invert boolean
----@field scripted boolean
-
----@class ModelCollisionGeometrySphere
----@field node integer
----@field center VectorXYZ
----@field radius number
-
----@class GameDataInputReference
----@field function UIGameDataInputReferenceFunction
-
----@class ScenarioStructureBSPFogRegion
----@field fog integer
----@field weatherPalette integer
-
----@class UnicodeStringList
----@field strings UnicodeStringListString[]
-
----@class SoundLoopingDetailFlags
----@field dontPlayWithoutAlternate boolean
----@field dontPlayWithAlternate boolean
-
----@class DamageEffectDamage
----@field sideEffect DamageEffectSideEffect
----@field category DamageEffectCategory
----@field flags DamageEffectDamageFlags
----@field aoeCoreRadius number
----@field lowerBound number
----@field upperBound number[2]
----@field vehiclePassthroughPenalty number
----@field activeCamouflageDamage number
----@field stun number
----@field maximumStun number
----@field stunTime number
----@field instantaneousAcceleration VectorXYZ
----@field modifiers DamageEffectMaterialModifier
-
----@alias GlowBoundaryEffect
----| "wrap"
----| "bounce"
-
----@class ShaderRadiosityProperties
----@field flags ShaderFlags
----@field detailLevel ShaderDetailLevel
----@field power number
----@field colorOfEmittedLight ColorRGB
----@field tintColor ColorRGB
-
 ---@class PhysicsMassPoint
 ---@field name string
 ---@field poweredMassPoint integer
@@ -6146,64 +7242,62 @@
 ---@field frictionPerpendicularScale number
 ---@field radius number
 
----@class ScenarioStructureBSPWeatherPolyhedronPlane
----@field plane Plane3D
+---@class ScenarioEncounter
+---@field name string
+---@field flags ScenarioEncounterFlags
+---@field teamIndex ScenarioTeamIndex
+---@field one integer
+---@field searchBehavior ScenarioSearchBehavior
+---@field manualBspIndex integer
+---@field respawnDelay number[2]
+---@field precomputedBspIndex integer
+---@field squads ScenarioSquad[]
+---@field platoons ScenarioPlatoon[]
+---@field firingPositions ScenarioFiringPosition[]
+---@field playerStartingLocations ScenarioPlayerStartingLocation[]
 
----@class AntennaVertex
----@field springStrengthCoefficient number
----@field angles VectorPY
----@field length number
----@field sequenceIndex integer
----@field color ColorARGB
----@field lodColor ColorARGB
----@field offset VectorXYZ
+---@class ColorRGB
+---@field r integer
+---@field g integer
+---@field b integer
 
----@class ModelAnimationsAnimationWeaponTypeAnimation
----@field animation integer
+---@class ScenarioScavengerHuntObjects
+---@field name string
+---@field objectNameIndex integer
 
----@class ModelCollisionGeometryBSP2DNode
----@field plane Plane2D
----@field leftChild integer
----@field rightChild integer
+---@class BitmapProcessing
+---@field detailFadeFactor number
+---@field sharpenAmount number
+---@field bumpHeight number
 
----@alias ShaderTransparentGenericStageInputAlpha
----| "constant_blue_1"
----| "constant_blue_0"
----| "scratch_blue_1"
----| "scratch_blue_0"
----| "vertex_blue_1_fade_parallel"
----| "vertex_blue_0_blue_light"
----| "map_blue_3"
----| "map_blue_2"
----| "map_blue_1"
----| "map_blue_0"
----| "constant_alpha_1"
----| "constant_alpha_0"
----| "scratch_alpha_1"
----| "scratch_alpha_0"
----| "vertex_alpha_1_fade_perpendicular"
----| "vertex_alpha_0_fade_none"
----| "map_alpha_3"
----| "map_alpha_2"
----| "map_alpha_1"
----| "map_alpha_0"
----| "negative_one_half"
----| "negative_one"
----| "one_half"
----| "one"
----| "zero"
+---@class MultiplayerPlayerInfo
+---@field speedMultiplier number
+---@field teleporterIndex integer
+---@field objectiveMode integer
+---@field objectivePlayerHandle TableResourceHandle
+---@field targetPlayer integer
+---@field targetTime integer
+---@field lastDeathTime integer
+---@field slayerTarget integer
+---@field oddManOut boolean
 
----@class DamageEffectVibrate
----@field frequency number
----@field duration number
----@field fadeFunction FunctionType
+---@class ShaderTransparentExtraLayer
+---@field shader TagReference
 
----@class ShaderTransparentChicagoMap
----@field flags ShaderTransparentChicagoMapFlags
----@field colorFunction ShaderColorFunctionType
----@field alphaFunction ShaderColorFunctionType
----@field parameters ShaderTransparentMapParameters
----@field animation ShaderTransparentMapAnimation
+---@class MaterialEffectsMaterialEffect
+---@field materials MaterialEffectsMaterialEffectMaterial[]
+
+---@class ScenarioStructureBSPLensFlare
+---@field lens TagReference
+
+---@class LensFlareReflectionFlags
+---@field occludedBySolidObjects boolean
+---@field radiusScaledByOcclusionFactor boolean
+---@field radiusNotScaledByDistance boolean
+---@field alignRotationWithScreenCenter boolean
+
+---@class ScenarioControlPalette
+---@field name TagReference
 
 ---@class Item: Object
 ---@field flags ItemFlags
@@ -6221,127 +7315,29 @@
 ---@field detonatingEffect TagReference
 ---@field detonationEffect TagReference
 
----@class ConditionalWidgetReference
----@field widgetTag TagReference
+---@class ScenarioStructureBSPSoundEnvironmentPalette
 ---@field name string
----@field flags ConditionalWidgetReferenceFlags
----@field customControllerIndex integer
+---@field soundEnvironment TagReference
 
----@class ActorMovement
----@field diveIntoCoverChance number
----@field emergeFromCoverChance number
----@field diveFromGrenadeChance number
----@field pathfindingRadius number
----@field glassIgnoranceChance number
----@field stationaryMovementDist number
----@field freeFlyingSidestep number
----@field beginMovingAngle number
----@field cosineBeginMovingAngle number
+---@class ScenarioStructureBSPWeatherPolyhedronPlane
+---@field plane Plane3D
 
----@alias WeaponHUDInterfaceStateAttachedTo
----| "elevation_to_target"
----| "distance_to_target"
----| "secondary_weapon_loaded_ammo"
----| "secondary_weapon_total_ammo"
----| "age"
----| "heat"
----| "loaded_ammo"
----| "total_ammo"
+---@alias ActorVariantTrajectoryType
+---| "bounce"
+---| "lob"
+---| "toss"
 
----@alias FlagTrailingEdgeShape
----| "trapezoid_short_bottom"
----| "trapezoid_short_top"
----| "convex_triangular"
----| "concave_triangular"
----| "flat"
+---@class UIWidgetCollection
+---@field tags TagCollectionTag[]
 
----@alias FramebufferFadeMode
----| "fade_when_parallel"
----| "fade_when_perpendicular"
----| "none"
+---@class SoundLoopingFlags
+---@field siegeOfMadrigal boolean
+---@field stopsMusic boolean
+---@field notALoop boolean
+---@field deafeningToAis boolean
 
----@class ItemCollection
----@field permutations ItemCollectionPermutation[]
----@field defaultSpawnTime integer
-
----@class ShaderSpecularProperties
----@field perpendicularBrightness number
----@field perpendicularTintColor ColorRGB
----@field parallelBrightness number
----@field parallelTintColor ColorRGB
-
----@class ScenarioStructureBSPMaterialUncompressedRenderedVertex
----@field position VectorXYZ
----@field normal VectorXYZ
----@field binormal VectorXYZ
----@field tangent VectorXYZ
----@field textureCoords VectorXY
-
----@class VectorXYInt
----@field x integer
----@field y integer
-
----@class VectorFont
----@field fontSize number
----@field offsetX number
----@field offsetY number
----@field plain VectorFontStyle
----@field bold VectorFontStyle
----@field italic VectorFontStyle
----@field condense VectorFontStyle
----@field underline VectorFontStyle
-
----@class GlobalsBreakableSurfaceParticleEffect
----@field particleType TagReference
----@field flags GlobalsBreakableSurfaceParticleEffectFlags
----@field density number
----@field velocityScale number[2]
----@field angularVelocity number[2]
----@field radius number[2]
----@field tint ColorARGB
-
----@class ScenarioScenery
----@field type integer
----@field name integer
----@field placement ScenarioObjectPlacement
----@field bspIndices integer
----@field appearancePlayerIndex integer
-
----@class Garbage: Item
-
----@class BaseObjectVitals
----@field baseHealth number
----@field baseShield number
----@field health number
----@field shield number
----@field currentShieldDamage number
----@field currentHealthDamage number
----@field entangledObjectHandle ObjectHandle
----@field recentShieldDamage number
----@field recentHealthDamage number
----@field recentShieldDamageTime integer
----@field recentHealthDamageTime integer
----@field shieldStunTime integer
----@field flags BaseObjectVitalsFlags
-
----@class ShaderLensFlares
----@field lensFlareSpacing number
----@field lensFlare TagReference
-
----@class BipedFlags
----@field unitUsesOldNtscPlayerPhysics boolean
----@field randomSpeedIncrease boolean
----@field hasNoDyingAirborne boolean
----@field usesLimpBodyPhysics boolean
----@field rotateWhileAirborne boolean
----@field immuneToFallingDamage boolean
----@field canClimbAnySurface boolean
----@field passesThroughOtherBipeds boolean
----@field spherical boolean
----@field physicsPillCenteredAtOrigin boolean
----@field flying boolean
----@field usesPlayerPhysics boolean
----@field turnsWithoutAnimating boolean
+---@class GlobalsSound
+---@field sound TagReference
 
 ---@class ModelAnimationsAnimationGraphWeapon
 ---@field name string
@@ -6359,6 +7355,159 @@
 ---@field ikPoint ModelAnimationsAnimationGraphUnitSeatikPoint[]
 ---@field weaponTypes ModelAnimationsAnimationGraphWeaponType[]
 
+---@class ShaderModelFlags
+---@field useXboxMultipurposeChannelOrder boolean
+---@field disableTwoSidedCulling boolean
+---@field trueAtmosphericFog boolean
+---@field alphaBlendedDecal boolean
+---@field notAlphaTested boolean
+---@field twoSided boolean
+---@field detailAfterReflection boolean
+
+---@class ShaderTransparentProperties
+---@field numericCounterLimit integer
+---@field flags ShaderTransparentFlags
+---@field firstMapType ShaderFirstMapType
+---@field framebufferBlendFunction FramebufferBlendFunction
+---@field framebufferFadeMode FramebufferFadeMode
+---@field framebufferFadeSource FunctionOut
+---@field lensFlares ShaderLensFlares
+---@field extraLayers ShaderTransparentExtraLayer[]
+
+---@class ModelAnimationsAnimationGraphUnitSeat
+---@field label string
+---@field rightYawPerFrame number
+---@field leftYawPerFrame number
+---@field rightFrameCount integer
+---@field leftFrameCount integer
+---@field downPitchPerFrame number
+---@field upPitchPerFrame number
+---@field downPitchFrameCount integer
+---@field upPitchFrameCount integer
+---@field animations ModelAnimationsAnimationWeaponClassAnimation[]
+---@field ikPoints ModelAnimationsAnimationGraphUnitSeatikPoint[]
+---@field weapons ModelAnimationsAnimationGraphWeapon[]
+
+---@class ScenarioPlayerStartingLocation
+---@field position VectorXYZ
+---@field facing number
+---@field teamIndex integer
+---@field bspIndex integer
+---@field type0 ScenarioSpawnType
+---@field type1 ScenarioSpawnType
+---@field type2 ScenarioSpawnType
+---@field type3 ScenarioSpawnType
+
+---@class ScenarioScriptNodeValue
+
+---@class ModelCollisionGeometryBSP
+---@field bsp3dNodes ModelCollisionGeometryBSP3DNode[]
+---@field planes ModelCollisionGeometryBSPPlane[]
+---@field leaves ModelCollisionGeometryBSPLeaf[]
+---@field bsp2dReferences ModelCollisionGeometryBSP2DReference[]
+---@field bsp2dNodes ModelCollisionGeometryBSP2DNode[]
+---@field surfaces ModelCollisionGeometryBSPSurface[]
+---@field edges ModelCollisionGeometryBSPEdge[]
+---@field vertices ModelCollisionGeometryBSPVertex[]
+
+---@class UnitSeatFlags
+---@field allowAiNoncombatants boolean
+---@field notValidWithoutDriver boolean
+---@field allowVehicleCommunicationAnimations boolean
+---@field firstPersonCameraSlavedToGun boolean
+---@field thirdPersonOnEnter boolean
+---@field allowsWeapons boolean
+---@field thirdPersonCamera boolean
+---@field gunner boolean
+---@field driver boolean
+---@field locked boolean
+---@field invisible boolean
+
+---@class TagEntry
+---@field primaryGroup TagGroup
+---@field secondaryGroup TagGroup
+---@field tertiaryGroup TagGroup
+---@field handle TagHandle
+---@field path string
+
+---@class ActorPursuit
+---@field uncoverDelayTime number[2]
+---@field targetSearchTime number[2]
+---@field pursuitPositionTime number[2]
+---@field numPositionsCoord integer
+---@field numPositionsNormal integer
+
+---@class ModelTriangleStripData
+---@field indices integer[3]
+
+---@alias ScenarioTriggerVolumeType
+---| "rotational"
+---| "fixed"
+
+---@class ModelCollisionGeometryBSPLeaf
+---@field flags ModelCollisionGeometryBSPLeafFlags
+---@field bsp2dReferenceCount integer
+---@field firstBsp2dReference integer
+
+---@class ShaderTransparentWaterFlags
+---@field drawBeforeFog boolean
+---@field atmosphericFog boolean
+---@field baseMapColorModulatesBackground boolean
+---@field baseMapAlphaModulatesReflection boolean
+
+---@class ScenarioStructureBSPSubcluster
+---@field worldBoundsX number[2]
+---@field worldBoundsY number[2]
+---@field worldBoundsZ number[2]
+---@field surfaceIndices ScenarioStructureBSPSubclusterSurfaceIndex[]
+
+---@class WeaponTriggerFlags
+---@field useOriginalUnitAdjustProjectileRay boolean
+---@field projectileIsClientSideOnly boolean
+---@field projectilesHaveIdenticalError boolean
+---@field projectileVectorCannotBeAdjusted boolean
+---@field useErrorWhenUnzoomed boolean
+---@field analogRateOfFire boolean
+---@field dischargingSpews boolean
+---@field ejectsDuringChamber boolean
+---@field sticksWhenDropped boolean
+---@field projectilesUseWeaponOrigin boolean
+---@field locksInOnOffState boolean
+---@field doesNotRepeatAutomatically boolean
+---@field canFireWithPartialAmmo boolean
+---@field randomFiringEffects boolean
+---@field tracksFiredProjectile boolean
+
+---@class DamageEffectFlags
+---@field doNotScaleDamageByDistance boolean
+
+---@class WeaponHUDInterfaceCrosshairOverlayFlags
+---@field dontShowWhenZoomed boolean
+---@field oneZoomLevel boolean
+---@field hideAreaOutsideReticle boolean
+---@field showSniperData boolean
+---@field showOnlyWhenZoomed boolean
+---@field notASprite boolean
+---@field flashesWhenActive boolean
+
+---@class LensFlareFlags
+---@field scaleByMarker boolean
+---@field fadeOutMoreQuickly boolean
+---@field fadeInMoreQuickly boolean
+---@field onlyRenderInThirdPerson boolean
+---@field onlyRenderInFirstPerson boolean
+---@field noOcclusionTest boolean
+---@field sun boolean
+
+---@class ProjectileNetworkData
+---@field position VectorXYZ
+---@field transitionalVelocity VectorXYZ
+
+---@class GBXModelFlags
+---@field ignoreSkinning boolean
+---@field partsHaveLocalNodes boolean
+---@field blendSharedNormals boolean
+
 ---@class ParticleFlags
 ---@field randomVerticalMirroring boolean
 ---@field randomHorizontalMirroring boolean
@@ -6373,77 +7522,25 @@
 ---@field animationStopsAtRest boolean
 ---@field canAnimateBackwards boolean
 
----@alias WeaponMovementPenalized
----| "when_zoomed_or_reloading"
----| "when_zoomed"
----| "always"
+---@class GrenadeHUDInterfaceTotalGrenadesNumberElement
+---@field properties HUDInterfaceNumberElement
+---@field flashCutoff integer
 
----@class ProjectileMaterialResponse
----@field flags ProjectileMaterialResponseFlags
----@field defaultResponse ProjectileResponse
----@field defaultEffect TagReference
----@field potentialResponse ProjectileResponse
----@field potentialFlags ProjectileMaterialResponsePotentialFlags
----@field potentialSkipFraction number
----@field potentialBetween number[2]
----@field potentialAnd number[2]
----@field potentialEffect TagReference
----@field scaleEffectsBy ProjectileScaleEffectsBy
----@field angularNoise number
----@field velocityNoise number
----@field detonationEffect TagReference
----@field initialFriction number
----@field maximumDistance number
----@field parallelFriction number
----@field perpendicularFriction number
+---@class FontFlags
+---@field disableMccFontOverride boolean
 
----@class ScenarioStructureBSPMaterialUncompressedLightmapVertex
----@field normal VectorXYZ
----@field textureCoords VectorXY
+---@class EquipmentNetwork
+---@field baselineValid boolean
+---@field baselineIndex integer
+---@field messageIndex integer
+---@field updateBaseline EquipmentNetworkData
+---@field deltaValid boolean
+---@field updateDelta EquipmentNetworkData
 
----@class ScenarioAIAnimationReference
----@field animationName string
----@field animationGraph TagReference
-
----@class ParticleSystem
----@field pointPhysics TagReference
----@field systemUpdatePhysics ParticleSystemSystemUpdatePhysics
----@field physicsFlags IsUnusedFlag
----@field physicsConstants ParticleSystemPhysicsConstant[]
----@field particleTypes ParticleSystemType[]
-
----@class ScenarioStructureBSPClusterPortalVertex
----@field point VectorXYZ
-
----@class PreferencesNetworkGame
----@field name string
----@field primaryColor ColorRGB
----@field secondaryColor ColorRGB
----@field pattern TagReference
----@field patternBitmapIndex integer
----@field decal TagReference
----@field decalBitmapIndex integer
-
----@class ParticleSystemType
----@field name string
----@field flags ParticleSystemTypeFlags
----@field initialParticleCount integer
----@field complexSpriteRenderModes ParticleSystemComplexSpriteRenderMode
----@field radius number
----@field particleCreationPhysics ParticleSystemParticleCreationPhysics
----@field physicsFlags IsUnusedFlag
----@field physicsConstants ParticleSystemPhysicsConstant[]
----@field states ParticleSystemTypeStates[]
----@field particleStates ParticleSystemTypeParticleState[]
-
----@class ScenarioScriptNode
----@field salt integer
----@field indexUnion integer
----@field type ScenarioScriptValueType
----@field flags ScenarioScriptNodeFlags
----@field nextNode integer
----@field stringOffset integer
----@field data ScenarioScriptNodeValue
+---@class VectorIJK
+---@field i integer
+---@field j integer
+---@field k integer
 
 ---@class ParticleSystemTypeStates
 ---@field name string
@@ -6460,236 +7557,225 @@
 ---@field particleUpdatePhysics ParticleSystemParticleUpdatePhysics
 ---@field physicsConstants ParticleSystemPhysicsConstant[]
 
----@class HUDGlobals
----@field messagingParameters HUDGlobalsMessagingParameters
----@field helpTextColor HUDInterfaceElementColor
----@field hudMessages TagReference
----@field objectiveColors HUDGlobalsObjectiveColors
----@field waypointParameters HUDGlobalsWaypointParameters
----@field hudCrap HUDGlobalsCrap
----@field indicators HUDGlobalsDamageIndicators
----@field notMuchTimeLeftColor HUDInterfaceElementColor
----@field timeOutColor HUDInterfaceElementColor
----@field moreHudCrap HUDGlobalsExtraCrap
----@field anniversaryHudRemaps HUDGlobalsAnniversaryRemap[]
+---@class ModelAnimationsAnimationGraphUnitSeatikPoint
+---@field marker string
+---@field attachToMarker string
 
----@class EffectPart
----@field createIn EffectCreateIn
----@field violenceMode EffectViolenceMode
----@field location integer
----@field flags EffectPartFlags
----@field typeIdentifier TagGroup
----@field type TagReference
----@field velocityBounds number[2]
----@field velocityConeAngle number
----@field angularVelocityBounds number[2]
----@field radiusModifierBounds number[2]
----@field aScalesValues EffectPartScalesValues
----@field bScalesValues EffectPartScalesValues
+---@class ActorPerception
+---@field maxVisionDistance number
+---@field centralVisionAngle number
+---@field maxVisionAngle number
+---@field peripheralVisionAngle number
+---@field peripheralDistance number
+---@field standingGunOffset VectorXYZ
+---@field crouchingGunOffset VectorXYZ
+---@field hearingDistance number
+---@field noticeProjectileChance number
+---@field noticeVehicleChance number
+---@field combatPerceptionTime number
+---@field guardPerceptionTime number
+---@field nonCombatPerceptionTime number
+---@field inverseCombatPerceptionTime number
+---@field inverseGuardPerceptionTime number
+---@field inverseNonCombatPerceptionTime number
 
----@class ScenarioStructureBSPMapLeafFace
----@field nodeIndex integer
----@field vertices ScenarioStructureBSPMapLeafFaceVertex[]
+---@alias WeaponHUDInterfaceViewType
+---| "splitscreen"
+---| "fullscreen"
+---| "any"
 
----@class ShaderTransparentMeterColors
----@field gradientMinColor ColorRGB
----@field gradientMaxColor ColorRGB
----@field backgroundColor ColorRGB
----@field flashColor ColorRGB
----@field meterTintColor ColorRGB
----@field meterTransparency number
----@field backgroundTransparency number
+---@class UnitDialogueVariant
+---@field variantNumber integer
+---@field dialogue TagReference
 
----@class ScenarioStructureBSP
----@field lightmapsBitmap TagReference
----@field vehicleFloor number
----@field vehicleCeiling number
----@field defaultAmbientColor ColorRGB
----@field defaultDistantLight0Color ColorRGB
----@field defaultDistantLight0Direction VectorXYZ
----@field defaultDistantLight1Color ColorRGB
----@field defaultDistantLight1Direction VectorXYZ
----@field defaultReflectionTint ColorARGB
----@field defaultShadowVector VectorXYZ
----@field defaultShadowColor ColorRGB
----@field collisionMaterials ScenarioStructureBSPCollisionMaterial[]
----@field collisionBsp ModelCollisionGeometryBSP[]
----@field nodes ScenarioStructureBSPNode[]
----@field worldBoundsX number[2]
----@field worldBoundsY number[2]
----@field worldBoundsZ number[2]
----@field leaves ScenarioStructureBSPLeaf[]
----@field leafSurfaces ScenarioStructureBSPSurfaceReference[]
----@field surfaces ScenarioStructureBSPSurface[]
----@field lightmaps ScenarioStructureBSPLightmap[]
----@field lensFlares ScenarioStructureBSPLensFlare[]
----@field lensFlareMarkers ScenarioStructureBSPLensFlareMarker[]
----@field clusters ScenarioStructureBSPCluster[]
----@field clusterData TagRawData
----@field clusterPortals ScenarioStructureBSPClusterPortal[]
----@field breakableSurfaces ScenarioStructureBSPBreakableSurface[]
----@field fogPlanes ScenarioStructureBSPFogPlane[]
----@field fogRegions ScenarioStructureBSPFogRegion[]
----@field fogPalette ScenarioStructureBSPFogPalette[]
----@field weatherPalette ScenarioStructureBSPWeatherPalette[]
----@field weatherPolyhedra ScenarioStructureBSPWeatherPolyhedron[]
----@field pathfindingSurfaces ScenarioStructureBSPPathfindingSurface[]
----@field pathfindingEdges ScenarioStructureBSPPathfindingEdge[]
----@field backgroundSoundPalette ScenarioStructureBSPBackgroundSoundPalette[]
----@field soundEnvironmentPalette ScenarioStructureBSPSoundEnvironmentPalette[]
----@field soundPasData TagRawData
----@field markers ScenarioStructureBSPMarker[]
----@field detailObjects ScenarioStructureBSPDetailObjectData[]
----@field runtimeDecals ScenarioStructureBSPRuntimeDecal[]
----@field leafMapLeaves ScenarioStructureBSPGlobalMapLeaf[]
----@field leafMapPortals ScenarioStructureBSPGlobalLeafPortal[]
+---@alias BitmapDataFormat
+---| "bc_7"
+---| "p8"
+---| "dxt5"
+---| "dxt3"
+---| "dxt1"
+---| "unused_5"
+---| "unused_4"
+---| "a8r8g8b8"
+---| "x8r8g8b8"
+---| "a4r4g4b4"
+---| "a1r5g5b5"
+---| "unused_3"
+---| "r5g6b5"
+---| "unused_2"
+---| "unused_1"
+---| "a8y8"
+---| "ay_8"
+---| "y8"
+---| "a8"
 
----@alias PhysicsFrictionType
----| "up"
----| "left"
----| "forward"
----| "point"
+---@class StringList
+---@field strings StringListString[]
 
----@class BitmapData
----@field signature TagGroup
----@field width integer
----@field height integer
----@field depth integer
----@field type BitmapDataType
----@field format BitmapDataFormat
----@field flags BitmapDataFlags
----@field registrationPoint VectorXYInt
----@field mipmapCount integer
----@field pixelDataOffset integer
----@field pixelDataSize integer
----@field bitmapTagId TagHandle
----@field pointer integer
----@field hardwareFormat integer
----@field baseAddress integer
+---@class BipedFlags
+---@field unitUsesOldNtscPlayerPhysics boolean
+---@field randomSpeedIncrease boolean
+---@field hasNoDyingAirborne boolean
+---@field usesLimpBodyPhysics boolean
+---@field rotateWhileAirborne boolean
+---@field immuneToFallingDamage boolean
+---@field canClimbAnySurface boolean
+---@field passesThroughOtherBipeds boolean
+---@field spherical boolean
+---@field physicsPillCenteredAtOrigin boolean
+---@field flying boolean
+---@field usesPlayerPhysics boolean
+---@field turnsWithoutAnimating boolean
 
----@class HUDGlobalsAnniversaryRemapTarget
----@field targetBitmap TagReference
----@field language HUDGlobalsAnniversaryRemapTargetLanguage
----@field flags HUDGlobalsAnniversaryRemapTargetFlags
+---@class BitmapGroupSequence
+---@field name string
+---@field firstBitmapIndex integer
+---@field bitmapCount integer
+---@field sprites BitmapGroupSprite[]
 
----@class HUDGlobalsExtraCrap
----@field carnageReportBitmap TagReference
----@field loadingBeginText integer
----@field loadingEndText integer
----@field checkpointBeginText integer
----@field checkpointEndText integer
----@field checkpointSound TagReference
+---@class WeatherParticleSystemParticleTypeFlags
+---@field randomRotation boolean
+---@field alongLongHuePath boolean
+---@field interpolateColorsInHsv boolean
 
----@class ScenarioMachine
----@field type integer
----@field name integer
----@field placement ScenarioObjectPlacement
----@field appearancePlayerIndex integer
----@field powerGroup integer
----@field positionGroup integer
----@field deviceFlags ScenarioDeviceFlags
----@field machineFlags ScenarioMachineFlags
+---@class ProjectileFlags
+---@field minimumUnattachedDetonationTime boolean
+---@field randomAttachedDetonationTime boolean
+---@field combineInitialVelocityWithParentVelocity boolean
+---@field hasSuperCombiningExplosion boolean
+---@field detonationMaxTimeIfAttached boolean
+---@field aiMustUseBallisticAiming boolean
+---@field orientedAlongVelocity boolean
 
----@class PhysicsInertialMatrix
----@field matrix Matrix
+---@class ModelCollisionGeometryBSPSurface
+---@field plane integer
+---@field firstEdge integer
+---@field flags ModelCollisionGeometryBSPSurfaceFlags
+---@field breakableSurface integer
+---@field material integer
 
----@alias DamageEffectSideEffect
----| "emp"
----| "lethal_to_the_unsuspecting"
----| "harmless"
+---@class DecalFlags
+---@field disabledByBloodSetting boolean
+---@field preserveAspect boolean
+---@field animationLoop boolean
+---@field editorIncrementalCounter boolean
+---@field editorSnapToAxis boolean
+---@field waterEffect boolean
+---@field noRandomRotation boolean
+---@field moreColors boolean
+---@field interpolateColorInHsv boolean
+---@field geometryInheritedByNextDecalInChain boolean
+
+---@class GlowParticleSize
+---@field attachment FunctionOut
+---@field bounds number[2]
+---@field multiplier number[2]
+
+---@class ScenarioReference
+---@field reference TagReference
+
+---@class HUDInterfaceStaticElement
+---@field position HUDInterfaceElementPosition
+---@field interfaceBitmap TagReference
+---@field color HUDInterfaceElementColor
+---@field sequenceIndex integer
+---@field multitextureOverlays HUDInterfaceMultitextureOverlay[]
+
+---@class Decal
+---@field properties DecalProperties
+---@field appearance DecalAppearance
+---@field animation DecalAnimation
+---@field shader DecalShader
+---@field maximumSpriteExtent number
+
+---@class DamageEffectScreenFlash
+---@field type DamageEffectScreenFlashType
+---@field priority DamageEffectScreenFlashPriority
+---@field duration number
+---@field fadeFunction FunctionType
+---@field maximumIntensity number
+---@field color ColorARGB
+
+---@alias AnimationFunctionControls
+---| "scale"
+---| "frame"
+
+---@class GlobalsBreakableSurfaceParticleEffectFlags
+---@field moreColors boolean
+---@field interpolateColorInHsv boolean
+
+---@class BipedContactPoint
+---@field markerName string
+
+---@class VectorPYR
+---@field pitch number
+---@field yaw number
+---@field rotation number
+
+---@alias ShaderTransparentGenericStageInputMappingColor
+---| "x_1"
+---| "x"
+---| "_1_2_clamp_x"
+---| "clamp_x_1_2"
+---| "_1_2"
+---| "_2"
+---| "_1_clamp_x"
+---| "clamp_x"
+
+---@alias ParticleSystemParticleUpdatePhysics
+---| "default"
+
+---@class ScenarioLocation
+---@field leafId integer
+---@field clusterId integer
+
+---@class ModelAnimationsFlags
+---@field forceIdleCompression boolean
+---@field compressAllAnimations boolean
+
+---@class Rectangle2D
+---@field top integer
+---@field left integer
+---@field bottom integer
+---@field right integer
+
+---@class EffectParticleScalesValues
+---@field tint boolean
+---@field particleRadiusDelta boolean
+---@field particleRadius boolean
+---@field distributionRadiusDelta boolean
+---@field distributionRadius boolean
+---@field countDelta boolean
+---@field count boolean
+---@field angularVelocityDelta boolean
+---@field angularVelocity boolean
+---@field velocityConeAngle boolean
+---@field velocityDelta boolean
+---@field velocity boolean
+
+---@class SkyAmbientRadiosity
+---@field color ColorRGB
+---@field power number
+
+---@class IsUnfilteredFlag
+---@field unfiltered boolean
+
+---@class ShaderFlags
+---@field transparentLit boolean
+---@field ignoreNormals boolean
+---@field simpleParameterization boolean
+
+---@class UnitCameraTrack
+---@field track TagReference
+
+---@class LensFlareReflectionMoreFlags
+---@field moreColors boolean
+---@field interpolateColorsInHsv boolean
+
+---@alias LensFlareOcclusionOffsetDirection
 ---| "none"
-
----@class Bitmap
----@field type BitmapType
----@field encodingFormat BitmapFormat
----@field usage BitmapUsage
----@field flags BitmapFlags
----@field processing BitmapProcessing
----@field spriteBudget BitmapSpriteBudget
----@field colorPlate BitmapColorPlate
----@field processedPixelData TagRawData
----@field moreProcessing BitmapMoreProcessing
----@field spriteProcessing BitmapSpriteProcessing
----@field bitmapGroupSequence BitmapGroupSequence[]
----@field bitmapData BitmapData[]
-
----@class WeaponMagazine
----@field flags WeaponMagazineFlags
----@field roundsRecharged integer
----@field roundsTotalInitial integer
----@field roundsReservedMaximum integer
----@field roundsLoadedMaximum integer
----@field reloadTime number
----@field roundsReloaded integer
----@field chamberTime number
----@field reloadingEffect TagReference
----@field chamberingEffect TagReference
----@field magazineObjects WeaponMagazineObject[]
-
----@class ScenarioAIConversationParticipant
----@field flags ScenarioAIConversationParticipantFlags
----@field selectionType ScenarioSelectionType
----@field actorType ActorType
----@field useThisObject integer
----@field setNewName integer
----@field variantNumbers integer[6]
----@field encounterName string
----@field encounterIndex integer
-
----@class ShaderEnvironmentDiffuseFlags
----@field rescaleBumpMap boolean
----@field rescaleDetailMaps boolean
-
----@class ScenarioStructureBSPCollisionMaterial
----@field shader TagReference
----@field material MaterialType
-
----@class HUDInterfaceMultitextureOverlay
----@field type integer
----@field framebufferBlendFunction FramebufferBlendFunction
----@field primaryAnchor HUDInterfaceMultitextureOverlayAnchor
----@field secondaryAnchor HUDInterfaceMultitextureOverlayAnchor
----@field tertiaryAnchor HUDInterfaceMultitextureOverlayAnchor
----@field zeroToOneBlendFunction HUDInterfaceZeroToOneBlendFunction
----@field oneToTwoBlendFunction HUDInterfaceZeroToOneBlendFunction
----@field primaryScale VectorXY
----@field secondaryScale VectorXY
----@field tertiaryScale VectorXY
----@field primaryOffset VectorXY
----@field secondaryOffset VectorXY
----@field tertiaryOffset VectorXY
----@field primary TagReference
----@field secondary TagReference
----@field tertiary TagReference
----@field primaryWrapMode HUDInterfaceWrapMode
----@field secondaryWrapMode HUDInterfaceWrapMode
----@field tertiaryWrapMode HUDInterfaceWrapMode
----@field effectors HUDInterfaceMultitextureOverlayEffector[]
-
----@alias FunctionOut
----| "d_out"
----| "c_out"
----| "b_out"
----| "a_out"
----| "none"
-
----@alias MeterAnchorColors
----| "at_full"
----| "at_empty"
----| "at_both_ends"
-
----@class ShaderTransparentPlasma: Shader
----@field intensity ShaderTransparentPlasmaIntensity
----@field offset ShaderTransparentPlasmaOffset
----@field color ShaderTransparentPlasmaColor
----@field primaryNoiseMap ShaderTransparentPlasmaNoiseMap
----@field secondaryNoiseMap ShaderTransparentPlasmaNoiseMap
-
----@class ModelCollisionGeometryBSPLeafFlags
----@field containsDoubleSidedSurfaces boolean
-
----@class ModelAnimationsDeviceAnimations
----@field animations ModelAnimationsDeviceAnimation[]
+---| "marker_forward"
+---| "toward_viewer"
 
 ---@class ScenarioVehicle
 ---@field type integer
@@ -6698,160 +7784,326 @@
 ---@field multiplayerTeamIndex integer
 ---@field multiplayerSpawnFlags ScenarioVehicleMultiplayerSpawnFlags
 
----@class ModelAnimationsUnitSeatAnimation
----@field animation integer
+---@class LightRadiosity
+---@field intensity number
+---@field color ColorRGB
 
----@alias UIJustification
----| "center_justify"
----| "right_justify"
----| "left_justify"
+---@class ShaderTransparentPlasma: Shader
+---@field intensity ShaderTransparentPlasmaIntensity
+---@field offset ShaderTransparentPlasmaOffset
+---@field color ShaderTransparentPlasmaColor
+---@field primaryNoiseMap ShaderTransparentPlasmaNoiseMap
+---@field secondaryNoiseMap ShaderTransparentPlasmaNoiseMap
 
----@alias ActorVariantTrajectoryType
----| "bounce"
----| "lob"
----| "toss"
+---@alias VehicleType
+---| "turret"
+---| "alien_fighter"
+---| "alien_scout"
+---| "human_plane"
+---| "human_boat"
+---| "human_jeep"
+---| "human_tank"
 
----@class ScenarioScriptParameter
----@field name string
----@field returnType ScenarioScriptValueType
+---@class WeaponHUDInterfaceOverlayType
+---@field showAlways boolean
+---@field showOnDefault boolean
+---@field showOnReloadOverheating boolean
+---@field showOnEmpty boolean
+---@field showOnFlashing boolean
 
----@class ModelCollisionGeometryBSP2DReference
----@field plane integer
----@field bsp2dNode integer
+---@alias ObjectType
+---| "sound_scenery"
+---| "placeholder"
+---| "device_light_fixture"
+---| "device_control"
+---| "device_machine"
+---| "scenery"
+---| "projectile"
+---| "garbage"
+---| "equipment"
+---| "weapon"
+---| "vehicle"
+---| "biped"
 
----@class Projectile: Object
----@field flags ProjectileFlags
----@field detonationTimerStarts ProjectileDetonationTimerStarts
----@field impactNoise ObjectNoise
----@field aIn ProjectileFunctionIn
----@field bIn ProjectileFunctionIn
----@field cIn ProjectileFunctionIn
----@field dIn ProjectileFunctionIn
----@field superDetonation TagReference
----@field aiPerceptionRadius number
----@field collisionRadius number
----@field armingTime number
----@field dangerRadius number
----@field effect TagReference
----@field timer number[2]
----@field minimumVelocity number
----@field maximumRange number
----@field airGravityScale number
----@field airDamageRange number[2]
----@field waterGravityScale number
----@field waterDamageRange number[2]
----@field initialVelocity number
----@field finalVelocity number
----@field guidedAngularVelocity number
----@field detonationNoise ObjectNoise
----@field detonationStarted TagReference
----@field flybySound TagReference
----@field attachedDetonationDamage TagReference
----@field impactDamage TagReference
----@field materialResponse ProjectileMaterialResponse[]
+---@class ObjectAttachment
+---@field type TagReference
+---@field marker string
+---@field primaryScale FunctionOut
+---@field secondaryScale FunctionOut
+---@field changeColor FunctionNameNullable
 
----@alias ScenarioReturnState
----| "fleeing"
----| "searching"
----| "guarding_at_guard_position"
----| "guarding"
----| "moving_randomly"
----| "moving_loop_randomly"
----| "moving_loop_back_and_forth"
----| "moving_loop"
----| "moving_repeat_same_position"
----| "alert"
----| "sleeping"
+---@alias WeaponOverchargedAction
+---| "discharge"
+---| "explode"
 ---| "none"
 
----@class HUDGlobalsAnniversaryRemap
----@field sourceBitmap TagReference
----@field targets HUDGlobalsAnniversaryRemapTarget[]
+---@class GlobalsRasterizerData
+---@field distanceAttenuation TagReference
+---@field vectorNormalization TagReference
+---@field atmosphericFogDensity TagReference
+---@field planarFogDensity TagReference
+---@field linearCornerFade TagReference
+---@field activeCamouflageDistortion TagReference
+---@field glow TagReference
+---@field default2d TagReference
+---@field default3d TagReference
+---@field defaultCubeMap TagReference
+---@field test0 TagReference
+---@field test1 TagReference
+---@field test2 TagReference
+---@field test3 TagReference
+---@field videoScanlineMap TagReference
+---@field videoNoiseMap TagReference
+---@field flags GlobalsRasterizerDataFlags
+---@field refractionAmount number
+---@field distanceFalloff number
+---@field tintColor ColorRGB
+---@field hyperStealthRefraction number
+---@field hyperStealthDistanceFalloff number
+---@field hyperStealthTintColor ColorRGB
+---@field distanceAttenuation2d TagReference
 
----@class SkyFunction
----@field functionName string
+---@class AntennaVertex
+---@field springStrengthCoefficient number
+---@field angles VectorPY
+---@field length number
+---@field sequenceIndex integer
+---@field color ColorARGB
+---@field lodColor ColorARGB
+---@field offset VectorXYZ
 
----@class ShaderTransparentMeterProperties
----@field flags ShaderTransparentMeterFlags
----@field map TagReference
+---@class ShaderTransparentGeneric: Shader
+---@field properties ShaderTransparentProperties
+---@field maps ShaderTransparentGenericMap[]
+---@field stages ShaderTransparentGenericStage[]
 
----@class TagHandle
----@field index integer
----@field value integer
----@field id integer
+---@alias ScenarioAddressee
+---| "participant"
+---| "player"
+---| "none"
+
+---@class FontCharacterIndex
+---@field characterIndex integer
+
+---@class ModelVertexReference
+---@field vertexType ModelVertexType
+---@field vertexCount integer
+---@field offset integer
+---@field unknownPointer integer
+---@field vertexPointer integer
+
+---@alias ShaderTransparentGenericStageInputColor
+---| "constant_alpha_1"
+---| "constant_alpha_0"
+---| "scratch_alpha_1"
+---| "scratch_alpha_0"
+---| "vertex_alpha_1_fade_perpendicular"
+---| "vertex_alpha_0_fade_none"
+---| "map_alpha_3"
+---| "map_alpha_2"
+---| "map_alpha_1"
+---| "map_alpha_0"
+---| "constant_color_1"
+---| "constant_color_0"
+---| "scratch_color_1"
+---| "scratch_color_0"
+---| "vertex_color_1_fade_perpendicular"
+---| "vertex_color_0_diffuse_light"
+---| "map_color_3"
+---| "map_color_2"
+---| "map_color_1"
+---| "map_color_0"
+---| "negative_one_half"
+---| "negative_one"
+---| "one_half"
+---| "one"
+---| "zero"
+
+---@class GrenadeHUDInterface
+---@field anchor HUDInterfaceAnchor
+---@field canvasSize HUDInterfaceCanvasSize
+---@field background HUDInterfaceStaticElement
+---@field totalGrenadesBackground HUDInterfaceStaticElement
+---@field totalGrenadesNumbers GrenadeHUDInterfaceTotalGrenadesNumberElement
+---@field totalGrenadesOverlays GrenadeHUDInterfaceTotalGrenadesOverlays
+---@field messagingInformation HUDInterfaceMessagingInformation
+
+---@class HUDInterfaceMeterElement
+---@field position HUDInterfaceElementPosition
+---@field meterBitmap TagReference
+---@field colorAtMeterMinimum integer
+---@field colorAtMeterMaximum integer
+---@field flashColor integer
+---@field emptyColor integer
+---@field flags HUDInterfaceMeterFlags
+---@field minimumMeterValue integer
+---@field sequenceIndex integer
+---@field alphaMultiplier integer
+---@field alphaBias integer
+---@field valueScale integer
+---@field opacity number
+---@field translucency number
+---@field disabledColor integer
+---@field minAlpha number
+
+---@alias BitmapType
+---| "interface_bitmaps"
+---| "sprites"
+---| "cube_maps"
+---| "_3d_textures"
+---| "_2d_textures"
+
+---@class ScenarioAIRecordingReference
+---@field recordingName string
+
+---@class TagCollectionTag
+---@field reference TagReference
+
+---@alias FramebufferBlendFunction
+---| "alpha_multiply_add"
+---| "component_max"
+---| "component_min"
+---| "subtract"
+---| "add"
+---| "double_multiply"
+---| "multiply"
+---| "alpha_blend"
+
+---@alias MetagameClass
+---| "standard_vehicle"
+---| "giant_vehicle"
+---| "heavy_vehicle"
+---| "light_vehicle"
+---| "specialist"
+---| "hero"
+---| "leader"
+---| "infantry"
+
+---@class Plane3D
+---@field i number
+---@field j number
+---@field k number
+---@field w number
+
+---@alias DeviceType
+---| "call_button"
+---| "off_button"
+---| "on_button"
+---| "toggle_switch"
+
+---@class ShaderEffect
+---@field shaderProperties ShaderEffectProperties
+---@field secondaryMap ShaderEffectSecondaryMap
+
+---@alias InputDeviceDefaultsDeviceType
+---| "full_profile_definition"
+---| "joysticks_gamepads_etc"
+---| "mouse_and_keyboard"
+
+---@alias HUDInterfaceZeroToOneBlendFunction
+---| "dot"
+---| "multiply_2x"
+---| "multiply"
+---| "subtract"
+---| "add"
+
+---@class TagRawData
+---@field size integer
+---@field pointer integer
+
+---@class ScenarioSquadAttacking
+---@field z boolean
+---@field y boolean
+---@field x boolean
+---@field w boolean
+---@field v boolean
+---@field u boolean
+---@field t boolean
+---@field s boolean
+---@field r boolean
+---@field q boolean
+---@field p boolean
+---@field o boolean
+---@field n boolean
+---@field m boolean
+---@field l boolean
+---@field k boolean
+---@field j boolean
+---@field i boolean
+---@field h boolean
+---@field g boolean
+---@field f boolean
+---@field e boolean
+---@field d boolean
+---@field c boolean
+---@field b boolean
+---@field a boolean
+
+---@class PlayerMultiplayerStatistics
+---@field raceTime integer
+---@field kingHillScore integer
+---@field oddballTime integer
+---@field ctfFlagGrabs integer
+---@field raceLaps integer
+---@field oddballCarrierKills integer
+---@field ctfFlagReturns integer
+---@field raceBestTime integer
+---@field oddballKills integer
+---@field ctfFlagScores integer
+
+---@alias CacheFileType
+---| "userInterface"
+---| "multiplayer"
+---| "singlePlayer"
+
+---@class FontCharacterTables
+---@field characterTable FontCharacterIndex[]
+
+---@class DamageEffectDamageFlags
+---@field allowAnyNonZeroAccelerationValue boolean
+---@field use3dInstantaneousAcceleration boolean
+---@field doesNotHurtPlayers boolean
+---@field forcesHardPing boolean
+---@field ignoreSeatScaleForDirDmg boolean
+---@field infectionFormPop boolean
+---@field canCauseMultiplayerHeadshots boolean
+---@field onlyHurtsOneInfectionForm boolean
+---@field skipsShields boolean
+---@field damageIndicatorsAlwaysPointDown boolean
+---@field causesFlamingDeath boolean
+---@field onlyHurtsShields boolean
+---@field detonatesExplosives boolean
+---@field doesNotPingUnits boolean
+---@field doesNotHurtFriends boolean
+---@field pingsResistantUnits boolean
+---@field canCauseHeadshots boolean
+---@field doesNotHurtOwner boolean
+
+---@class IsUnusedFlag
+---@field unused boolean
+
+---@class SoundLoopingTrackFlags
+---@field fadeInAlternate boolean
+---@field fadeOutAtStop boolean
+---@field fadeInAtStart boolean
 
 ---@class HUDInterfaceNumberFlags
 ---@field drawATrailingM boolean
 ---@field onlyShowWhenZoomed boolean
 ---@field showLeadingZeros boolean
 
----@class SoundPitchRange
----@field name string
----@field naturalPitch number
----@field bendBounds number[2]
----@field actualPermutationCount integer
----@field playbackRate number
----@field usedPermutations integer
----@field lastPermutationIndex integer
----@field nextPermutationIndex integer
----@field permutations SoundPermutation[]
+---@alias DamageEffectScreenFlashType
+---| "tint"
+---| "invert"
+---| "min"
+---| "max"
+---| "darken"
+---| "lighten"
+---| "none"
 
----@class ShaderEnvironmentSpecular
----@field flags ShaderEnvironmentSpecularFlags
----@field brightness number
----@field perpendicularColor ColorRGB
----@field parallelColor ColorRGB
-
----@class DeviceMachine: Device
----@field type MachineType
----@field flags MachineFlags
----@field doorOpenTime number
----@field collisionResponse MachineCollisionResponse
----@field elevatorNode integer
----@field doorOpenTimeTicks integer
-
----@class ScenarioVehicleMultiplayerSpawnFlags
----@field unused7 boolean
----@field unused6 boolean
----@field unused5 boolean
----@field unused4 boolean
----@field oddballAllowed boolean
----@field kingAllowed boolean
----@field ctfAllowed boolean
----@field slayerAllowed boolean
----@field unused3 boolean
----@field unused2 boolean
----@field unused1 boolean
----@field unused boolean
----@field oddballDefault boolean
----@field kingDefault boolean
----@field ctfDefault boolean
----@field slayerDefault boolean
-
----@class ScenarioStructureBSPFogPalette
----@field name string
----@field fog TagReference
----@field fogScaleFunction string
-
----@class PhysicsPoweredMassPointFlags
----@field antigrav boolean
----@field thrust boolean
----@field airLift boolean
----@field waterLift boolean
----@field airFriction boolean
----@field waterFriction boolean
----@field groundFriction boolean
-
----@class ScenarioStructureBSPCompiledHeader
----@field pointer integer
----@field lightmapMaterialCount integer
----@field renderedVertices integer
----@field lightmapMaterialCountAgain integer
----@field lightmapVertices integer
----@field signature TagGroup
-
----@class GlobalsWeapon
----@field weapon TagReference
+---@alias FontEncodingType
+---| "extended"
+---| "ucs_2"
 
 ---@alias MultiplayerInformationSound
 ---| "ting"
@@ -6899,1264 +8151,12 @@
 ---| "game_over"
 ---| "play_ball"
 
----@class LensFlareReflectionMoreFlags
----@field moreColors boolean
----@field interpolateColorsInHsv boolean
-
----@alias AnimationFunction
----| "d_out"
----| "c_out"
----| "b_out"
----| "a_out"
-
----@class ModelAnimationsAnimationGraphNodeFlags
----@field noMovement boolean
----@field hinge boolean
----@field ballSocket boolean
-
----@class HUDInterfaceNumberElement
----@field position HUDInterfaceElementPosition
----@field color HUDInterfaceElementColor
----@field maximumNumberOfDigits integer
----@field flags HUDInterfaceNumberFlags
----@field numberOfFractionalDigits integer
-
----@class ModelAnimationsAnimationGraphNode
----@field name string
----@field nextSiblingNodeIndex integer
----@field firstChildNodeIndex integer
----@field parentNodeIndex integer
----@field nodeJointFlags ModelAnimationsAnimationGraphNodeFlags
----@field baseVector VectorXYZ
----@field vectorRange number
-
----@class ScenarioSpawnNotPlaced
----@field usePlayerAppearance boolean
----@field onHard boolean
----@field onNormal boolean
----@field onEasy boolean
----@field automatically boolean
-
----@class ShaderTransparentMeterFlags
----@field unfiltered boolean
----@field tintMode2 boolean
----@field flashColorIsNegative boolean
----@field twoSided boolean
----@field decal boolean
-
----@class GBXModelGeometry
----@field flags IsUnusedFlag
----@field parts GBXModelGeometryPart[]
-
----@alias MachineType
----| "gear"
----| "platform"
----| "door"
-
----@class LightColor
----@field interpolationFlags ColorInterpolationFlags
----@field color ColorARGB
-
----@class Antenna
----@field attachmentMarkerName string
----@field bitmaps TagReference
----@field physics TagReference
----@field springStrengthCoefficient number
----@field falloffPixels number
----@field cutoffPixels number
----@field length number
----@field vertices AntennaVertex[]
-
----@alias VehicleFunctionIn
----| "wingtip_contrail_new"
----| "engine_hack"
----| "thrust"
----| "hover"
----| "wingtip_contrail"
----| "back_right_tire_velocity"
----| "back_left_tire_velocity"
----| "front_right_tire_velocity"
----| "front_left_tire_velocity"
----| "back_right_tire_position"
----| "back_left_tire_position"
----| "front_right_tire_position"
----| "front_left_tire_position"
----| "right_tread_velocity"
----| "left_tread_velocity"
----| "right_tread_position"
----| "left_tread_position"
----| "velocity_up"
----| "velocity_left"
----| "velocity_forward"
----| "velocity_ground"
----| "velocity_water"
----| "velocity_air"
----| "walk"
----| "jump"
----| "crouch"
----| "turn_right"
----| "turn_left"
----| "turn_absolute"
----| "speed_slide_maximum"
----| "slide_right"
----| "slide_left"
----| "slide_absolute"
----| "speed_backward"
----| "speed_forward"
----| "speed_absolute"
----| "none"
-
----@class UnitHUDInterface
----@field anchor HUDInterfaceAnchor
----@field canvasSize HUDInterfaceCanvasSize
----@field hudBackground HUDInterfaceStaticElement
----@field shieldPanelBackground HUDInterfaceStaticElement
----@field shieldPanelMeter UnitHUDInterfaceShieldMeter
----@field healthPanelBackground HUDInterfaceStaticElement
----@field healthPanelMeter UnitHUDInterfaceHealthMeter
----@field motionSensorBackground HUDInterfaceStaticElement
----@field motionSensorForeground HUDInterfaceStaticElement
----@field motionSensorCenter UnitHUDInterfaceMotionSensorCenter
----@field auxiliaryElements UnitHUDInterfaceAuxiliaryElements
-
----@alias SoundFormat
----| "ogg_vorbis"
----| "ima_adpcm"
----| "xbox_adpcm"
----| "pcm"
-
----@class UnitHUDInterfaceAuxiliaryElements
----@field anchor HUDInterfaceAnchor
----@field overlays UnitHUDInterfaceAuxiliaryOverlay[]
----@field warningSounds UnitHUDInterfaceHUDSound[]
----@field meters UnitHUDInterfaceAuxiliaryPanel[]
-
----@class ModelAnimationsFrameInfoDxDy
----@field dx number
----@field dy number
-
----@class WeaponHUDInterfaceNumberWeaponSpecificFlags
----@field divideNumberByClipSize boolean
-
----@class UnitWeapon
----@field weapon TagReference
-
----@class ActorVariantRangedCombat
----@field weapon TagReference
----@field maximumFiringDistance number
----@field rateOfFire number
----@field projectileError number
----@field firstBurstDelayTime number[2]
----@field newTargetFiringPatternTime number
----@field surpriseDelayTime number
----@field surpriseFireWildlyTime number
----@field deathFireWildlyChance number
----@field deathFireWildlyTime number
----@field desiredCombatRange number[2]
----@field customStandGunOffset VectorXYZ
----@field customCrouchGunOffset VectorXYZ
----@field targetTracking number
----@field targetLeading number
----@field weaponDamageModifier number
----@field damagePerSecond number
-
----@class ParticleShaderFlags
----@field dontOverdrawFpWeapon boolean
----@field nonlinearTint boolean
----@field sortBias boolean
-
----@class ScenarioNetgameEquipmentFlags
----@field levitate boolean
-
----@class UnitCameraTrack
----@field track TagReference
-
----@alias WeaponDistributionFunction
----| "horizontal_fan"
----| "point"
-
----@class ShaderModelTextureScrollingAnimation
----@field uAnimationSource FunctionOut
----@field uAnimationFunction WaveFunction
----@field uAnimationPeriod number
----@field uAnimationPhase number
----@field uAnimationScale number
----@field vAnimationSource FunctionOut
----@field vAnimationFunction WaveFunction
----@field vAnimationPeriod number
----@field vAnimationPhase number
----@field vAnimationScale number
----@field rotationAnimationSource FunctionOut
----@field rotationAnimationFunction WaveFunction
----@field rotationAnimationPeriod number
----@field rotationAnimationPhase number
----@field rotationAnimationScale number
----@field rotationAnimationCenter VectorXY
-
----@class UnitUnitHUDInterface
----@field hud TagReference
-
----@class WeaponHUDInterfaceNumber
----@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
----@field allowedViewType WeaponHUDInterfaceViewType
----@field anchor HUDInterfaceChildAnchor
----@field properties HUDInterfaceNumberElement
----@field weaponSpecificFlags WeaponHUDInterfaceNumberWeaponSpecificFlags
-
----@class WeaponHUDInterfaceMeter
----@field stateAttachedTo WeaponHUDInterfaceStateAttachedTo
----@field allowedViewType WeaponHUDInterfaceViewType
----@field anchor HUDInterfaceChildAnchor
----@field properties HUDInterfaceMeterElement
-
----@class HUDInterfaceElementColor
----@field defaultColor integer
----@field flashingColor integer
----@field flashPeriod number
----@field flashDelay number
----@field numberOfFlashes integer
----@field flashFlags HUDInterfaceFlashFlags
----@field flashLength number
----@field disabledColor integer
-
----@alias ProjectileDetonationTimerStarts
----| "when_at_rest"
----| "after_first_bounce"
----| "immediately"
-
----@alias HUDInterfaceChildAnchor
----| "right_center"
----| "left_center"
----| "bottom_center"
----| "top_center"
----| "center"
----| "bottom_right"
----| "bottom_left"
----| "top_right"
----| "top_left"
----| "from_parent"
-
----@class UnitSeat
----@field flags UnitSeatFlags
----@field label string
----@field markerName string
----@field accelerationScale VectorXYZ
----@field yawRate number
----@field pitchRate number
----@field cameraMarkerName string
----@field cameraSubmergedMarkerName string
----@field pitchAutoLevel number
----@field pitchRange number[2]
----@field cameraTracks UnitCameraTrack[]
----@field hudInterface UnitUnitHUDInterface[]
----@field hudTextMessageIndex integer
----@field yawMinimum number
----@field yawMaximum number
----@field builtInGunner TagReference
-
----@class ModelAnimationsAnimationGraphObjectOverlay
----@field animation integer
----@field function AnimationFunction
----@field functionControls AnimationFunctionControls
-
----@class GBXModelGeometryPart: ModelGeometryPart
----@field localNodeCount integer
----@field localNodeIndices integer[22]
-
----@class VectorFontStyle
----@field data TagReference
----@field hardwareFormat integer
----@field spaceWidth integer
-
----@alias FunctionBoundsMode
----| "scale_to_fit"
----| "clip_and_normalize"
----| "clip"
-
----@class UnitAnimationData
----@field flags UnitAnimationFlags
----@field unknownSomeAnimationIndexMaybe integer
----@field unknownSomeAnimationIndex integer
----@field seatIndex integer
----@field seatWeaponIndex integer
----@field weaponTypeIndex integer
----@field state integer
----@field replacementState integer
----@field overlayState integer
----@field desiredState integer
----@field baseSeat integer
----@field emotion integer
----@field replacementAnimation ObjectAnimationState
----@field overlayStateAnimation ObjectAnimationState
----@field weaponIk ObjectAnimationState
----@field updateLook boolean
----@field updateAim boolean
----@field lookingBounds Bounds2D
----@field aimingBounds Bounds2D
----@field externalAnimationGraph integer
----@field externalAnimation ObjectAnimationState
-
----@alias DamageEffectCategory
----| "shotgun"
----| "needle"
----| "plasma"
----| "vehicle"
----| "mounted_weapon"
----| "flame"
----| "melee"
----| "sniper"
----| "high_explosive"
----| "grenade"
----| "bullet"
----| "falling"
----| "none"
-
----@class ChildWidgetReferenceFlags
----@field useCustomControllerIndex boolean
-
----@class CameraTrackControlPoint
----@field position VectorXYZ
----@field orientation Quaternion
-
----@class DamageEffect
----@field radius number[2]
----@field cutoffScale number
----@field flags DamageEffectFlags
----@field screenFlash DamageEffectScreenFlash
----@field lowFrequencyVibrate DamageEffectVibrate
----@field highFrequencyVibrate DamageEffectVibrate
----@field temporaryCameraImpulse DamageEffectTemporaryCameraImpulse
----@field permanentCameraImpulse DamageEffectPermanentCameraImpulse
----@field cameraShaking DamageEffectCameraShaking
----@field sound TagReference
----@field breakingEffect DamageEffectBreakingEffect
----@field damage DamageEffectDamage
-
----@alias ScenarioGroupIndex
----| "z"
----| "y"
----| "x"
----| "w"
----| "v"
----| "u"
----| "t"
----| "s"
----| "r"
----| "q"
----| "p"
----| "o"
----| "n"
----| "m"
----| "l"
----| "k"
----| "j"
----| "i"
----| "h"
----| "g"
----| "f"
----| "e"
----| "d"
----| "c"
----| "b"
----| "a"
-
----@class WeatherParticleSystem
----@field flags IsUnusedFlag
----@field particleTypes WeatherParticleSystemParticleType[]
-
----@alias HUDInterfaceCanvasSize
----| "_960_p"
----| "_480_p"
-
----@class Plane2D
----@field i number
----@field j number
----@field w number
-
----@class ActorPerception
----@field maxVisionDistance number
----@field centralVisionAngle number
----@field maxVisionAngle number
----@field peripheralVisionAngle number
----@field peripheralDistance number
----@field standingGunOffset VectorXYZ
----@field crouchingGunOffset VectorXYZ
----@field hearingDistance number
----@field noticeProjectileChance number
----@field noticeVehicleChance number
----@field combatPerceptionTime number
----@field guardPerceptionTime number
----@field nonCombatPerceptionTime number
----@field inverseCombatPerceptionTime number
----@field inverseGuardPerceptionTime number
----@field inverseNonCombatPerceptionTime number
-
----@class UnitDialogueVariant
----@field variantNumber integer
----@field dialogue TagReference
-
----@class WeatherParticleSystemParticleTypeFlags
----@field randomRotation boolean
----@field alongLongHuePath boolean
----@field interpolateColorsInHsv boolean
-
----@class ModelAnimationsAnimationGraphVehicleAnimations
----@field rightYawPerFrame number
----@field leftYawPerFrame number
----@field rightFrameCount integer
----@field leftFrameCount integer
----@field downPitchPerFrame number
----@field upPitchPerFrame number
----@field downPitchFrameCount integer
----@field upPitchFrameCount integer
----@field animations ModelAnimationsVehicleAnimation[]
----@field suspensionAnimations ModelAnimationSuspensionAnimation[]
-
----@class SoundLoopingTrackFlags
----@field fadeInAlternate boolean
----@field fadeOutAtStop boolean
----@field fadeInAtStart boolean
-
----@class ShaderTransparentExtraLayer
----@field shader TagReference
-
----@class MultiplayerPlayerInfo
----@field speedMultiplier number
----@field teleporterIndex integer
----@field objectiveMode integer
----@field objectivePlayerHandle TableResourceHandle
----@field targetPlayer integer
----@field targetTime integer
----@field lastDeathTime integer
----@field slayerTarget integer
----@field oddManOut boolean
-
----@class ScenarioActorStartingLocationFlags
----@field required boolean
-
----@alias TriangleBufferType
----| "triangle_strip"
----| "triangle_list"
-
----@class ModelCollisionGeometryPermutation
----@field name string
-
----@class ScenarioStructureBSPMirrorVertex
----@field point VectorXYZ
-
----@alias LensFlareOcclusionOffsetDirection
----| "none"
----| "marker_forward"
----| "toward_viewer"
-
----@class HUDMessageTextMessage
----@field name string
----@field startIndexIntoTextBlob integer
----@field startIndexOfMessageBlock integer
----@field panelCount integer
-
----@class ScenarioEncounterFlags
----@field manualBspIndexSpecified boolean
----@field _3dFiringPositions boolean
----@field initiallyBraindead boolean
----@field initiallyDeaf boolean
----@field initiallyBlind boolean
----@field respawnEnabled boolean
----@field notInitiallyCreated boolean
-
----@class ScenarioSquadAttacking
----@field z boolean
----@field y boolean
----@field x boolean
----@field w boolean
----@field v boolean
----@field u boolean
----@field t boolean
----@field s boolean
----@field r boolean
----@field q boolean
----@field p boolean
----@field o boolean
----@field n boolean
----@field m boolean
----@field l boolean
----@field k boolean
----@field j boolean
----@field i boolean
----@field h boolean
----@field g boolean
----@field f boolean
----@field e boolean
----@field d boolean
----@field c boolean
----@field b boolean
----@field a boolean
-
----@class DamageEffectCameraShaking
----@field duration number
----@field falloffFunction FunctionType
----@field randomTranslation number
----@field randomRotation number
----@field wobbleFunction WaveFunction
----@field wobblePeriod number
----@field wobbleWeight number
-
----@class ScenarioFiringPosition
----@field position VectorXYZ
----@field groupIndex ScenarioGroupIndex
----@field clusterIndex integer
----@field surfaceIndex integer
-
----@alias SoundClass
----| "game_event"
----| "unused_19"
----| "unused_18"
----| "scripted_dialog_force_unspatialized"
----| "scripted_dialog_other"
----| "scripted_effect"
----| "scripted_dialog_player"
----| "unused_17"
----| "unused_16"
----| "unused_15"
----| "unused_14"
----| "first_person_damage"
----| "unused_13"
----| "unused_12"
----| "unused_11"
----| "ambient_computers"
----| "ambient_machinery"
----| "ambient_nature"
----| "music"
----| "unused_10"
----| "device_computers"
----| "device_nature"
----| "device_machinery"
----| "device_force_field"
----| "device_door"
----| "unused_9"
----| "unused_8"
----| "vehicle_engine"
----| "vehicle_collision"
----| "unused_7"
----| "unused_6"
----| "unit_dialog"
----| "unit_footsteps"
----| "unused_5"
----| "unused_4"
----| "slow_particle_impacts"
----| "particle_impacts"
----| "object_impacts"
----| "unused_3"
----| "unused_2"
----| "weapon_idle"
----| "weapon_overheat"
----| "weapon_charge"
----| "weapon_empty"
----| "weapon_reload"
----| "weapon_ready"
----| "weapon_fire"
----| "unused_1"
----| "unused"
----| "projectile_detonation"
----| "projectile_impact"
-
----@class WeaponMagazineObject
----@field rounds integer
----@field equipment TagReference
-
----@class SkyLightFlags
----@field affectsInteriors boolean
----@field affectsExteriors boolean
-
----@class HUDGlobalsWaypointArrowFlags
----@field dontRotateWhenPointingOffscreen boolean
-
----@class ActorDefensive
----@field hideBehindCoverTime number[2]
----@field hideTargetNotVisibleTime number
----@field hideShieldFraction number
----@field attackShieldFraction number
----@field pursueShieldFraction number
----@field defensiveCrouchType ActorDefensiveCrouchType
----@field attackingCrouchThreshold number
----@field defendingCrouchThreshold number
----@field minStandTime number
----@field minCrouchTime number
----@field defendingHideTimeModifier number
----@field attackingEvasionThreshold number
----@field defendingEvasionThreshold number
----@field evasionSeekCoverChance number
----@field evasionDelayTime number
----@field maxSeekCoverDistance number
----@field coverDamageThreshold number
----@field stalkingDiscoveryTime number
----@field stalkingMaxDistance number
----@field stationaryFacingAngle number
----@field changeFacingStandTime number
-
----@class ScenarioStructureBSPCluster
----@field sky integer
----@field fog integer
----@field backgroundSound integer
----@field soundEnvironment integer
----@field weather integer
----@field transitionStructureBsp integer
----@field firstDecalIndex integer
----@field decalCount integer
----@field predictedResources PredictedResource[]
----@field subclusters ScenarioStructureBSPSubcluster[]
----@field firstLensFlareMarkerIndex integer
----@field lensFlareMarkerCount integer
----@field surfaceIndices ScenarioStructureBSPClusterSurfaceIndex[]
----@field mirrors ScenarioStructureBSPMirror[]
----@field portals ScenarioStructureBSPClusterPortalIndex[]
-
----@class MachineFlags
----@field elevator boolean
----@field butNotWhenOpen boolean
----@field pathfindingObstacle boolean
-
----@class ActorFiringPositions
----@field guardPositionTime number[2]
----@field combatPositionTime number[2]
----@field oldPositionAvoidDist number
----@field friendAvoidDist number
-
----@class ShaderTransparentMeterExternalFunctionSources
----@field meterBrightnessSource FunctionOut
----@field flashBrightnessSource FunctionOut
----@field valueSource FunctionOut
----@field gradientSource FunctionOut
----@field flashExtensionSource FunctionOut
-
----@class ColorARGB
----@field a integer
----@field r integer
----@field g integer
----@field b integer
-
----@class GlobalsCheatPowerup
----@field powerup TagReference
-
----@class TableResourceHandle
----@field index integer
----@field value integer
----@field id integer
-
----@alias ActorUnreachableDangerTrigger
----| "unused_4"
----| "unused_3"
----| "unused_2"
----| "unused_1"
----| "unused"
----| "damaging_us"
----| "shooting_near_us"
----| "shooting"
----| "visible"
----| "never"
-
----@alias ObjectNoise
----| "quiet"
----| "shout"
----| "loud"
----| "medium"
----| "silent"
-
----@class GrenadeHUDInterfaceSoundLatchedTo
----@field throwOnNoGrenades boolean
----@field noGrenadesLeft boolean
----@field lowGrenadeCount boolean
-
----@alias ShaderModelDetailMask
----| "auxiliary_mask"
----| "auxiliary_mask_inverse"
----| "change_color_mask"
----| "change_color_mask_inverse"
----| "self_illumination_mask"
----| "self_illumination_mask_inverse"
----| "reflection_mask"
----| "reflection_mask_inverse"
----| "none"
-
----@alias FontEncodingType
----| "extended"
----| "ucs_2"
-
----@class WeatherParticleSystemParticleType
----@field name string
----@field flags WeatherParticleSystemParticleTypeFlags
----@field fadeInStartDistance number
----@field fadeInEndDistance number
----@field fadeOutStartDistance number
----@field fadeOutEndDistance number
----@field fadeInStartHeight number
----@field fadeInEndHeight number
----@field fadeOutStartHeight number
----@field fadeOutEndHeight number
----@field particleCount number[2]
----@field physics TagReference
----@field accelerationMagnitude number[2]
----@field accelerationTurningRate number
----@field accelerationChangeRate number
----@field particleRadius number[2]
----@field animationRate number[2]
----@field rotationRate number[2]
----@field color ColorARGB
----@field spriteSize number
----@field spriteBitmap TagReference
----@field renderMode ParticleOrientation
----@field renderDirectionSource WeatherParticleSystemRenderDirectionSource
----@field shader ShaderEffect
-
----@alias UICanvas
----| "_1708_x960"
----| "_1280_x960"
----| "_854_x480"
----| "_640_x480"
-
----@class LightningMarkerFlag
----@field notConnectedToNextMarker boolean
-
----@class ScenarioSquad
----@field name string
----@field actorType integer
----@field platoon integer
----@field initialState ScenarioReturnState
----@field returnState ScenarioReturnState
----@field flags ScenarioSquadFlags
----@field uniqueLeaderType ScenarioUniqueLeaderType
----@field maneuverToSquad integer
----@field squadDelayTime number
----@field attacking ScenarioSquadAttacking
----@field attackingSearch ScenarioSquadAttacking
----@field attackingGuard ScenarioSquadAttacking
----@field defending ScenarioSquadAttacking
----@field defendingSearch ScenarioSquadAttacking
----@field defendingGuard ScenarioSquadAttacking
----@field pursuing ScenarioSquadAttacking
----@field normalDiffCount integer
----@field insaneDiffCount integer
----@field majorUpgrade ScenarioMajorUpgrade
----@field respawnMinActors integer
----@field respawnMaxActors integer
----@field respawnTotal integer
----@field respawnDelay number[2]
----@field movePositions ScenarioMovePosition[]
----@field startingLocations ScenarioActorStartingLocation[]
-
----@class SkyAmbientRadiosity
----@field color ColorRGB
----@field power number
-
----@class ScenarioStructureBSPRuntimeDecal
----@field position VectorXYZ
----@field decalType integer
----@field yaw integer
----@field pitch integer
-
----@class WeaponTriggerFiringEffect
----@field shotCount integer[2]
----@field firingEffect TagReference
----@field misfireEffect TagReference
----@field emptyEffect TagReference
----@field firingDamage TagReference
----@field misfireDamage TagReference
----@field emptyDamage TagReference
-
----@class VectorIJ
----@field i integer
----@field j integer
-
----@class BaseObjectFlags
----@field offInPegasus boolean
-
----@class ScenarioStructureBSPMapLeafFaceVertex
----@field vertex VectorXY
-
----@class ColorRGB
----@field r integer
----@field g integer
----@field b integer
-
----@class ScenarioStructureBSPSoundEnvironmentPalette
----@field name string
----@field soundEnvironment TagReference
-
----@alias TagGroup
----| "weapon_hud_interface"
----| "wind"
----| "weapon"
----| "vehicle"
----| "virtual_keyboard"
----| "unicode_string_list"
----| "unit"
----| "unit_hud_interface"
----| "dialogue"
----| "camera_track"
----| "tag_collection"
----| "shader_transparent_water"
----| "string_list"
----| "sound_scenery"
----| "shader_transparent_plasma"
----| "ui_widget_collection"
----| "shader_transparent_generic"
----| "shader_model"
----| "sound_environment"
----| "sound"
----| "shader_transparent_meter"
----| "sky"
----| "shader"
----| "shader_transparent_glass"
----| "shader_environment"
----| "scenario"
----| "shader_transparent_chicago"
----| "shader_transparent_chicago_extended"
----| "scenery"
----| "scenario_structure_bsp"
----| "weather_particle_system"
----| "projectile"
----| "point_physics"
----| "placeholder"
----| "physics"
----| "particle_system"
----| "particle"
----| "object"
----| "preferences_network_game"
----| "null"
----| "multiplayer_scenario_description"
----| "model"
----| "gbxmodel"
----| "light_volume"
----| "meter"
----| "globals"
----| "device_machine"
----| "sound_looping"
----| "light"
----| "device_light_fixture"
----| "lightning"
----| "lens_flare"
----| "damage_effect"
----| "item_collection"
----| "item"
----| "hud_globals"
----| "hud_number"
----| "hud_message_text"
----| "grenade_hud_interface"
----| "glow"
----| "garbage"
----| "material_effects"
----| "font"
----| "fog"
----| "flag"
----| "equipment"
----| "effect"
----| "detail_object_collection"
----| "device"
----| "input_device_defaults"
----| "ui_widget_definition"
----| "decal"
----| "device_control"
----| "contrail"
----| "color_table"
----| "model_collision_geometry"
----| "continuous_damage_effect"
----| "spheroid"
----| "bitmap"
----| "biped"
----| "model_animations"
----| "antenna"
----| "actor_variant"
----| "actor"
-
----@class FontCharacterIndex
----@field characterIndex integer
-
----@class ShaderModelMaps
----@field mapUScale number
----@field mapVScale number
----@field baseMap TagReference
----@field multipurposeMap TagReference
----@field detailFunction ShaderDetailFunction
----@field detailMask ShaderModelDetailMask
----@field detailMapScale number
----@field detailMap TagReference
----@field detailMapVScale number
-
----@alias HUDInterfaceDestination
----| "tertiary_map"
----| "secondary_map"
----| "primary_map"
----| "geometry_offset"
-
----@class Actor
----@field flags ActorFlags
----@field moreFlags ActorMoreFlags
----@field type ActorType
----@field perception ActorPerception
----@field movement ActorMovement
----@field looking ActorLooking
----@field unopposable ActorUnopposable
----@field panic ActorPanic
----@field defensive ActorDefensive
----@field pursuit ActorPursuit
----@field berserk ActorBerserk
----@field firingPositions ActorFiringPositions
----@field communication ActorCommunication
-
----@class ScenarioStructureBSPSubclusterSurfaceIndex
----@field index integer
-
----@class ColorInterpolationFlags
----@field moreColors boolean
----@field blendInHsv boolean
-
----@alias ActorDefensiveCrouchType
----| "flood_shamble"
----| "any_target"
----| "hide_behind_shield"
----| "low_shields"
----| "danger"
----| "never"
-
----@class WeaponTrigger
----@field flags WeaponTriggerFlags
----@field maximumRateOfFire number[2]
----@field accelerationTime number
----@field decelerationTime number
----@field blurredRateOfFire number
----@field magazine integer
----@field roundsPerShot integer
----@field minimumRoundsLoaded integer
----@field projectilesBetweenContrails integer
----@field predictionType WeaponPredictionType
----@field firingNoise ObjectNoise
----@field error number[2]
----@field errorAccelerationTime number
----@field errorDecelerationTime number
----@field chargingTime number
----@field chargedTime number
----@field overchargedAction WeaponOverchargedAction
----@field chargedIllumination number
----@field spewTime number
----@field chargingEffect TagReference
----@field distributionFunction WeaponDistributionFunction
----@field projectilesPerShot integer
----@field distributionAngle number
----@field minimumError number
----@field errorAngle number[2]
----@field firstPersonOffset VectorXYZ
----@field projectile TagReference
----@field ejectionPortRecoveryTime number
----@field illuminationRecoveryTime number
----@field heatGeneratedPerRound number
----@field ageGeneratedPerRound number
----@field overloadTime number
----@field illuminationRecoveryRate number
----@field ejectionPortRecoveryRate number
----@field firingAccelerationRate number
----@field firingDecelerationRate number
----@field errorAccelerationRate number
----@field errorDecelerationRate number
----@field firingEffects WeaponTriggerFiringEffect[]
-
----@class ScenarioStructureBSPGlobalZrEferenceVector
----@field zReferenceI number
----@field zReferenceJ number
----@field zReferenceK number
----@field zReferenceL number
-
----@class ActorVariantUnitProperties
----@field bodyVitality number
----@field shieldVitality number
----@field shieldSappingRadius number
----@field forcedShaderPermutation integer
----@field changeColors ActorVariantChangeColors[]
-
----@class ActorFlags
----@field avoidFriendsLineOfFire boolean
----@field crouchWhenInLineOfFire boolean
----@field fixedCrouchFacing boolean
----@field cannotMoveWhileCrouching boolean
----@field suicidalMeleeAttack boolean
----@field swarm boolean
----@field diveOffLedges boolean
----@field alwaysChargeInAttackingMode boolean
----@field crouchWhenHidingFromUnopposable boolean
----@field panickedByUnopposableEnemy boolean
----@field flying boolean
----@field berserkingUsesPanickedMovement boolean
----@field alwaysBerserkInAttackingMode boolean
----@field stalkingFreezeIfExposed boolean
----@field useStalkingBehavior boolean
----@field defensiveCrouchWhileCharging boolean
----@field crouchingMustMoveForward boolean
----@field standingMustMoveForward boolean
----@field startFiringBeforeAligned boolean
----@field getsInVehiclesWithPlayer boolean
----@field alwaysChargeAtEnemies boolean
----@field panicWhenSurprised boolean
----@field mustCrouchToShoot boolean
----@field unused1 boolean
----@field crouchWhenGuarding boolean
----@field crouchWhenNotInCombat boolean
----@field tryToStayStillWhenCrouched boolean
----@field shootAtTargetsLastLocation boolean
----@field unused boolean
----@field sneakUncoveringPursuitPosition boolean
----@field sneakUncoveringTarget boolean
----@field canSeeInDarkness boolean
-
----@class ScenarioStructureBSPLeaf
----@field vertices integer[3]
----@field cluster integer
----@field surfaceReferenceCount integer
----@field surfaceReferences integer
-
----@class ContrailFlags
----@field edgeEffectFadesSlowly boolean
----@field pointsAlwaysPinnedToGround boolean
----@field pointsAlwaysPinnedToMedia boolean
----@field pointsStartPinnedToGround boolean
----@field pointsStartPinnedToMedia boolean
----@field lastPointUnfaded boolean
----@field firstPointUnfaded boolean
-
----@class ProjectileMaterialResponsePotentialFlags
----@field neverAgainstUnits boolean
----@field onlyAgainstUnits boolean
-
----@class ObjectValidOutGoingFunctions
----@field d boolean
----@field c boolean
----@field b boolean
----@field a boolean
-
----@class ScenarioStructureBSPNode
----@field nodeStuff integer[3]
-
----@class ShaderEnvironmentReflectionFlags
----@field dynamicMirror boolean
-
----@class ModelCollisionGeometryBSPSurface
----@field plane integer
----@field firstEdge integer
----@field flags ModelCollisionGeometryBSPSurfaceFlags
----@field breakableSurface integer
----@field material integer
-
----@class ModelCollisionGeometryBSPPlane
----@field plane Plane3D
-
----@class ScenarioStructureBSPSurface
----@field vertex0Index integer
----@field vertex1Index integer
----@field vertex2Index integer
-
----@alias EffectViolenceMode
----| "nonviolent_mode_only"
----| "violent_mode_only"
----| "either_mode"
-
----@class ModelCollisionGeometryBSPSurfaceFlags
----@field breakable boolean
----@field climbable boolean
----@field invisible boolean
----@field twoSided boolean
-
----@class ScenarioNetgameEquipment
----@field flags ScenarioNetgameEquipmentFlags
----@field type0 ScenarioSpawnType
----@field type1 ScenarioSpawnType
----@field type2 ScenarioSpawnType
----@field type3 ScenarioSpawnType
----@field teamIndex integer
----@field spawnTime integer
----@field unknownFfffffff integer
----@field position VectorXYZ
----@field facing number
----@field itemCollection TagReference
-
----@class ModelAnimationsAnimationFlags
----@field _25HzPal boolean
----@field worldRelative boolean
----@field compressedData boolean
-
----@class ProjectileObjectFlags
----@field attached boolean
----@field projectileUnknownFlag boolean
----@field tracer boolean
-
----@class ColorTableColor
----@field name string
----@field color ColorARGB
-
----@class ShaderTransparentGlassFlags
----@field bumpMapIsSpecularMask boolean
----@field twoSided boolean
----@field decal boolean
----@field alphaTested boolean
-
----@class ShaderTransparentChicagoMapFlags
----@field vClamped boolean
----@field uClamped boolean
----@field alphaReplicate boolean
----@field unfiltered boolean
-
----@class SoundLoopingTrack
----@field flags SoundLoopingTrackFlags
----@field gain number
----@field fadeInDuration number
----@field fadeOutDuration number
----@field start TagReference
----@field loop TagReference
----@field end TagReference
----@field alternateLoop TagReference
----@field alternateEnd TagReference
-
----@alias PredictedResourceType
----| "sound"
----| "bitmap"
-
----@class ShaderTransparentMapAnimation
----@field uAnimationSource FunctionOut
----@field uAnimationFunction WaveFunction
----@field uAnimationPeriod number
----@field uAnimationPhase number
----@field uAnimationScale number
----@field vAnimationSource FunctionOut
----@field vAnimationFunction WaveFunction
----@field vAnimationPeriod number
----@field vAnimationPhase number
----@field vAnimationScale number
----@field rotationAnimationSource FunctionOut
----@field rotationAnimationFunction WaveFunction
----@field rotationAnimationPeriod number
----@field rotationAnimationPhase number
----@field rotationAnimationScale number
----@field rotationAnimationCenter VectorXY
-
----@class ScenarioPlayerStartingLocation
----@field position VectorXYZ
----@field facing number
----@field teamIndex integer
----@field bspIndex integer
----@field type0 ScenarioSpawnType
----@field type1 ScenarioSpawnType
----@field type2 ScenarioSpawnType
----@field type3 ScenarioSpawnType
-
----@class ScenarioMovePosition
----@field position VectorXYZ
----@field facing number
----@field weight number
----@field time number[2]
----@field animation integer
----@field sequenceId integer
----@field clusterIndex integer
----@field surfaceIndex integer
-
----@class GlobalsPlaylistMember
----@field mapName string
----@field gameVariant string
----@field minimumExperience integer
----@field maximumExperience integer
----@field minimumPlayerCount integer
----@field maximumPlayerCount integer
----@field rating integer
-
----@class ScenarioPlatoonFlags
----@field startInDefendingState boolean
----@field sayAdvancingWhenManeuver boolean
----@field fleeWhenManeuvering boolean
-
----@alias ShaderTransparentGenericStageOutputFunction
----| "dot_product"
----| "multiply"
-
----@class ScenarioStructureBSPPathfindingSurface
----@field data integer
-
----@alias UIEventType
----| "post_render"
----| "custom_activation"
----| "double_click"
----| "right_mouse"
----| "middle_mouse"
----| "left_mouse"
----| "lose_focus"
----| "get_focus"
----| "deleted"
----| "created"
----| "right_analog_stick_right"
----| "right_analog_stick_left"
----| "right_analog_stick_down"
----| "left_analog_stick_up_1"
----| "left_analog_stick_right"
----| "left_analog_stick_left"
----| "left_analog_stick_down"
----| "left_analog_stick_up"
----| "right_thumb"
----| "left_thumb"
----| "back_button"
----| "start_button"
----| "dpad_right"
----| "dpad_left"
----| "dpad_down"
----| "dpad_up"
----| "right_trigger"
----| "left_trigger"
----| "white_button"
----| "black_button"
----| "y_button"
----| "x_button"
----| "b_button"
----| "a_button"
-
----@class ScenarioTextFlags
----@field bottomJustify boolean
----@field centerVertically boolean
----@field wrapVertically boolean
----@field wrapHorizontally boolean
-
----@class ScenarioAIScriptReference
----@field scriptName string
-
----@class HUDGlobalsObjectiveColors
----@field properties HUDInterfaceElementColor
----@field uptimeTicks integer
----@field fadeTicks integer
-
----@class HUDInterfaceElementPosition
----@field anchorOffset VectorXYInt
----@field widthScale number
----@field heightScale number
----@field scalingFlags HUDInterfaceScalingFlags
-
----@alias HUDInterfaceZeroToOneBlendFunction
----| "dot"
----| "multiply_2x"
----| "multiply"
----| "subtract"
----| "add"
-
----@alias ScenarioMajorUpgrade
----| "all"
----| "none"
----| "many"
----| "few"
----| "normal"
-
----@class ActorVariantFlags
----@field preferPassengerSeat boolean
----@field cannotUseRangedWeapons boolean
----@field superActiveCamouflage boolean
----@field activeCamouflage boolean
----@field movementSwitchingTryToStayWithFriends boolean
----@field hasUnlimitedGrenades boolean
----@field interpolateColorInHsv boolean
----@field canShootWhileFlying boolean
-
----@class TagRawData
----@field size integer
----@field pointer integer
+---@class ModelCollisionGeometryBSP2DNode
+---@field plane Plane2D
+---@field leftChild integer
+---@field rightChild integer
+
+---@alias GlowNormalParticleDistribution
+---| "distributed_uniformly"
+---| "distributed_randomly"
 
